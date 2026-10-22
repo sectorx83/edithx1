@@ -134,7 +134,9 @@ function Index() {
     setMessages([]);
   }
 
-  useEffect(() => endRef.current?.scrollIntoView({ behavior: "smooth" }), [messages, loading]);
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, loading]);
 
   async function send(e: React.FormEvent) {
     e.preventDefault();
