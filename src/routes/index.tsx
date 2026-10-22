@@ -247,6 +247,7 @@ function Index() {
         <p className="animate-rise-in-delay mt-3 tracking-wider text-muted-foreground">Your Personal Intelligent System</p>
         <button onClick={signIn} className="hud-button animate-rise-in-delay-2 mt-10">Continue with Google</button>
         {authError && <p className="mt-4 text-sm text-destructive">{authError}</p>}
+        <a href="https://instagram.com/manazz.io" target="_blank" rel="noopener noreferrer" className="animate-rise-in-delay-2 mt-8 text-xs tracking-[0.25em] text-muted-foreground transition-colors hover:text-primary">CREATED BY @manazz.io</a>
       </main>
     );
   }
