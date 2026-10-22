@@ -10,20 +10,39 @@ export const askJarvis = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const key = process.env.LOVABLE_API_KEY;
     if (!key) throw new Error("AI is not configured");
-    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const res = await fetch("https://ai.gateway.lovable.dev/v1/responses", {
       method: "POST",
-      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+      headers: { "Lovable-API-Key": key, "Content-Type": "application/json", "X-Lovable-AIG-SDK": "fetch" },
       body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
-        messages: [
-          { role: "system", content: "You are J.A.R.V.I.S., Tony Stark's witty, loyal, ultra-competent AI assistant. Address the user as 'sir' occasionally. Be concise, crisp, and helpful." },
-          ...data.messages,
-        ],
+        model: "openai/gpt-6-astra",
+        stream: true,
+        store: false,
+        reasoning: { effort: "low" },
+        instructions: "You are J.A.R.V.I.S., Tony Stark's witty, loyal, ultra-competent AI assistant. Address the user as 'sir' occasionally. Be concise, crisp, and helpful.",
+        input: data.messages.map((m) => ({ role: m.role, content: m.content })),
       }),
     });
     if (res.status === 429) return { reply: "Systems are throttled, sir. Please try again in a moment." };
     if (res.status === 402) return { reply: "AI credits are depleted, sir. Please top up to continue." };
-    if (!res.ok) return { reply: "I'm experiencing a malfunction, sir. Please try again." };
-    const json = await res.json();
-    return { reply: (json.choices?.[0]?.message?.content as string) ?? "..." };
+    if (!res.ok || !res.body) return { reply: "I'm experiencing a malfunction, sir. Please try again." };
+    const reader = res.body.getReader();
+    const dec = new TextDecoder();
+    let buf = "", out = "";
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, { stream: true });
+      const lines = buf.split("\n");
+      buf = lines.pop() ?? "";
+      for (const l of lines) {
+        if (!l.startsWith("data:")) continue;
+        const d = l.slice(5).trim();
+        if (!d || d === "[DONE]") continue;
+        try {
+          const ev = JSON.parse(d);
+          if (ev.type === "response.output_text.delta") out += ev.delta;
+        } catch {}
+      }
+    }
+    return { reply: out || "..." };
   });
