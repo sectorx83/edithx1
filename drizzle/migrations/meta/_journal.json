@@ -8,6 +8,13 @@
       "when": 1792671091373,
       "tag": "0000_jarvis_messages",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1792671382345,
+      "tag": "0001_user_settings",
+      "breakpoints": true
     }
   ]
 }

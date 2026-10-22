@@ -179,3 +179,8 @@ body { font-family: "Rajdhani", system-ui, sans-serif; }
 .hud-mic { width: 2.75rem; flex-shrink: 0; border: 1px solid var(--primary); color: var(--primary); border-radius: 9999px; transition: all .2s; }
 .hud-mic:disabled { opacity: .5; }
 .hud-mic-on { background: var(--primary); color: var(--primary-foreground); box-shadow: 0 0 20px var(--primary); animation: pulse-orb 1s ease-in-out infinite; }
+.hud-panel { background: var(--card); border-left: 1px solid var(--border); box-shadow: -10px 0 40px color-mix(in oklab, var(--primary) 15%, transparent); }
+.hud-label { font-size: .75rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted-foreground); margin-bottom: .75rem; }
+.hud-chip { border: 1px solid var(--border); border-radius: .4rem; padding: .5rem; font-size: .875rem; transition: all .2s; }
+.hud-chip:hover { border-color: var(--primary); }
+.hud-chip-on { border-color: var(--primary); color: var(--primary); background: color-mix(in oklab, var(--primary) 12%, transparent); box-shadow: 0 0 12px color-mix(in oklab, var(--primary) 30%, transparent); }

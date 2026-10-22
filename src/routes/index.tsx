@@ -4,6 +4,9 @@ import { useServerFn } from "@tanstack/react-start";
 import { askJarvis } from "@/lib/jarvis.functions";
 import { transcribeAudio } from "@/lib/transcribe.functions";
 import { recordWav } from "@/lib/record-wav";
+import { streamSpeech } from "@/lib/stream-speech";
+import { SettingsPanel } from "@/components/SettingsPanel";
+import { DEFAULT_SETTINGS, type StyxSettings } from "@/lib/styx-settings";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import type { Session } from "@supabase/supabase-js";
@@ -49,6 +52,24 @@ function Index() {
   const [recording, setRecording] = useState(false);
   const [transcribing, setTranscribing] = useState(false);
   const [voiceError, setVoiceError] = useState("");
+  const [settings, setSettings] = useState<StyxSettings>(DEFAULT_SETTINGS);
+  const [showSettings, setShowSettings] = useState(false);
+  const speechAbort = useRef<AbortController | null>(null);
+
+  async function speak(text: string, voice = settings.voice) {
+    speechAbort.current?.abort();
+    const ac = new AbortController();
+    speechAbort.current = ac;
+    const { data } = await supabase.auth.getSession();
+    const token = data.session?.access_token;
+    if (!token) return;
+    try {
+      await streamSpeech("/api/speak", { text, voice }, { Authorization: `Bearer ${token}` }, ac.signal);
+    } catch (e) {
+      if (!ac.signal.aborted) setVoiceError("Couldn't play the voice reply.");
+      console.error(e);
+    }
+  }
 
   async function toggleMic() {
     setVoiceError("");
@@ -83,7 +104,16 @@ function Index() {
     supabase.from("messages").select("role, content").order("created_at").then(({ data }) => {
       if (data) setMessages(data as Msg[]);
     });
+    supabase.from("user_settings").select("speak_replies, voice, tone, sensitive").maybeSingle().then(({ data }) => {
+      if (data) setSettings(data);
+    });
   }, [uid]);
+
+  async function saveSettings(next: StyxSettings) {
+    setSettings(next);
+    const { error } = await supabase.from("user_settings").upsert({ user_id: uid!, ...next, updated_at: new Date().toISOString() });
+    if (error) setVoiceError("Couldn't save settings.");
+  }
 
   async function signIn() {
     setAuthError("");
@@ -115,6 +145,7 @@ function Index() {
       const { reply } = await ask({ data: { messages: next } });
       setMessages([...next, { role: "assistant", content: reply }]);
       await supabase.from("messages").insert({ role: "assistant", content: reply });
+      if (settings.speak_replies) void speak(reply);
     } catch {
       setMessages([...next, { role: "assistant", content: "Connection lost, sir." }]);
     } finally {
@@ -137,6 +168,9 @@ function Index() {
 
   return (
     <main className="hud-bg flex h-screen flex-col">
+      {showSettings && (
+        <SettingsPanel settings={settings} onChange={saveSettings} onClose={() => setShowSettings(false)} onPreview={(v) => speak("Hello. I am Styx, at your service.", v)} />
+      )}
       <header className="flex items-center gap-3 border-b border-border px-5 py-3">
         <Core size={36} active={loading} />
         <div>
@@ -144,6 +178,7 @@ function Index() {
           <div className="text-xs tracking-widest text-muted-foreground">{loading ? "PROCESSING..." : "ONLINE"}</div>
         </div>
         <div className="ml-auto flex gap-3 text-xs tracking-widest text-muted-foreground">
+          <button onClick={() => setShowSettings(true)} className="hover:text-primary">SETTINGS</button>
           {messages.length > 0 && <button onClick={clearChat} className="hover:text-primary">CLEAR</button>}
           <button onClick={() => supabase.auth.signOut()} className="hover:text-primary">SIGN OUT</button>
         </div>
@@ -159,6 +194,7 @@ function Index() {
           {messages.map((m, i) => (
             <div key={i} className={m.role === "user" ? "msg-user" : "msg-ai"}>
               <p className="whitespace-pre-wrap">{m.content}</p>
+              {m.role === "assistant" && <button onClick={() => speak(m.content)} className="mt-1 text-xs tracking-widest text-muted-foreground hover:text-primary">▶ PLAY</button>}
             </div>
           ))}
           {loading && <div className="msg-ai text-primary">Analyzing<span className="animate-pulse">...</span></div>}
