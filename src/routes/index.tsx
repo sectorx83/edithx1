@@ -2,6 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { askJarvis } from "@/lib/jarvis.functions";
+import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable/index";
+import type { Session } from "@supabase/supabase-js";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -32,12 +35,39 @@ function Core({ size = 220, active = false }: { size?: number; active?: boolean 
 }
 
 function Index() {
-  const [started, setStarted] = useState(false);
+  const [session, setSession] = useState<Session | null>(null);
+  const [ready, setReady] = useState(false);
+  const [authError, setAuthError] = useState("");
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const ask = useServerFn(askJarvis);
   const endRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setSession(s));
+    supabase.auth.getSession().then(({ data }) => { setSession(data.session); setReady(true); });
+    return () => sub.subscription.unsubscribe();
+  }, []);
+
+  const uid = session?.user.id;
+  useEffect(() => {
+    if (!uid) { setMessages([]); return; }
+    supabase.from("messages").select("role, content").order("created_at").then(({ data }) => {
+      if (data) setMessages(data as Msg[]);
+    });
+  }, [uid]);
+
+  async function signIn() {
+    setAuthError("");
+    const r = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
+    if (r.error) setAuthError("Sign-in failed, sir. Please try again.");
+  }
+
+  async function clearChat() {
+    await supabase.from("messages").delete().eq("user_id", uid!);
+    setMessages([]);
+  }
 
   useEffect(() => endRef.current?.scrollIntoView({ behavior: "smooth" }), [messages, loading]);
 
@@ -50,8 +80,10 @@ function Index() {
     setInput("");
     setLoading(true);
     try {
+      await supabase.from("messages").insert({ role: "user", content: text });
       const { reply } = await ask({ data: { messages: next } });
       setMessages([...next, { role: "assistant", content: reply }]);
+      await supabase.from("messages").insert({ role: "assistant", content: reply });
     } catch {
       setMessages([...next, { role: "assistant", content: "Connection lost, sir." }]);
     } finally {
@@ -59,13 +91,15 @@ function Index() {
     }
   }
 
-  if (!started) {
+  if (!ready) return <main className="hud-bg flex min-h-screen items-center justify-center"><Core /></main>;
+  if (!session) {
     return (
       <main className="hud-bg flex min-h-screen flex-col items-center justify-center px-6 text-center">
         <Core />
         <h1 className="jarvis-title mt-10 text-4xl sm:text-5xl">J.A.R.V.I.S.</h1>
         <p className="mt-3 tracking-wider text-muted-foreground">Just A Rather Very Intelligent System</p>
-        <button onClick={() => setStarted(true)} className="hud-button mt-10">Initialize System</button>
+        <button onClick={signIn} className="hud-button mt-10">Continue with Google</button>
+        {authError && <p className="mt-4 text-sm text-destructive">{authError}</p>}
       </main>
     );
   }
@@ -77,6 +111,10 @@ function Index() {
         <div>
           <div className="jarvis-title text-lg">J.A.R.V.I.S.</div>
           <div className="text-xs tracking-widest text-muted-foreground">{loading ? "PROCESSING..." : "ONLINE"}</div>
+        </div>
+        <div className="ml-auto flex gap-3 text-xs tracking-widest text-muted-foreground">
+          {messages.length > 0 && <button onClick={clearChat} className="hover:text-primary">CLEAR</button>}
+          <button onClick={() => supabase.auth.signOut()} className="hover:text-primary">SIGN OUT</button>
         </div>
       </header>
       <section className="flex-1 overflow-y-auto px-4 py-6">
