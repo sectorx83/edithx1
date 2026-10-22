@@ -104,7 +104,16 @@ function Index() {
       const file = await rec.stop();
       const fd = new FormData(); fd.append("file", file);
       const r = await transcribe({ data: fd });
-      if (r.error || !r.text?.trim()) { if (r.error) setVoiceError(r.error); return void listen(); }
+      if (r.error || !r.text?.trim()) {
+        if (r.error) setVoiceError(r.error);
+        emptyStreak.current += 1;
+        if (emptyStreak.current >= 3) {
+          setVoiceError("I didn't hear anything, sir. Tap the globe to try again.");
+          return void stopConvo();
+        }
+        return void listen();
+      }
+      emptyStreak.current = 0;
       const reply = await sendText(r.text, false);
       if (reply && convoRef.current) { setPhase("speaking"); await speak(reply); }
     } catch (e) {
