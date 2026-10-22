@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import ReactMarkdown from "react-markdown";
 import { useServerFn } from "@tanstack/react-start";
 import { askJarvis } from "@/lib/jarvis.functions";
 import { transcribeAudio } from "@/lib/transcribe.functions";
@@ -63,6 +64,7 @@ function Index() {
     speechAbort.current?.abort();
     const ac = new AbortController();
     speechAbort.current = ac;
+    text = text.replace(/[*_#`>|]/g, "").replace(/\[(.*?)\]\(.*?\)/g, "$1");
     const { data } = await supabase.auth.getSession();
     const token = data.session?.access_token;
     if (!token) return;
@@ -198,7 +200,7 @@ function Index() {
           )}
           {messages.map((m, i) => (
             <div key={i} className={m.role === "user" ? "msg-user" : "msg-ai"}>
-              <p className="whitespace-pre-wrap">{m.content}</p>
+              {m.role === "assistant" ? <div className="md"><ReactMarkdown>{m.content}</ReactMarkdown></div> : <p className="whitespace-pre-wrap">{m.content}</p>}
               {m.role === "assistant" && <button onClick={() => speak(m.content)} className="mt-1 text-xs tracking-widest text-muted-foreground hover:text-primary">▶ PLAY</button>}
             </div>
           ))}
