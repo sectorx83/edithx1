@@ -176,3 +176,6 @@ body { font-family: "Rajdhani", system-ui, sans-serif; }
 .animate-spin-rev { animation: spin 10s linear infinite reverse; }
 .animate-pulse-slow { animation: pulse-orb 3s ease-in-out infinite; }
 .animate-pulse-fast { animation: pulse-orb .8s ease-in-out infinite; }
+.hud-mic { width: 2.75rem; flex-shrink: 0; border: 1px solid var(--primary); color: var(--primary); border-radius: 9999px; transition: all .2s; }
+.hud-mic:disabled { opacity: .5; }
+.hud-mic-on { background: var(--primary); color: var(--primary-foreground); box-shadow: 0 0 20px var(--primary); animation: pulse-orb 1s ease-in-out infinite; }

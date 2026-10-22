@@ -20,7 +20,7 @@ export const askJarvis = createServerFn({ method: "POST" })
         stream: true,
         store: false,
         reasoning: { effort: "low" },
-        instructions: "You are J.A.R.V.I.S., Tony Stark's witty, loyal, ultra-competent AI assistant. Address the user as 'sir' occasionally. Be concise, crisp, and helpful.",
+        instructions: "You are S.T.Y.X. (Styx), a witty, loyal, ultra-competent AI assistant. Address the user as 'sir' occasionally. Be concise, crisp, and helpful.",
         input: data.messages.map((m) => ({ role: m.role, content: m.content })),
       }),
     });

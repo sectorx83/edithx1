@@ -2,6 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { askJarvis } from "@/lib/jarvis.functions";
+import { transcribeAudio } from "@/lib/transcribe.functions";
+import { recordWav } from "@/lib/record-wav";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import type { Session } from "@supabase/supabase-js";
@@ -9,10 +11,10 @@ import type { Session } from "@supabase/supabase-js";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "J.A.R.V.I.S. — Just A Rather Very Intelligent System" },
-      { name: "description", content: "Talk to J.A.R.V.I.S., your personal AI assistant." },
-      { property: "og:title", content: "J.A.R.V.I.S. AI Assistant" },
-      { property: "og:description", content: "Talk to J.A.R.V.I.S., your personal AI assistant." },
+      { title: "S.T.Y.X. — Your Personal Intelligent System" },
+      { name: "description", content: "Talk to S.T.Y.X., your personal AI assistant." },
+      { property: "og:title", content: "S.T.Y.X. AI Assistant" },
+      { property: "og:description", content: "Talk to S.T.Y.X., your personal AI assistant." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -42,6 +44,31 @@ function Index() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const ask = useServerFn(askJarvis);
+  const transcribe = useServerFn(transcribeAudio);
+  const recRef = useRef<{ stop: () => Promise<File> } | null>(null);
+  const [recording, setRecording] = useState(false);
+  const [transcribing, setTranscribing] = useState(false);
+  const [voiceError, setVoiceError] = useState("");
+
+  async function toggleMic() {
+    setVoiceError("");
+    if (!recording) {
+      try { recRef.current = await recordWav(); setRecording(true); }
+      catch { setVoiceError("Microphone access was blocked."); }
+      return;
+    }
+    setRecording(false);
+    setTranscribing(true);
+    try {
+      const file = await recRef.current!.stop();
+      const fd = new FormData(); fd.append("file", file);
+      const r = await transcribe({ data: fd });
+      if (r.error) setVoiceError(r.error);
+      else if (r.text) await sendText(r.text);
+    } catch (e) {
+      setVoiceError(e instanceof Error ? e.message : "Recording failed.");
+    } finally { setTranscribing(false); }
+  }
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -73,7 +100,11 @@ function Index() {
 
   async function send(e: React.FormEvent) {
     e.preventDefault();
-    const text = input.trim();
+    await sendText(input);
+  }
+
+  async function sendText(raw: string) {
+    const text = raw.trim();
     if (!text || loading) return;
     const next = [...messages, { role: "user" as const, content: text }];
     setMessages(next);
@@ -96,8 +127,8 @@ function Index() {
     return (
       <main className="hud-bg flex min-h-screen flex-col items-center justify-center px-6 text-center">
         <Core />
-        <h1 className="jarvis-title mt-10 text-4xl sm:text-5xl">J.A.R.V.I.S.</h1>
-        <p className="mt-3 tracking-wider text-muted-foreground">Just A Rather Very Intelligent System</p>
+        <h1 className="jarvis-title mt-10 text-4xl sm:text-5xl">S.T.Y.X.</h1>
+        <p className="mt-3 tracking-wider text-muted-foreground">Your Personal Intelligent System</p>
         <button onClick={signIn} className="hud-button mt-10">Continue with Google</button>
         {authError && <p className="mt-4 text-sm text-destructive">{authError}</p>}
       </main>
@@ -109,7 +140,7 @@ function Index() {
       <header className="flex items-center gap-3 border-b border-border px-5 py-3">
         <Core size={36} active={loading} />
         <div>
-          <div className="jarvis-title text-lg">J.A.R.V.I.S.</div>
+          <div className="jarvis-title text-lg">S.T.Y.X.</div>
           <div className="text-xs tracking-widest text-muted-foreground">{loading ? "PROCESSING..." : "ONLINE"}</div>
         </div>
         <div className="ml-auto flex gap-3 text-xs tracking-widest text-muted-foreground">
@@ -136,9 +167,13 @@ function Index() {
       </section>
       <form onSubmit={send} className="border-t border-border p-4">
         <div className="mx-auto flex max-w-3xl gap-2">
-          <input value={input} onChange={(e) => setInput(e.target.value)} placeholder="Speak to Jarvis..." className="hud-input flex-1" />
+          <button type="button" onClick={toggleMic} disabled={loading || transcribing} aria-label={recording ? "Stop recording" : "Speak"} className={recording ? "hud-mic hud-mic-on" : "hud-mic"}>
+            {transcribing ? "…" : recording ? "■" : "🎙"}
+          </button>
+          <input value={input} onChange={(e) => setInput(e.target.value)} placeholder={recording ? "Listening..." : "Type or tap the mic..."} className="hud-input flex-1" />
           <button disabled={loading} className="hud-button">Send</button>
         </div>
+        {voiceError && <p className="mx-auto mt-2 max-w-3xl text-sm text-destructive">{voiceError}</p>}
       </form>
     </main>
   );
