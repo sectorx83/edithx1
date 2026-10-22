@@ -1,4 +1,5 @@
 import { createParser } from "eventsource-parser";
+import { audioLevel, readLevel } from "@/lib/audio-level";
 
 export function decodePCM(pending: Uint8Array, incoming: Uint8Array) {
   const bytes = new Uint8Array(pending.length + incoming.length);
@@ -26,6 +27,13 @@ export async function streamSpeech(endpoint: string, body: Record<string, unknow
   };
   signal?.addEventListener("abort", abort, { once: true });
   let playback: Promise<void> = Promise.resolve();
+  const analyser = context.createAnalyser();
+  analyser.fftSize = 512;
+  analyser.connect(context.destination);
+  const lvlBuf = new Uint8Array(analyser.fftSize);
+  let raf = 0;
+  const tick = () => { audioLevel.value = readLevel(analyser, lvlBuf); audioLevel.source = "ai"; raf = requestAnimationFrame(tick); };
+  raf = requestAnimationFrame(tick);
   try {
     if (context.state === "suspended") await context.resume();
     const response = await fetch(endpoint, {
@@ -56,7 +64,7 @@ export async function streamSpeech(endpoint: string, body: Record<string, unknow
         buffer.copyToChannel(decoded.samples, 0);
         const source = context.createBufferSource();
         source.buffer = buffer;
-        source.connect(context.destination);
+        source.connect(analyser);
         sources.add(source);
         playback = new Promise<void>((resolve) => {
           source.onended = () => {
@@ -85,6 +93,8 @@ export async function streamSpeech(endpoint: string, body: Record<string, unknow
     await playback;
     signal?.throwIfAborted();
   } finally {
+    cancelAnimationFrame(raf);
+    audioLevel.value = 0; audioLevel.source = "idle";
     signal?.removeEventListener("abort", abort);
     controller.abort();
     for (const source of sources) source.stop();
