@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { buildSystemPrompt } from "@/lib/styx-settings";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -9,7 +10,8 @@ export const askJarvis = createServerFn({ method: "POST" })
     if (!Array.isArray(d?.messages)) throw new Error("Invalid input");
     return { messages: d.messages.slice(-20).map((m) => ({ role: m.role === "assistant" ? "assistant" : "user", content: String(m.content).slice(0, 4000) })) as Msg[] };
   })
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    const { data: settings } = await context.supabase.from("user_settings").select("tone, sensitive").maybeSingle();
     const key = process.env['LOVABLE_API_KEY'];
     if (!key) throw new Error("AI is not configured");
     const res = await fetch("https://ai.gateway.lovable.dev/v1/responses", {
@@ -20,7 +22,7 @@ export const askJarvis = createServerFn({ method: "POST" })
         stream: true,
         store: false,
         reasoning: { effort: "low" },
-        instructions: "You are S.T.Y.X. (Styx), a witty, loyal, ultra-competent AI assistant. Address the user as 'sir' occasionally. Be concise, crisp, and helpful.",
+        instructions: buildSystemPrompt(settings),
         input: data.messages.map((m) => ({ role: m.role, content: m.content })),
       }),
     });
