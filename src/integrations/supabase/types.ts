@@ -38,6 +38,33 @@ export type Database = {
         }
         Relationships: []
       }
+      user_settings: {
+        Row: {
+          sensitive: string
+          speak_replies: boolean
+          tone: string
+          updated_at: string
+          user_id: string
+          voice: string
+        }
+        Insert: {
+          sensitive?: string
+          speak_replies?: boolean
+          tone?: string
+          updated_at?: string
+          user_id?: string
+          voice?: string
+        }
+        Update: {
+          sensitive?: string
+          speak_replies?: boolean
+          tone?: string
+          updated_at?: string
+          user_id?: string
+          voice?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
