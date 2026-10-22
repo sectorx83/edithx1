@@ -221,7 +221,7 @@ body { font-family: "Rajdhani", system-ui, sans-serif; }
   mask-image: radial-gradient(circle at 50% 45%, black, transparent 75%); }
 .hud-bg::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 120px; pointer-events: none; z-index: 0;
   background: linear-gradient(transparent, color-mix(in oklab, var(--primary) 8%, transparent), transparent); animation: scan 7s linear infinite; }
-.hud-bg > * { position: relative; z-index: 1; }
+.hud-bg > :not(.fixed) { position: relative; z-index: 1; }
 
 .core-ripple { position: absolute; inset: 20%; border-radius: 9999px; border: 1px solid var(--primary); animation: ripple 2.8s ease-out infinite; pointer-events: none; }
 .core-ripple-2 { animation-delay: 1.4s; }
