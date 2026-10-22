@@ -14,7 +14,7 @@ export const transcribeAudio = createServerFn({ method: "POST" })
     if (!key) throw new Error("AI is not configured");
     const file = data.get("file") as File;
     const form = new FormData();
-    form.append("model", "openai/gpt-transcribe");
+    form.append("model", "openai/gpt-4o-mini-transcribe");
     form.append("file", file, "recording.wav");
     form.append("response_format", "json");
     form.append("stream", "true");
