@@ -22,7 +22,7 @@ function Options({ items, value, onPick }: { items: [string, string][]; value: s
 export function SettingsPanel({ settings, onChange, onClose, onPreview }: Props) {
   const set = (patch: Partial<StyxSettings>) => onChange({ ...settings, ...patch });
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-background/70 backdrop-blur-sm" onClick={onClose}>
+    <div className="animate-fade-in fixed inset-0 z-50 flex justify-end bg-background/70 backdrop-blur-sm" onClick={onClose}>
       <aside className="hud-panel h-full w-full max-w-sm overflow-y-auto p-6" onClick={(e) => e.stopPropagation()}>
         <div className="mb-6 flex items-center justify-between">
           <h2 className="jarvis-title text-lg">SETTINGS</h2>
