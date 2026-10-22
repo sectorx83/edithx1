@@ -46,7 +46,7 @@ export const SENSITIVE: Record<string, { label: string; prompt: string }> = {
 };
 
 export function buildSystemPrompt(s: Partial<StyxSettings> | null) {
-  const tone = TONES[s?.tone ?? ""] ?? TONES.witty;
-  const sens = SENSITIVE[s?.sensitive ?? ""] ?? SENSITIVE.balanced;
+  const tone = TONES[s?.tone ?? ""] ?? TONES["witty"]!;
+  const sens = SENSITIVE[s?.sensitive ?? ""] ?? SENSITIVE["balanced"]!;
   return `You are S.T.Y.X. (Styx), a loyal, ultra-competent AI assistant. ${tone.prompt} ${sens.prompt} Always be safe if someone may be in danger: share crisis resources.`;
 }
