@@ -75,6 +75,7 @@ function Index() {
   const ask = useServerFn(askJarvis);
   const transcribe = useServerFn(transcribeAudio);
   const recRef = useRef<{ stop: () => Promise<File> } | null>(null);
+  const emptyStreak = useRef(0);
   const [recording, setRecording] = useState(false);
   const [transcribing, setTranscribing] = useState(false);
   const [voiceError, setVoiceError] = useState("");
@@ -122,7 +123,7 @@ function Index() {
     if (convoRef.current) void listen();
   }
 
-  function startConvo() { convoRef.current = true; setConvo(true); void listen(); }
+  function startConvo() { convoRef.current = true; setConvo(true); emptyStreak.current = 0; void listen(); }
   function stopConvo() {
     convoRef.current = false; setConvo(false); setPhase("idle");
     speechAbort.current?.abort();
