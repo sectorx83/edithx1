@@ -75,6 +75,7 @@ function Index() {
   const ask = useServerFn(askJarvis);
   const transcribe = useServerFn(transcribeAudio);
   const recRef = useRef<{ stop: () => Promise<File> } | null>(null);
+  const emptyStreak = useRef(0);
   const [recording, setRecording] = useState(false);
   const [transcribing, setTranscribing] = useState(false);
   const [voiceError, setVoiceError] = useState("");
@@ -104,7 +105,16 @@ function Index() {
       const file = await rec.stop();
       const fd = new FormData(); fd.append("file", file);
       const r = await transcribe({ data: fd });
-      if (r.error || !r.text?.trim()) { if (r.error) setVoiceError(r.error); return void listen(); }
+      if (r.error || !r.text?.trim()) {
+        if (r.error) setVoiceError(r.error);
+        emptyStreak.current += 1;
+        if (emptyStreak.current >= 3) {
+          setVoiceError("I didn't hear anything, sir. Tap the globe to try again.");
+          return void stopConvo();
+        }
+        return void listen();
+      }
+      emptyStreak.current = 0;
       const reply = await sendText(r.text, false);
       if (reply && convoRef.current) { setPhase("speaking"); await speak(reply); }
     } catch (e) {
@@ -113,7 +123,7 @@ function Index() {
     if (convoRef.current) void listen();
   }
 
-  function startConvo() { convoRef.current = true; setConvo(true); void listen(); }
+  function startConvo() { convoRef.current = true; setConvo(true); emptyStreak.current = 0; void listen(); }
   function stopConvo() {
     convoRef.current = false; setConvo(false); setPhase("idle");
     speechAbort.current?.abort();
