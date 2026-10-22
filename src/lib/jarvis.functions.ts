@@ -1,8 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
 export const askJarvis = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((d: { messages: Msg[] }) => {
     if (!Array.isArray(d?.messages)) throw new Error("Invalid input");
     return { messages: d.messages.slice(-20).map((m) => ({ role: m.role === "assistant" ? "assistant" : "user", content: String(m.content).slice(0, 4000) })) as Msg[] };
