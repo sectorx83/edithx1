@@ -142,3 +142,37 @@
     color: var(--color-foreground);
   }
 }
+
+:root {
+  --background: oklch(0.13 0.025 240);
+  --foreground: oklch(0.93 0.02 210);
+  --card: oklch(0.17 0.03 235);
+  --card-foreground: oklch(0.93 0.02 210);
+  --primary: oklch(0.82 0.15 205);
+  --primary-foreground: oklch(0.13 0.025 240);
+  --muted: oklch(0.2 0.03 235);
+  --muted-foreground: oklch(0.65 0.04 220);
+  --border: oklch(0.82 0.15 205 / 18%);
+  --input: oklch(0.82 0.15 205 / 25%);
+  --ring: oklch(0.82 0.15 205);
+}
+body { font-family: "Rajdhani", system-ui, sans-serif; }
+.hud-bg { background: radial-gradient(circle at 50% 40%, oklch(0.2 0.05 220), var(--background) 65%); }
+.jarvis-title { font-family: "Orbitron", sans-serif; letter-spacing: 0.35em; color: var(--primary); text-shadow: 0 0 18px color-mix(in oklab, var(--primary) 70%, transparent); }
+.glow-ring { filter: drop-shadow(0 0 6px var(--primary)); }
+.core-haze { background: radial-gradient(circle, color-mix(in oklab, var(--primary) 25%, transparent), transparent 70%); }
+.core-orb { background: radial-gradient(circle at 45% 40%, oklch(0.95 0.05 200), var(--primary) 60%, transparent 100%); box-shadow: 0 0 40px var(--primary), 0 0 80px color-mix(in oklab, var(--primary) 50%, transparent); }
+.hud-button { padding: 0.6rem 1.6rem; border: 1px solid var(--primary); color: var(--primary); border-radius: 0.4rem; letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; transition: all .2s; }
+.hud-button:hover:not(:disabled) { background: var(--primary); color: var(--primary-foreground); box-shadow: 0 0 20px var(--primary); }
+.hud-button:disabled { opacity: .5; }
+.hud-input { background: var(--card); border: 1px solid var(--input); border-radius: 0.4rem; padding: 0.6rem 1rem; color: var(--foreground); outline: none; }
+.hud-input:focus { border-color: var(--primary); box-shadow: 0 0 12px color-mix(in oklab, var(--primary) 40%, transparent); }
+.msg-user { align-self: flex-end; max-width: 80%; background: color-mix(in oklab, var(--primary) 15%, transparent); border: 1px solid var(--border); border-radius: 1rem 1rem 0.2rem 1rem; padding: 0.6rem 1rem; }
+.msg-ai { align-self: flex-start; max-width: 85%; background: var(--card); border-left: 2px solid var(--primary); border-radius: 0.2rem 1rem 1rem 1rem; padding: 0.6rem 1rem; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pulse-orb { 50% { transform: scale(1.12); opacity: .8; } }
+.animate-spin-slow { animation: spin 30s linear infinite; }
+.animate-spin-mid { animation: spin 6s linear infinite; }
+.animate-spin-rev { animation: spin 10s linear infinite reverse; }
+.animate-pulse-slow { animation: pulse-orb 3s ease-in-out infinite; }
+.animate-pulse-fast { animation: pulse-orb .8s ease-in-out infinite; }
