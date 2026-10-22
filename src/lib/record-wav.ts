@@ -32,7 +32,7 @@ export async function recordWav(): Promise<{ stop: () => Promise<File> }> {
   const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
   let context: AudioContext | undefined;
   try {
-    context = new AudioContext();
+    context = new AudioContext({ sampleRate: 16000 });
     await context.resume();
     const audioContext = context;
     const source = audioContext.createMediaStreamSource(stream);

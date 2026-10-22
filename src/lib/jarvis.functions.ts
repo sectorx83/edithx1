@@ -18,10 +18,11 @@ export const askJarvis = createServerFn({ method: "POST" })
       method: "POST",
       headers: { "Lovable-API-Key": key, "Content-Type": "application/json", "X-Lovable-AIG-SDK": "fetch" },
       body: JSON.stringify({
-        model: "openai/gpt-6-astra",
+        model: "openai/gpt-6-luna",
         stream: true,
         store: false,
         reasoning: { effort: "low" },
+        max_output_tokens: 1200,
         instructions: buildSystemPrompt(settings),
         input: data.messages.map((m) => ({ role: m.role, content: m.content })),
       }),

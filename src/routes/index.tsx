@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import { Mic, Square, Loader2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { useServerFn } from "@tanstack/react-start";
 import { askJarvis } from "@/lib/jarvis.functions";
@@ -211,7 +212,7 @@ function Index() {
       <form onSubmit={send} className="border-t border-border p-4">
         <div className="mx-auto flex max-w-3xl gap-2">
           <button type="button" onClick={toggleMic} disabled={loading || transcribing} aria-label={recording ? "Stop recording" : "Speak"} className={recording ? "hud-mic hud-mic-on" : "hud-mic"}>
-            {transcribing ? "…" : recording ? "■" : "🎙"}
+            {transcribing ? <Loader2 className="h-5 w-5 animate-spin" /> : recording ? <Square className="h-4 w-4 fill-current" /> : <Mic className="h-5 w-5" />}
           </button>
           <input value={input} onChange={(e) => setInput(e.target.value)} placeholder={recording ? "Listening..." : "Type or tap the mic..."} className="hud-input min-w-0 flex-1" />
           <button disabled={loading} className="hud-button">Send</button>
