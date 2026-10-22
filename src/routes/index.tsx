@@ -1,12 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Mic, Square, Loader2 } from "lucide-react";
+import { Mic, Square, Loader2, MessageSquare, AudioLines } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { useServerFn } from "@tanstack/react-start";
 import { askJarvis } from "@/lib/jarvis.functions";
 import { transcribeAudio } from "@/lib/transcribe.functions";
 import { recordWav } from "@/lib/record-wav";
 import { streamSpeech } from "@/lib/stream-speech";
+import { audioLevel } from "@/lib/audio-level";
 import { SettingsPanel } from "@/components/SettingsPanel";
 import { DEFAULT_SETTINGS, type StyxSettings } from "@/lib/styx-settings";
 import { supabase } from "@/integrations/supabase/client";
@@ -29,16 +30,34 @@ export const Route = createFileRoute("/")({
 
 type Msg = { role: "user" | "assistant"; content: string };
 
-function Core({ size = 220, active = false }: { size?: number; active?: boolean }) {
+function Core({ size = 220, active = false, reactive = false }: { size?: number; active?: boolean; reactive?: boolean }) {
+  const r1 = useRef<HTMLDivElement>(null), r2 = useRef<HTMLDivElement>(null), r3 = useRef<HTMLDivElement>(null), orb = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!reactive) return;
+    let raf = 0, a = 0, smooth = 0, last = performance.now();
+    const loop = (t: number) => {
+      const dt = Math.min(64, t - last); last = t;
+      smooth += (audioLevel.value - smooth) * 0.2;
+      const speed = 0.02 + smooth * 0.9 + (active ? 0.08 : 0);
+      a += speed * dt;
+      if (r1.current) r1.current.style.transform = `rotate(${a * 0.5}deg)`;
+      if (r2.current) r2.current.style.transform = `rotate(${-a}deg) scale(${1 + smooth * 0.06})`;
+      if (r3.current) r3.current.style.transform = `rotate(${a * 1.6}deg) scale(${1 + smooth * 0.1})`;
+      if (orb.current) { orb.current.style.transform = `scale(${1 + smooth * 0.45})`; orb.current.style.filter = `brightness(${1 + smooth * 0.8})`; }
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
+  }, [reactive, active]);
   return (
     <div className="relative" style={{ width: size, height: size }}>
-      <div className="absolute inset-0 rounded-full border-2 border-dashed border-primary/40 animate-spin-slow" />
-      <div className="absolute inset-[8%] rounded-full border-[3px] border-transparent border-t-primary border-r-primary/60 animate-spin-rev glow-ring" />
-      <div className="absolute inset-[18%] rounded-full border-[3px] border-transparent border-l-primary border-b-primary animate-spin-mid glow-ring" />
+      <div ref={r1} className={`absolute inset-0 rounded-full border-2 border-dashed border-primary/40 ${reactive ? "" : "animate-spin-slow"}`} />
+      <div ref={r2} className={`absolute inset-[8%] rounded-full border-[3px] border-transparent border-t-primary border-r-primary/60 glow-ring ${reactive ? "" : "animate-spin-rev"}`} />
+      <div ref={r3} className={`absolute inset-[18%] rounded-full border-[3px] border-transparent border-l-primary border-b-primary glow-ring ${reactive ? "" : "animate-spin-mid"}`} />
       <div className="absolute inset-[18%] rounded-full core-haze" />
       <div className="core-ripple" />
       <div className="core-ripple core-ripple-2" />
-      <div className={`absolute inset-[37%] rounded-full core-orb ${active ? "animate-pulse-fast" : "animate-pulse-slow"}`} />
+      <div className="absolute inset-[37%]"><div ref={orb} className={`h-full w-full rounded-full core-orb ${reactive ? "" : active ? "animate-pulse-fast" : "animate-pulse-slow"}`} /></div>
     </div>
   );
 }
@@ -62,6 +81,47 @@ function Index() {
   const [settings, setSettings] = useState<StyxSettings>(DEFAULT_SETTINGS);
   const [showSettings, setShowSettings] = useState(false);
   const speechAbort = useRef<AbortController | null>(null);
+  const [mode, setMode] = useState<"voice" | "text">("voice");
+  const [convo, setConvo] = useState(false);
+  const convoRef = useRef(false);
+  const [phase, setPhase] = useState<"idle" | "listening" | "thinking" | "speaking">("idle");
+
+  async function listen() {
+    if (!convoRef.current) return;
+    setVoiceError("");
+    try {
+      setPhase("listening");
+      const rec = await recordWav(() => void finishTurn());
+      recRef.current = rec;
+    } catch { setVoiceError("Microphone access was blocked."); stopConvo(); }
+  }
+
+  async function finishTurn() {
+    const rec = recRef.current; recRef.current = null;
+    if (!rec || !convoRef.current) return;
+    setPhase("thinking");
+    try {
+      const file = await rec.stop();
+      const fd = new FormData(); fd.append("file", file);
+      const r = await transcribe({ data: fd });
+      if (r.error || !r.text?.trim()) { if (r.error) setVoiceError(r.error); return void listen(); }
+      const reply = await sendText(r.text, false);
+      if (reply && convoRef.current) { setPhase("speaking"); await speak(reply); }
+    } catch (e) {
+      setVoiceError(e instanceof Error ? e.message : "Recording failed.");
+    }
+    if (convoRef.current) void listen();
+  }
+
+  function startConvo() { convoRef.current = true; setConvo(true); void listen(); }
+  function stopConvo() {
+    convoRef.current = false; setConvo(false); setPhase("idle");
+    speechAbort.current?.abort();
+    const rec = recRef.current; recRef.current = null;
+    rec?.stop().catch(() => {});
+    audioLevel.value = 0;
+  }
+  useEffect(() => () => { convoRef.current = false; speechAbort.current?.abort(); recRef.current?.stop().catch(() => {}); }, []);
 
   async function speak(text: string, voice = settings.voice) {
     speechAbort.current?.abort();
@@ -143,9 +203,10 @@ function Index() {
     await sendText(input);
   }
 
-  async function sendText(raw: string) {
+  async function sendText(raw: string, autoSpeak = true): Promise<string | undefined> {
     const text = raw.trim();
     if (!text || busyRef.current) return;
+    let result: string | undefined;
     busyRef.current = true;
     const next = [...messagesRef.current, { role: "user" as const, content: text }];
     setMessages(next);
@@ -156,13 +217,15 @@ function Index() {
       const { reply } = await ask({ data: { messages: next } });
       setMessages([...messagesRef.current, { role: "assistant", content: reply }]);
       await supabase.from("messages").insert({ role: "assistant", content: reply });
-      if (settings.speak_replies) void speak(reply);
+      result = reply;
+      if (autoSpeak && settings.speak_replies) void speak(reply);
     } catch {
       setMessages([...messagesRef.current, { role: "assistant", content: "Connection lost. Please try again." }]);
     } finally {
       busyRef.current = false;
       setLoading(false);
     }
+    return result;
   }
 
   if (!ready) return <main className="hud-bg flex min-h-screen items-center justify-center"><Core /></main>;
@@ -190,11 +253,30 @@ function Index() {
           <div className="text-xs tracking-widest text-muted-foreground">{loading ? "PROCESSING..." : "ONLINE"}</div>
         </div>
         <div className="ml-auto flex shrink-0 gap-3 whitespace-nowrap text-[10px] sm:text-xs tracking-wider text-muted-foreground">
+          <button onClick={() => { if (mode === "voice") stopConvo(); setMode(mode === "voice" ? "text" : "voice"); }} className="flex items-center gap-1 hover:text-primary">{mode === "voice" ? <><MessageSquare className="h-3 w-3" />TEXT</> : <><AudioLines className="h-3 w-3" />VOICE</>}</button>
           <button onClick={() => setShowSettings(true)} className="hover:text-primary">SETTINGS</button>
           {messages.length > 0 && <button onClick={clearChat} className="hover:text-primary">CLEAR</button>}
           <button onClick={() => supabase.auth.signOut()} className="hover:text-primary">SIGN OUT</button>
         </div>
       </header>
+      {mode === "voice" ? (
+        <section className="flex flex-1 flex-col items-center justify-center gap-8 overflow-hidden px-6 text-center">
+          <button onClick={convo ? stopConvo : startConvo} aria-label={convo ? "End conversation" : "Start talking"} className="rounded-full">
+            <Core size={260} reactive active={phase === "thinking"} />
+          </button>
+          <div className="text-sm tracking-[0.3em] text-primary">
+            {phase === "listening" ? "LISTENING..." : phase === "thinking" ? "THINKING..." : phase === "speaking" ? "SPEAKING..." : "TAP THE CORE TO TALK"}
+          </div>
+          {messages.length > 0 && (
+            <p className="line-clamp-3 max-w-md text-sm text-muted-foreground">{messages[messages.length - 1].content.replace(/[*_#`]/g, "")}</p>
+          )}
+          <div className="flex gap-3">
+            {phase === "listening" && <button onClick={() => void finishTurn()} className="hud-button">Done speaking</button>}
+            {convo && <button onClick={stopConvo} className="hud-mic hud-mic-on" aria-label="End conversation"><Square className="h-4 w-4 fill-current" /></button>}
+          </div>
+          {voiceError && <p className="text-sm text-destructive">{voiceError}</p>}
+        </section>
+      ) : (<>
       <section className="flex-1 overflow-y-auto px-4 py-6">
         <div className="mx-auto flex max-w-3xl flex-col gap-4">
           {messages.length === 0 && (
@@ -223,6 +305,7 @@ function Index() {
         </div>
         {voiceError && <p className="mx-auto mt-2 max-w-3xl text-sm text-destructive">{voiceError}</p>}
       </form>
+      </>)}
     </main>
   );
 }

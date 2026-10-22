@@ -23,7 +23,7 @@ export const askJarvis = createServerFn({ method: "POST" })
         store: false,
         reasoning: { effort: "low" },
         max_output_tokens: 1200,
-        instructions: buildSystemPrompt(settings),
+        instructions: buildSystemPrompt(settings) + "\nThis is primarily a spoken voice conversation: answer in 1-3 short, natural sentences with no markdown, lists, or emojis unless the user asks for detail.",
         input: data.messages.map((m) => ({ role: m.role, content: m.content })),
       }),
     });
