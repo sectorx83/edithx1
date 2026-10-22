@@ -36,6 +36,8 @@ function Core({ size = 220, active = false }: { size?: number; active?: boolean 
       <div className="absolute inset-[8%] rounded-full border-[3px] border-transparent border-t-primary border-r-primary/60 animate-spin-rev glow-ring" />
       <div className="absolute inset-[18%] rounded-full border-[3px] border-transparent border-l-primary border-b-primary animate-spin-mid glow-ring" />
       <div className="absolute inset-[18%] rounded-full core-haze" />
+      <div className="core-ripple" />
+      <div className="core-ripple core-ripple-2" />
       <div className={`absolute inset-[37%] rounded-full core-orb ${active ? "animate-pulse-fast" : "animate-pulse-slow"}`} />
     </div>
   );
@@ -165,10 +167,10 @@ function Index() {
   if (!session) {
     return (
       <main className="hud-bg flex min-h-screen flex-col items-center justify-center px-6 text-center">
-        <Core />
-        <h1 className="jarvis-title mt-10 text-4xl sm:text-5xl">S.T.Y.X.</h1>
-        <p className="mt-3 tracking-wider text-muted-foreground">Your Personal Intelligent System</p>
-        <button onClick={signIn} className="hud-button mt-10">Continue with Google</button>
+        <div className="animate-float"><Core /></div>
+        <h1 className="jarvis-title animate-rise-in mt-10 text-4xl sm:text-5xl">S.T.Y.X.</h1>
+        <p className="animate-rise-in-delay mt-3 tracking-wider text-muted-foreground">Your Personal Intelligent System</p>
+        <button onClick={signIn} className="hud-button animate-rise-in-delay-2 mt-10">Continue with Google</button>
         {authError && <p className="mt-4 text-sm text-destructive">{authError}</p>}
       </main>
     );
@@ -194,8 +196,8 @@ function Index() {
       <section className="flex-1 overflow-y-auto px-4 py-6">
         <div className="mx-auto flex max-w-3xl flex-col gap-4">
           {messages.length === 0 && (
-            <div className="mt-16 flex flex-col items-center text-center">
-              <Core size={140} />
+            <div className="animate-fade-in mt-16 flex flex-col items-center text-center">
+              <div className="animate-float"><Core size={140} /></div>
               <p className="mt-6 text-muted-foreground">Good day, sir. How may I assist you?</p>
             </div>
           )}
@@ -205,7 +207,7 @@ function Index() {
               {m.role === "assistant" && <button onClick={() => speak(m.content)} className="mt-1 text-xs tracking-widest text-muted-foreground hover:text-primary">▶ PLAY</button>}
             </div>
           ))}
-          {loading && <div className="msg-ai text-primary">Analyzing<span className="animate-pulse">...</span></div>}
+          {loading && <div className="msg-ai"><span className="typing"><span /><span /><span /></span></div>}
           <div ref={endRef} />
         </div>
       </section>
