@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import ReactMarkdown from "react-markdown";
 import { useServerFn } from "@tanstack/react-start";
 import { askJarvis } from "@/lib/jarvis.functions";
 import { transcribeAudio } from "@/lib/transcribe.functions";
@@ -43,7 +44,10 @@ function Index() {
   const [session, setSession] = useState<Session | null>(null);
   const [ready, setReady] = useState(false);
   const [authError, setAuthError] = useState("");
-  const [messages, setMessages] = useState<Msg[]>([]);
+  const [messages, setMessagesState] = useState<Msg[]>([]);
+  const messagesRef = useRef<Msg[]>([]);
+  const busyRef = useRef(false);
+  const setMessages = (m: Msg[]) => { messagesRef.current = m; setMessagesState(m); };
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const ask = useServerFn(askJarvis);
@@ -60,6 +64,7 @@ function Index() {
     speechAbort.current?.abort();
     const ac = new AbortController();
     speechAbort.current = ac;
+    text = text.replace(/[*_#`>|]/g, "").replace(/\[(.*?)\]\(.*?\)/g, "$1");
     const { data } = await supabase.auth.getSession();
     const token = data.session?.access_token;
     if (!token) return;
@@ -135,20 +140,22 @@ function Index() {
 
   async function sendText(raw: string) {
     const text = raw.trim();
-    if (!text || loading) return;
-    const next = [...messages, { role: "user" as const, content: text }];
+    if (!text || busyRef.current) return;
+    busyRef.current = true;
+    const next = [...messagesRef.current, { role: "user" as const, content: text }];
     setMessages(next);
     setInput("");
     setLoading(true);
     try {
       await supabase.from("messages").insert({ role: "user", content: text });
       const { reply } = await ask({ data: { messages: next } });
-      setMessages([...next, { role: "assistant", content: reply }]);
+      setMessages([...messagesRef.current, { role: "assistant", content: reply }]);
       await supabase.from("messages").insert({ role: "assistant", content: reply });
       if (settings.speak_replies) void speak(reply);
     } catch {
-      setMessages([...next, { role: "assistant", content: "Connection lost, sir." }]);
+      setMessages([...messagesRef.current, { role: "assistant", content: "Connection lost. Please try again." }]);
     } finally {
+      busyRef.current = false;
       setLoading(false);
     }
   }
@@ -171,13 +178,13 @@ function Index() {
       {showSettings && (
         <SettingsPanel settings={settings} onChange={saveSettings} onClose={() => setShowSettings(false)} onPreview={(v) => speak("Hello. I am Styx, at your service.", v)} />
       )}
-      <header className="flex items-center gap-3 border-b border-border px-5 py-3">
+      <header className="flex items-center gap-2 border-b border-border px-5 py-3">
         <Core size={36} active={loading} />
         <div>
-          <div className="jarvis-title text-lg">S.T.Y.X.</div>
+          <div className="jarvis-title text-base sm:text-lg">S.T.Y.X.</div>
           <div className="text-xs tracking-widest text-muted-foreground">{loading ? "PROCESSING..." : "ONLINE"}</div>
         </div>
-        <div className="ml-auto flex gap-3 text-xs tracking-widest text-muted-foreground">
+        <div className="ml-auto flex shrink-0 gap-3 whitespace-nowrap text-[10px] sm:text-xs tracking-wider text-muted-foreground">
           <button onClick={() => setShowSettings(true)} className="hover:text-primary">SETTINGS</button>
           {messages.length > 0 && <button onClick={clearChat} className="hover:text-primary">CLEAR</button>}
           <button onClick={() => supabase.auth.signOut()} className="hover:text-primary">SIGN OUT</button>
@@ -193,7 +200,7 @@ function Index() {
           )}
           {messages.map((m, i) => (
             <div key={i} className={m.role === "user" ? "msg-user" : "msg-ai"}>
-              <p className="whitespace-pre-wrap">{m.content}</p>
+              {m.role === "assistant" ? <div className="md"><ReactMarkdown>{m.content}</ReactMarkdown></div> : <p className="whitespace-pre-wrap">{m.content}</p>}
               {m.role === "assistant" && <button onClick={() => speak(m.content)} className="mt-1 text-xs tracking-widest text-muted-foreground hover:text-primary">▶ PLAY</button>}
             </div>
           ))}
@@ -206,7 +213,7 @@ function Index() {
           <button type="button" onClick={toggleMic} disabled={loading || transcribing} aria-label={recording ? "Stop recording" : "Speak"} className={recording ? "hud-mic hud-mic-on" : "hud-mic"}>
             {transcribing ? "…" : recording ? "■" : "🎙"}
           </button>
-          <input value={input} onChange={(e) => setInput(e.target.value)} placeholder={recording ? "Listening..." : "Type or tap the mic..."} className="hud-input flex-1" />
+          <input value={input} onChange={(e) => setInput(e.target.value)} placeholder={recording ? "Listening..." : "Type or tap the mic..."} className="hud-input min-w-0 flex-1" />
           <button disabled={loading} className="hud-button">Send</button>
         </div>
         {voiceError && <p className="mx-auto mt-2 max-w-3xl text-sm text-destructive">{voiceError}</p>}

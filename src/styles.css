@@ -162,7 +162,7 @@ body { font-family: "Rajdhani", system-ui, sans-serif; }
 .glow-ring { filter: drop-shadow(0 0 6px var(--primary)); }
 .core-haze { background: radial-gradient(circle, color-mix(in oklab, var(--primary) 25%, transparent), transparent 70%); }
 .core-orb { background: radial-gradient(circle at 45% 40%, oklch(0.95 0.05 200), var(--primary) 60%, transparent 100%); box-shadow: 0 0 40px var(--primary), 0 0 80px color-mix(in oklab, var(--primary) 50%, transparent); }
-.hud-button { padding: 0.6rem 1.6rem; border: 1px solid var(--primary); color: var(--primary); border-radius: 0.4rem; letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; transition: all .2s; }
+.hud-button { padding: 0.6rem 1.1rem; flex-shrink: 0; border: 1px solid var(--primary); color: var(--primary); border-radius: 0.4rem; letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; transition: all .2s; }
 .hud-button:hover:not(:disabled) { background: var(--primary); color: var(--primary-foreground); box-shadow: 0 0 20px var(--primary); }
 .hud-button:disabled { opacity: .5; }
 .hud-input { background: var(--card); border: 1px solid var(--input); border-radius: 0.4rem; padding: 0.6rem 1rem; color: var(--foreground); outline: none; }
@@ -184,3 +184,9 @@ body { font-family: "Rajdhani", system-ui, sans-serif; }
 .hud-chip { border: 1px solid var(--border); border-radius: .4rem; padding: .5rem; font-size: .875rem; transition: all .2s; }
 .hud-chip:hover { border-color: var(--primary); }
 .hud-chip-on { border-color: var(--primary); color: var(--primary); background: color-mix(in oklab, var(--primary) 12%, transparent); box-shadow: 0 0 12px color-mix(in oklab, var(--primary) 30%, transparent); }
+.md > * + * { margin-top: .6rem; }
+.md ul { list-style: disc; padding-left: 1.2rem; }
+.md ol { list-style: decimal; padding-left: 1.2rem; }
+.md strong { color: var(--primary); font-weight: 600; }
+.md h1, .md h2, .md h3 { font-weight: 600; color: var(--primary); }
+.md code { background: var(--muted); padding: 0 .3rem; border-radius: .25rem; }
