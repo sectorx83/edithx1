@@ -268,7 +268,7 @@ function Index() {
             {phase === "listening" ? "LISTENING..." : phase === "thinking" ? "THINKING..." : phase === "speaking" ? "SPEAKING..." : "TAP THE CORE TO TALK"}
           </div>
           {messages.length > 0 && (
-            <p className="line-clamp-3 max-w-md text-sm text-muted-foreground">{messages[messages.length - 1].content.replace(/[*_#`]/g, "")}</p>
+            <p className="line-clamp-3 max-w-md text-sm text-muted-foreground">{messages[messages.length - 1]!.content.replace(/[*_#`]/g, "")}</p>
           )}
           <div className="flex gap-3">
             {phase === "listening" && <button onClick={() => void finishTurn()} className="hud-button">Done speaking</button>}

@@ -46,7 +46,7 @@ export async function recordWav(onSilence?: () => void): Promise<{ stop: () => P
       const data = event.inputBuffer.getChannelData(0);
       chunks.push(new Float32Array(data));
       let sum = 0;
-      for (let i = 0; i < data.length; i++) sum += data[i] * data[i];
+      for (let i = 0; i < data.length; i++) sum += data[i]! * data[i]!;
       const lvl = Math.min(1, Math.sqrt(sum / data.length) * 6);
       audioLevel.value = lvl; audioLevel.source = "mic";
       const ms = (data.length / audioContext.sampleRate) * 1000;
