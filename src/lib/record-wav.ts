@@ -28,7 +28,10 @@ export function encodeWav(chunks: readonly Float32Array[], sampleRate: number): 
   return new Blob([bytes], { type: "audio/wav" });
 }
 
-export async function recordWav(): Promise<{ stop: () => Promise<File> }> {
+import { audioLevel } from "@/lib/audio-level";
+
+/** onSilence fires once after speech was heard and then ~1.3s of quiet. */
+export async function recordWav(onSilence?: () => void): Promise<{ stop: () => Promise<File> }> {
   const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
   let context: AudioContext | undefined;
   try {
@@ -38,7 +41,18 @@ export async function recordWav(): Promise<{ stop: () => Promise<File> }> {
     const source = audioContext.createMediaStreamSource(stream);
     const node = audioContext.createScriptProcessor(4096, 1, 1);
     const chunks: Float32Array[] = [];
-    node.onaudioprocess = (event) => chunks.push(new Float32Array(event.inputBuffer.getChannelData(0)));
+    let heard = false, quietMs = 0, fired = false;
+    node.onaudioprocess = (event) => {
+      const data = event.inputBuffer.getChannelData(0);
+      chunks.push(new Float32Array(data));
+      let sum = 0;
+      for (let i = 0; i < data.length; i++) sum += data[i]! * data[i]!;
+      const lvl = Math.min(1, Math.sqrt(sum / data.length) * 6);
+      audioLevel.value = lvl; audioLevel.source = "mic";
+      const ms = (data.length / audioContext.sampleRate) * 1000;
+      if (lvl > 0.12) { heard = true; quietMs = 0; } else if (heard) quietMs += ms;
+      if (heard && quietMs > 1300 && !fired) { fired = true; onSilence?.(); }
+    };
     source.connect(node);
     node.connect(audioContext.destination);
     let stopped = false;
@@ -50,6 +64,7 @@ export async function recordWav(): Promise<{ stop: () => Promise<File> }> {
         node.disconnect();
         source.disconnect();
         node.onaudioprocess = null;
+        audioLevel.value = 0; audioLevel.source = "idle";
         const blob = encodeWav(chunks, audioContext.sampleRate);
         await audioContext.close();
         if (blob.size < 2048) throw new Error("Recording was empty; please record again");
