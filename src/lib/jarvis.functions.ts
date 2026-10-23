@@ -7,12 +7,12 @@ type Msg = { role: "user" | "assistant"; content: string };
 
 type NetworkPayload = {
   command: string;
-  taskStatus?: string;
-  steps?: { id: string; tool: string; status: string; error?: string | undefined }[];
-  browserAction?: BrowserAction;
-  reportUrl?: string;
-  actionId?: string;
-  error?: string;
+  taskStatus?: string | undefined;
+  steps?: { id: string; tool: string; status: string; error?: string | undefined }[] | undefined;
+  browserAction?: BrowserAction | undefined;
+  reportUrl?: string | undefined;
+  actionId?: string | undefined;
+  error?: string | undefined;
 };
 
 const CMD_RE = /\[STYX_CMD\]([\s\S]*?)\[\/STYX_CMD\]/;
