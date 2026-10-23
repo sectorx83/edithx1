@@ -4,6 +4,7 @@ import { Mic, Square, Loader2, MessageSquare, AudioLines } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { useServerFn } from "@tanstack/react-start";
 import { askJarvis } from "@/lib/jarvis.functions";
+import { getNetworkStatus, reportBrowserAction } from "@/lib/styx-network.functions";
 import { transcribeAudio } from "@/lib/transcribe.functions";
 import { recordWav } from "@/lib/record-wav";
 import { streamSpeech } from "@/lib/stream-speech";
@@ -86,6 +87,11 @@ function Index() {
   const [convo, setConvo] = useState(false);
   const convoRef = useRef(false);
   const [phase, setPhase] = useState<"idle" | "listening" | "thinking" | "speaking">("idle");
+  const fetchNetStatus = useServerFn(getNetworkStatus);
+  const reportAction = useServerFn(reportBrowserAction);
+  type NetStatus = { status: "connecting" | "connected" | "disconnected"; error?: string | undefined; tools: { name: string; description: string }[]; misconfigured: { name: string; reason: string; setup: string }[]; unavailable: { name: string; reason: string }[] };
+  const [net, setNet] = useState<NetStatus>({ status: "connecting", tools: [], misconfigured: [], unavailable: [] });
+  const [showNet, setShowNet] = useState(false);
 
   async function listen() {
     if (!convoRef.current) return;
@@ -176,6 +182,38 @@ function Index() {
     return () => sub.subscription.unsubscribe();
   }, []);
 
+  // Poll STYX NETWORK status; states come from real backend responses.
+  useEffect(() => {
+    if (!session) return;
+    let dead = false;
+    const check = async () => {
+      try {
+        const r = await fetchNetStatus();
+        if (!dead) setNet({ status: r.status, error: r.error, tools: r.tools, misconfigured: r.misconfigured, unavailable: r.unavailable });
+      } catch {
+        if (!dead) setNet((n) => ({ ...n, status: "disconnected", error: "Status check failed" }));
+      }
+    };
+    void check();
+    const t = setInterval(check, 60000);
+    return () => { dead = true; clearInterval(t); };
+  }, [session, fetchNetStatus]);
+
+  // Open a Network browser_action in a new tab and report the real result.
+  async function handleBrowserAction(n: { browserAction?: { url: string; target?: string }; reportUrl?: string; actionId?: string }) {
+    const ba = n.browserAction;
+    if (!ba?.url || !/^https:\/\//i.test(ba.url)) return;
+    const win = window.open(ba.url, "_blank", "noopener,noreferrer");
+    const opened = !!win;
+    if (n.reportUrl && n.actionId) {
+      try { await reportAction({ data: { reportUrl: n.reportUrl, actionId: n.actionId, success: opened } }); } catch { /* reporting is best-effort */ }
+    }
+    const note = opened
+      ? `Opened ${new URL(ba.url).hostname} in a new tab.`
+      : `Your browser blocked the new tab. Allow popups for this site, or open it manually: ${ba.url}`;
+    setMessages([...messagesRef.current, { role: "assistant", content: note }]);
+  }
+
   const uid = session?.user.id;
   useEffect(() => {
     if (!uid) { setMessages([]); return; }
@@ -224,9 +262,10 @@ function Index() {
     setLoading(true);
     try {
       await supabase.from("messages").insert({ role: "user", content: text });
-      const { reply } = await ask({ data: { messages: next } });
+      const { reply, network } = await ask({ data: { messages: next } });
       setMessages([...messagesRef.current, { role: "assistant", content: reply }]);
       await supabase.from("messages").insert({ role: "assistant", content: reply });
+      if (network?.browserAction) void handleBrowserAction(network);
       result = reply;
       if (autoSpeak && settings.speak_replies) void speak(reply);
     } catch {
@@ -264,12 +303,28 @@ function Index() {
           <div className="text-xs tracking-widest text-muted-foreground">{loading ? "PROCESSING..." : "ONLINE"}</div>
         </div>
         <div className="ml-auto flex shrink-0 gap-3 whitespace-nowrap text-[10px] sm:text-xs tracking-wider text-muted-foreground">
+          <button onClick={() => setShowNet(!showNet)} className="flex items-center gap-1.5 hover:text-primary" aria-label="STYX NETWORK status">
+            <span className={`inline-block h-2 w-2 rounded-full ${net.status === "connected" ? "bg-green-400" : net.status === "connecting" ? "animate-pulse bg-yellow-400" : "bg-red-500"}`} />
+            NET {net.status === "connected" ? "CONNECTED" : net.status === "connecting" ? "CONNECTING" : "DISCONNECTED"}
+          </button>
           <button onClick={() => { if (mode === "voice") stopConvo(); setMode(mode === "voice" ? "text" : "voice"); }} className="flex items-center gap-1 hover:text-primary">{mode === "voice" ? <><MessageSquare className="h-3 w-3" />TEXT</> : <><AudioLines className="h-3 w-3" />VOICE</>}</button>
           <button onClick={() => setShowSettings(true)} className="hover:text-primary">SETTINGS</button>
           {messages.length > 0 && <button onClick={clearChat} className="hover:text-primary">CLEAR</button>}
           <button onClick={() => supabase.auth.signOut()} className="hover:text-primary">SIGN OUT</button>
         </div>
       </header>
+      {showNet && (
+        <div className="border-b border-border bg-background/80 px-5 py-3 text-xs backdrop-blur">
+          <div className="mx-auto flex max-w-3xl flex-col gap-2">
+            <div className="tracking-widest text-primary">STYX NETWORK — {net.status.toUpperCase()}{net.error ? ` (${net.error})` : ""}</div>
+            {net.tools.length > 0 && <div className="text-muted-foreground">Available: {net.tools.map((t) => t.name).join(", ")}</div>}
+            {net.misconfigured.map((t) => (
+              <div key={t.name} className="text-yellow-400">⚠ {t.name}: {t.reason} {t.setup}</div>
+            ))}
+            {net.unavailable.length > 0 && <div className="text-muted-foreground">Unavailable: {net.unavailable.map((t) => t.name).join(", ")}</div>}
+          </div>
+        </div>
+      )}
       {mode === "voice" ? (
         <section className="flex flex-1 flex-col items-center justify-center gap-8 overflow-hidden px-6 text-center">
           <button onClick={convo ? stopConvo : startConvo} aria-label={convo ? "End conversation" : "Start talking"} className="rounded-full">
