@@ -200,7 +200,7 @@ function Index() {
   }, [session, fetchNetStatus]);
 
   // Open a Network browser_action in a new tab and report the real result.
-  async function handleBrowserAction(n: { browserAction?: { url: string; target?: string }; reportUrl?: string; actionId?: string }) {
+  async function handleBrowserAction(n: { browserAction?: { url: string; target?: string } | undefined; reportUrl?: string | undefined; actionId?: string | undefined }) {
     const ba = n.browserAction;
     if (!ba?.url || !/^https:\/\//i.test(ba.url)) return;
     const win = window.open(ba.url, "_blank", "noopener,noreferrer");
