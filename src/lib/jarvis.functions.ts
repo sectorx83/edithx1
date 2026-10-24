@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { buildSystemPrompt } from "@/lib/styx-settings";
+import { callGemini } from "@/lib/gemini.server";
 import { sendNetworkCommand, type BrowserAction, type NetworkTaskStep } from "@/lib/styx-network.server";
 
 type Msg = { role: "user" | "assistant"; content: string };

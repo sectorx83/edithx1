@@ -3,7 +3,7 @@
 // key is saved. Server-only — never import from client code.
 
 const GEMINI_MODEL = "gemini-2.5-flash";
-const GATEWAY_MODEL = "google/gemini-3.1-flash-lite-preview";
+const GATEWAY_MODEL = "google/gemini-3.1-flash-lite";
 
 export type GeminiContent = { role: "user" | "model"; parts: { text: string }[] };
 
