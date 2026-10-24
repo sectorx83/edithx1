@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { buildSystemPrompt } from "@/lib/styx-settings";
+import { callGemini } from "@/lib/gemini.server";
 import { sendNetworkCommand, type BrowserAction, type NetworkTaskStep } from "@/lib/styx-network.server";
 
 type Msg = { role: "user" | "assistant"; content: string };
@@ -47,42 +48,18 @@ export const askJarvis = createServerFn({ method: "POST" })
   })
   .handler(async ({ data, context }) => {
     const { data: settings } = await context.supabase.from("user_settings").select("tone, sensitive").maybeSingle();
-    const key = process.env['LOVABLE_API_KEY'];
-    if (!key) throw new Error("AI is not configured");
-    const res = await fetch("https://ai.gateway.lovable.dev/v1/responses", {
-      method: "POST",
-      headers: { "Lovable-API-Key": key, "Content-Type": "application/json", "X-Lovable-AIG-SDK": "fetch" },
-      body: JSON.stringify({
-        model: "openai/gpt-6-luna",
-        stream: true,
-        store: false,
-        reasoning: { effort: "low" },
-        max_output_tokens: 1200,
-        instructions: buildSystemPrompt(settings) + "\nThis is primarily a spoken voice conversation: answer in 1-3 short, natural sentences with no markdown, lists, or emojis unless the user asks for detail." + NETWORK_PROMPT,
-        input: data.messages.map((m) => ({ role: m.role, content: m.content })),
-      }),
-    });
-    if (res.status === 429) return { reply: "Systems are throttled, sir. Please try again in a moment." };
-    if (res.status === 402) return { reply: "AI credits are depleted, sir. Please top up to continue." };
-    if (!res.ok || !res.body) return { reply: "I'm experiencing a malfunction, sir. Please try again." };
-    const reader = res.body.getReader();
-    const dec = new TextDecoder();
-    let buf = "", out = "";
-    for (;;) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      buf += dec.decode(value, { stream: true });
-      const lines = buf.split("\n");
-      buf = lines.pop() ?? "";
-      for (const l of lines) {
-        if (!l.startsWith("data:")) continue;
-        const d = l.slice(5).trim();
-        if (!d || d === "[DONE]") continue;
-        try {
-          const ev = JSON.parse(d);
-          if (ev.type === "response.output_text.delta") out += ev.delta;
-        } catch {}
-      }
+    let out: string;
+    try {
+      out = await callGemini(
+        data.messages.map((m) => ({ role: m.role === "assistant" ? "model" : "user", parts: [{ text: m.content }] })),
+        buildSystemPrompt(settings) + "\nThis is primarily a spoken voice conversation: answer in 1-3 short, natural sentences with no markdown, lists, or emojis unless the user asks for detail." + NETWORK_PROMPT,
+      );
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "";
+      if (msg === "RATE_LIMITED") return { reply: "Systems are throttled, sir. Please try again in a moment." };
+      if (msg === "CREDITS_DEPLETED") return { reply: "AI credits are depleted, sir. Please top up to continue." };
+      if (msg === "BAD_API_KEY") return { reply: "My Gemini API key appears to be invalid, sir. Please check it in the settings." };
+      return { reply: "I'm experiencing a malfunction, sir. Please try again." };
     }
 
     // Execute a STYX NETWORK directive if the AI emitted one.

@@ -48,5 +48,6 @@ export const SENSITIVE: Record<string, { label: string; prompt: string }> = {
 export function buildSystemPrompt(s: Partial<StyxSettings> | null) {
   const tone = TONES[s?.tone ?? ""] ?? TONES["witty"]!;
   const sens = SENSITIVE[s?.sensitive ?? ""] ?? SENSITIVE["balanced"]!;
-  return `You are S.T.Y.X. (Styx), a loyal, ultra-competent AI assistant. ${tone.prompt} ${sens.prompt} Always be safe if someone may be in danger: share crisis resources.`;
+  const today = new Date().toISOString().slice(0, 10);
+  return `You are S.T.Y.X. (Styx), a loyal, ultra-competent AI assistant. Today's real date is ${today} — always use this as the current date and never claim it is 2025 or any earlier year. ${tone.prompt} ${sens.prompt} Always be safe if someone may be in danger: share crisis resources.`;
 }
