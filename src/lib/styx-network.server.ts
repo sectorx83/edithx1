@@ -165,7 +165,7 @@ export async function sendNetworkCommand(command: string, args: Record<string, u
 }
 
 export async function reportNetworkAction(reportUrl: string, actionId: string, success: boolean): Promise<{ ok: boolean; error?: string }> {
-  if (!/^\/api\/public\/v1\/tasks\/[0-9a-f-]{36}\/report$/i.test(reportUrl)) return { ok: false, error: "Invalid report URL" };
+  if (!isValidReportUrl(reportUrl)) return { ok: false, error: "Invalid report URL" };
   try {
     const res = await networkFetch(reportUrl, { method: "POST", body: JSON.stringify({ action_id: actionId, success }) }, 10000);
     const d = (await res.json().catch(() => null)) as { ok?: boolean; error?: { code?: string; message?: string } } | null;
