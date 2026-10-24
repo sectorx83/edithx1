@@ -15,14 +15,14 @@ describe("styx-network sanitizeArgs", () => {
 
   it("truncates search_web query and clamps limit", () => {
     const r = sanitizeArgs("search_web", { query: "x".repeat(1000), limit: 50 });
-    expect((r.query as string).length).toBe(500);
-    expect(r.limit).toBe(10);
+    expect((r["query"] as string).length).toBe(500);
+    expect(r["limit"]).toBe(10);
   });
 
   it("caps execute_task steps at 8 and assigns ids", () => {
     const steps = Array.from({ length: 12 }, () => ({ tool: "fetch_page", args: { url: "https://www.bbc.com" } }));
     const r = sanitizeArgs("execute_task", { steps });
-    const out = r.steps as { id: string; tool: string }[];
+    const out = r["steps"] as { id: string; tool: string }[];
     expect(out.length).toBe(8);
     expect(out[0]!.id).toBe("s1");
     expect(out[0]!.tool).toBe("fetch_page");
