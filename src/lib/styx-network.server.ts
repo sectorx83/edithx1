@@ -88,7 +88,11 @@ export async function fetchNetworkTools(): Promise<NetworkToolsResult> {
 
 const ALLOWED_COMMANDS = new Set(["open_world_news", "open_website", "search_web", "fetch_page", "execute_task"]);
 
-function sanitizeArgs(command: string, args: Record<string, unknown>): Record<string, unknown> {
+export function isValidReportUrl(reportUrl: string): boolean {
+  return /^\/api\/public\/v1\/tasks\/[0-9a-f-]{36}\/report$/i.test(reportUrl);
+}
+
+export function sanitizeArgs(command: string, args: Record<string, unknown>): Record<string, unknown> {
   const out: Record<string, unknown> = {};
   if (command === "open_website" || command === "fetch_page") {
     const url = args["url"];
