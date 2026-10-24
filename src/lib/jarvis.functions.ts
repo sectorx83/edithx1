@@ -6,7 +6,7 @@ import { sendNetworkCommand, type BrowserAction, type NetworkTaskStep } from "@/
 
 type Msg = { role: "user" | "assistant"; content: string };
 
-type NetworkPayload = {
+export type NetworkPayload = {
   command: string;
   taskStatus?: string | undefined;
   steps?: { id: string; tool: string; status: string; error?: string | undefined }[] | undefined;
