@@ -2,8 +2,8 @@
 // Gemini key, then the Lovable AI Gateway as a last resort. Server-only — never
 // import from client code.
 
-const OPENROUTER_MODEL = "google/gemini-2.5-flash";
-const GEMINI_MODEL = "gemini-2.5-flash";
+const OPENROUTER_MODEL = "google/gemini-3.8-flash";
+const GEMINI_MODEL = "gemini-3.8-flash";
 const GATEWAY_MODEL = "google/gemini-3.1-flash-lite";
 
 export type ChatMessage = { role: "user" | "assistant"; content: string };
