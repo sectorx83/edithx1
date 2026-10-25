@@ -3,7 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import { Mic, Square, Loader2, MessageSquare, AudioLines } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { useServerFn } from "@tanstack/react-start";
-import { askJarvis } from "@/lib/jarvis.functions";
+import { askJarvis, type NetworkPayload } from "@/lib/jarvis.functions";
+import { TaskPanel } from "@/components/TaskPanel";
 import { getNetworkStatus, reportBrowserAction } from "@/lib/styx-network.functions";
 import { transcribeAudio } from "@/lib/transcribe.functions";
 import { recordWav } from "@/lib/record-wav";
@@ -29,7 +30,7 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-type Msg = { role: "user" | "assistant"; content: string };
+type Msg = { role: "user" | "assistant"; content: string; network?: NetworkPayload | undefined };
 
 function Core({ size = 220, active = false, reactive = false }: { size?: number; active?: boolean; reactive?: boolean }) {
   const r1 = useRef<HTMLDivElement>(null), r2 = useRef<HTMLDivElement>(null), r3 = useRef<HTMLDivElement>(null), orb = useRef<HTMLDivElement>(null);
@@ -263,7 +264,7 @@ function Index() {
     try {
       await supabase.from("messages").insert({ role: "user", content: text });
       const { reply, network } = await ask({ data: { messages: next } });
-      setMessages([...messagesRef.current, { role: "assistant", content: reply }]);
+      setMessages([...messagesRef.current, { role: "assistant", content: reply, network }]);
       await supabase.from("messages").insert({ role: "assistant", content: reply });
       if (network?.browserAction) void handleBrowserAction(network);
       result = reply;
@@ -355,6 +356,7 @@ function Index() {
           {messages.map((m, i) => (
             <div key={i} className={m.role === "user" ? "msg-user" : "msg-ai"}>
               {m.role === "assistant" ? <div className="md"><ReactMarkdown>{m.content}</ReactMarkdown></div> : <p className="whitespace-pre-wrap">{m.content}</p>}
+              {m.role === "assistant" && m.network && <TaskPanel network={m.network} />}
               {m.role === "assistant" && <button onClick={() => speak(m.content)} className="mt-1 text-xs tracking-widest text-muted-foreground hover:text-primary">▶ PLAY</button>}
             </div>
           ))}
