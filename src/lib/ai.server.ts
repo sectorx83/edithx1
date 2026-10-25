@@ -16,6 +16,7 @@ async function callOpenRouter(systemPrompt: string, messages: ChatMessage[], api
       model: OPENROUTER_MODEL,
       max_tokens: 1200,
       temperature: 0.7,
+      reasoning: { effort: "low", exclude: true },
       messages: [{ role: "system", content: systemPrompt }, ...messages],
     }),
   });
@@ -89,10 +90,29 @@ async function callGateway(systemPrompt: string, messages: ChatMessage[]): Promi
   return out;
 }
 
+function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
+  return Promise.race([
+    p,
+    new Promise<T>((_, rej) => setTimeout(() => rej(new Error("AI_TIMEOUT")), ms)),
+  ]);
+}
+
+// Try each configured provider in order; fall through on any failure or timeout.
 export async function callChat(systemPrompt: string, messages: ChatMessage[]): Promise<string> {
+  const attempts: (() => Promise<string>)[] = [];
   const openrouterKey = process.env["OPENROUTER_API_KEY"];
-  if (openrouterKey) return callOpenRouter(systemPrompt, messages, openrouterKey);
+  if (openrouterKey) attempts.push(() => withTimeout(callOpenRouter(systemPrompt, messages, openrouterKey), 25000));
   const geminiKey = process.env["GEMINI_API_KEY"];
-  if (geminiKey) return callGeminiDirect(systemPrompt, messages, geminiKey);
-  return callGateway(systemPrompt, messages);
+  if (geminiKey) attempts.push(() => withTimeout(callGeminiDirect(systemPrompt, messages, geminiKey), 20000));
+  attempts.push(() => withTimeout(callGateway(systemPrompt, messages), 25000));
+  let lastErr: unknown;
+  for (const a of attempts) {
+    try {
+      return await a();
+    } catch (e) {
+      lastErr = e;
+      console.error("AI provider failed:", e instanceof Error ? e.message : e);
+    }
+  }
+  throw lastErr instanceof Error ? lastErr : new Error("AI unavailable");
 }
