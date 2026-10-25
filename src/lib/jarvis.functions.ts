@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { buildSystemPrompt } from "@/lib/styx-settings";
-import { callGemini } from "@/lib/gemini.server";
+import { callChat } from "@/lib/ai.server";
 import { sendNetworkCommand, type BrowserAction, type NetworkTaskStep } from "@/lib/styx-network.server";
 
 type Msg = { role: "user" | "assistant"; content: string };
@@ -50,9 +50,9 @@ export const askJarvis = createServerFn({ method: "POST" })
     const { data: settings } = await context.supabase.from("user_settings").select("tone, sensitive").maybeSingle();
     let out: string;
     try {
-      out = await callGemini(
-        data.messages.map((m) => ({ role: m.role === "assistant" ? "model" : "user", parts: [{ text: m.content }] })),
+      out = await callChat(
         buildSystemPrompt(settings) + "\nThis is primarily a spoken voice conversation: answer in 1-3 short, natural sentences with no markdown, lists, or emojis unless the user asks for detail." + NETWORK_PROMPT,
+        data.messages,
       );
     } catch (e) {
       const msg = e instanceof Error ? e.message : "";
