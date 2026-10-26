@@ -1,5 +1,4 @@
 // Shared AI chat client for Styx. Priority: the user's Gemini key, then
-// Gemini key, then the Lovable AI Gateway as a last resort. Server-only — never
 // import from client code.
 
 const GEMINI_MODEL = "gemini-3.8-flash";
@@ -77,8 +76,6 @@ function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
 // Try each configured provider in order; fall through on any failure or timeout.
 export async function callChat(systemPrompt: string, messages: ChatMessage[]): Promise<string> {
   const attempts: (() => Promise<string>)[] = [];
-  const openrouterKey = process.env["OPENROUTER_API_KEY"];
-  if (openrouterKey) attempts.push(() => withTimeout(callOpenRouter(systemPrompt, messages, openrouterKey), 25000));
   const geminiKey = process.env["GEMINI_API_KEY"];
   if (geminiKey) attempts.push(() => withTimeout(callGeminiDirect(systemPrompt, messages, geminiKey), 20000));
   attempts.push(() => withTimeout(callGateway(systemPrompt, messages), 25000));
