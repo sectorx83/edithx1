@@ -1,34 +1,11 @@
-// Shared AI chat client for Styx. Priority: the user's Gemini key, then the Lovable gateway. (OpenRouter removed.)
+// Shared AI chat client for Styx. Priority: the user's Gemini key, then
 // Gemini key, then the Lovable AI Gateway as a last resort. Server-only — never
 // import from client code.
 
-const OPENROUTER_MODEL = "google/gemini-3.8-flash";
 const GEMINI_MODEL = "gemini-3.8-flash";
 const GATEWAY_MODEL = "google/gemini-3.1-flash-lite";
 
 export type ChatMessage = { role: "user" | "assistant"; content: string };
-
-async function callOpenRouter(systemPrompt: string, messages: ChatMessage[], apiKey: string): Promise<string> {
-  const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model: OPENROUTER_MODEL,
-      max_tokens: 1200,
-      temperature: 0.7,
-      reasoning: { effort: "low", exclude: true },
-      messages: [{ role: "system", content: systemPrompt }, ...messages],
-    }),
-  });
-  if (res.status === 429) throw new Error("RATE_LIMITED");
-  if (res.status === 401 || res.status === 403) throw new Error("BAD_API_KEY");
-  if (res.status === 402) throw new Error("CREDITS_DEPLETED");
-  if (!res.ok) throw new Error(`OpenRouter error ${res.status}`);
-  const data = (await res.json()) as { choices?: { message?: { content?: string } }[] };
-  const text = data.choices?.[0]?.message?.content ?? "";
-  if (!text) throw new Error("Empty AI response");
-  return text;
-}
 
 async function callGeminiDirect(systemPrompt: string, messages: ChatMessage[], apiKey: string): Promise<string> {
   const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`, {
