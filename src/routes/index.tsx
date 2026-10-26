@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { Mic, Square, Loader2, MessageSquare, AudioLines } from "lucide-react";
 import ReactMarkdown from "react-markdown";
@@ -17,6 +17,11 @@ import { lovable } from "@/integrations/lovable/index";
 import type { Session } from "@supabase/supabase-js";
 
 export const Route = createFileRoute("/")({
+  beforeLoad: async () => {
+    const { isUnlocked } = await import("@/lib/gate.functions");
+    const { unlocked } = await isUnlocked();
+    if (!unlocked) throw redirect({ to: "/unlock" });
+  },
   head: () => ({
     meta: [
       { title: "S.T.Y.X. — Your Personal Intelligent System" },
