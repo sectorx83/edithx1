@@ -1,4 +1,4 @@
-// Shared AI chat client for Styx. Priority: the user's OpenRouter key, then their
+// Shared AI chat client for Styx. Priority: the user's Gemini key, then the Lovable gateway. (OpenRouter removed.)
 // Gemini key, then the Lovable AI Gateway as a last resort. Server-only — never
 // import from client code.
 
