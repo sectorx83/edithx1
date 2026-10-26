@@ -1,9 +1,7 @@
-// Shared AI chat client for Styx. Priority: the user's Gemini key, then
-// Lovable AI Gateway as a last resort. Server-only — never
-// import from client code.
+// Shared AI chat client for Styx. Uses only the user's own Gemini key.
+// No gateway fallback. Server-only — never import from client code.
 
 const GEMINI_MODEL = "gemini-3-flash-preview";
-const GATEWAY_MODEL = "google/gemini-3.1-flash-lite";
 
 export type ChatMessage = { role: "user" | "assistant"; content: string };
 
@@ -26,47 +24,6 @@ async function callGeminiDirect(systemPrompt: string, messages: ChatMessage[], a
   return text;
 }
 
-async function callGateway(systemPrompt: string, messages: ChatMessage[]): Promise<string> {
-  const key = process.env["LOVABLE_API_KEY"];
-  if (!key) throw new Error("AI is not configured");
-  const res = await fetch("https://ai.gateway.lovable.dev/v1/responses", {
-    method: "POST",
-    headers: { "Lovable-API-Key": key, "Content-Type": "application/json", "X-Lovable-AIG-SDK": "fetch" },
-    body: JSON.stringify({
-      model: GATEWAY_MODEL,
-      stream: true,
-      store: false,
-      max_output_tokens: 1200,
-      instructions: systemPrompt,
-      input: messages,
-    }),
-  });
-  if (res.status === 429) throw new Error("RATE_LIMITED");
-  if (res.status === 402) throw new Error("CREDITS_DEPLETED");
-  if (!res.ok || !res.body) throw new Error(`Gateway error ${res.status}`);
-  const reader = res.body.getReader();
-  const dec = new TextDecoder();
-  let buf = "", out = "";
-  for (;;) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    buf += dec.decode(value, { stream: true });
-    const lines = buf.split("\n");
-    buf = lines.pop() ?? "";
-    for (const l of lines) {
-      if (!l.startsWith("data:")) continue;
-      const d = l.slice(5).trim();
-      if (!d || d === "[DONE]") continue;
-      try {
-        const ev = JSON.parse(d);
-        if (ev.type === "response.output_text.delta") out += ev.delta;
-      } catch {}
-    }
-  }
-  if (!out) throw new Error("Empty AI response");
-  return out;
-}
-
 function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
   return Promise.race([
     p,
@@ -74,20 +31,9 @@ function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
   ]);
 }
 
-// Try each configured provider in order; fall through on any failure or timeout.
+// Single provider: the user's Gemini key. Failures surface as-is — no fallback.
 export async function callChat(systemPrompt: string, messages: ChatMessage[]): Promise<string> {
-  const attempts: (() => Promise<string>)[] = [];
   const geminiKey = process.env["GEMINI_API_KEY"];
-  if (geminiKey) attempts.push(() => withTimeout(callGeminiDirect(systemPrompt, messages, geminiKey), 20000));
-  attempts.push(() => withTimeout(callGateway(systemPrompt, messages), 25000));
-  let lastErr: unknown;
-  for (const a of attempts) {
-    try {
-      return await a();
-    } catch (e) {
-      lastErr = e;
-      console.error("AI provider failed:", e instanceof Error ? e.message : e);
-    }
-  }
-  throw lastErr instanceof Error ? lastErr : new Error("AI unavailable");
+  if (!geminiKey) throw new Error("AI is not configured");
+  return withTimeout(callGeminiDirect(systemPrompt, messages, geminiKey), 20000);
 }
