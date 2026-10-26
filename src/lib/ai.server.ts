@@ -1,4 +1,5 @@
 // Shared AI chat client for Styx. Priority: the user's Gemini key, then
+// Lovable AI Gateway as a last resort. Server-only — never
 // import from client code.
 
 const GEMINI_MODEL = "gemini-3.8-flash";
