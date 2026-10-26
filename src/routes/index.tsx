@@ -223,8 +223,8 @@ function Index() {
   const uid = session?.user.id;
   useEffect(() => {
     if (!uid) { setMessages([]); return; }
-    supabase.from("messages").select("role, content").order("created_at").then(({ data }) => {
-      if (data) setMessages(data as Msg[]);
+    supabase.from("messages").select("role, content, network").order("created_at").then(({ data }) => {
+      if (data) setMessages(data.map((d) => ({ role: d.role as Msg["role"], content: d.content, network: (d.network as NetworkPayload | null) ?? undefined })));
     });
     supabase.from("user_settings").select("speak_replies, voice, tone, sensitive").maybeSingle().then(({ data }) => {
       if (data) setSettings(data);
@@ -270,7 +270,7 @@ function Index() {
       await supabase.from("messages").insert({ role: "user", content: text });
       const { reply, network } = await ask({ data: { messages: next } });
       setMessages([...messagesRef.current, { role: "assistant", content: reply, network }]);
-      await supabase.from("messages").insert({ role: "assistant", content: reply });
+      await supabase.from("messages").insert({ role: "assistant", content: reply, network: network ? JSON.parse(JSON.stringify(network)) : null });
       if (network?.browserAction) void handleBrowserAction(network);
       result = reply;
       if (autoSpeak && settings.speak_replies) void speak(reply);
