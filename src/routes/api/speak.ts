@@ -19,24 +19,26 @@ export const Route = createFileRoute("/api/speak")({
         if (!text) return new Response("No text", { status: 400 });
         const voice = VOICES.some((v) => v.id === body?.voice) ? body!.voice! : "Charon";
 
-        const res = await fetch("https://ai.gateway.lovable.dev/v1/audio/speech", {
+        const key = process.env["GEMINI_API_KEY"];
+        if (!key) return new Response("Voice not configured", { status: 500 });
+        const res = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent", {
           method: "POST",
-          headers: { Authorization: `Bearer ${process.env["LOVABLE_API_KEY"]}`, "Content-Type": "application/json" },
+          headers: { "x-goog-api-key": key, "Content-Type": "application/json" },
           body: JSON.stringify({
-            model: "google/gemini-3.1-flash-tts-preview",
-            contents: [{ role: "user", parts: [{ text }] }],
+            contents: [{ parts: [{ text }] }],
             generationConfig: {
               responseModalities: ["AUDIO"],
               speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } },
             },
-            stream_format: "sse",
           }),
           signal: request.signal,
         });
-        if (!res.ok || !res.body) return new Response(await res.text(), { status: res.status });
-        return new Response(res.body, {
-          headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-store" },
-        });
+        if (!res.ok) return new Response(await res.text(), { status: res.status });
+        const j = (await res.json()) as { candidates?: { content?: { parts?: { inlineData?: { data?: string } }[] } }[] };
+        const audio = j.candidates?.[0]?.content?.parts?.find((x) => x.inlineData?.data)?.inlineData?.data;
+        if (!audio) return new Response("No audio", { status: 502 });
+        const sse = `data: ${JSON.stringify({ type: "speech.audio.delta", audio })}\n\ndata: ${JSON.stringify({ type: "speech.audio.done" })}\n\n`;
+        return new Response(sse, { headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-store" } });
       },
     },
   },

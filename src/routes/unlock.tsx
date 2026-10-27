@@ -6,10 +6,10 @@ import { unlockSite } from "@/lib/gate.functions";
 export const Route = createFileRoute("/unlock")({
   head: () => ({
     meta: [
-      { title: "S.T.Y.X. — Access Required" },
-      { name: "description", content: "Enter the access code to reach S.T.Y.X." },
-      { property: "og:title", content: "S.T.Y.X. — Access Required" },
-      { property: "og:description", content: "Enter the access code to reach S.T.Y.X." },
+      { title: "E.D.I.T.H. — Access Required" },
+      { name: "description", content: "Enter the access code to reach E.D.I.T.H." },
+      { property: "og:title", content: "E.D.I.T.H. — Access Required" },
+      { property: "og:description", content: "Enter the access code to reach E.D.I.T.H." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -41,7 +41,7 @@ function Unlock() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-6">
       <form onSubmit={onSubmit} className="w-full max-w-sm space-y-4 border border-primary/40 rounded-lg p-6 bg-card/60 backdrop-blur">
-        <h1 className="text-primary tracking-[0.3em] text-center text-lg">S.T.Y.X. ACCESS</h1>
+        <h1 className="text-primary tracking-[0.3em] text-center text-lg">E.D.I.T.H. ACCESS</h1>
         <input
           name="password"
           type="password"

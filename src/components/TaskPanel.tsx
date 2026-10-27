@@ -57,7 +57,7 @@ export function TaskPanel({ network }: { network: NetworkPayload }) {
         </>
       )}
       {st === "awaiting_approval" && (
-        <p className="mt-2 text-yellow-400">This task is waiting for approval on the STYX NETWORK before it can continue.</p>
+        <p className="mt-2 text-yellow-400">This task is waiting for approval on the EDITH NETWORK before it can continue.</p>
       )}
       {network.error && st !== "failed" && <p className="mt-2 text-destructive">{network.error}</p>}
     </div>
