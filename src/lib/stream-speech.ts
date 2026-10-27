@@ -12,9 +12,18 @@ export function decodePCM(pending: Uint8Array, incoming: Uint8Array) {
   return { samples, pending: bytes.slice(usable) };
 }
 
+let shared: AudioContext | null = null;
+/** Call from a tap/click so mobile browsers allow later playback. */
+export function unlockAudio() {
+  if (!shared || shared.state === "closed") shared = new AudioContext({ sampleRate: 24000 });
+  void shared.resume().catch(() => {});
+  const b = shared.createBuffer(1, 1, 24000); const s = shared.createBufferSource(); s.buffer = b; s.connect(shared.destination); s.start();
+}
+
 export async function streamSpeech(endpoint: string, body: Record<string, unknown>, headers: Record<string, string>, signal?: AbortSignal): Promise<void> {
   signal?.throwIfAborted();
-  const context = new AudioContext({ sampleRate: 24000 });
+  if (!shared || shared.state === "closed") shared = new AudioContext({ sampleRate: 24000 });
+  const context = shared;
   const sources = new Set<AudioBufferSourceNode>();
   let playhead = 0;
   let pending = new Uint8Array(0);

@@ -35,8 +35,9 @@ export async function recordWav(onSilence?: () => void): Promise<{ stop: () => P
   const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
   let context: AudioContext | undefined;
   try {
-    context = new AudioContext({ sampleRate: 16000 });
-    await context.resume();
+    try { context = new AudioContext({ sampleRate: 16000 }); context.createMediaStreamSource(stream).disconnect(); }
+    catch { await context?.close().catch(() => {}); context = new AudioContext(); }
+    await Promise.race([context.resume(), new Promise((r) => setTimeout(r, 1000))]);
     const audioContext = context;
     const source = audioContext.createMediaStreamSource(stream);
     const node = audioContext.createScriptProcessor(4096, 1, 1);
