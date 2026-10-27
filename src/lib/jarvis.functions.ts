@@ -19,7 +19,7 @@ export type NetworkPayload = {
 const CMD_RE = /\[STYX_CMD\]([\s\S]*?)\[\/STYX_CMD\]/;
 
 const NETWORK_PROMPT = `
-You are connected to the STYX NETWORK execution engine. When the user asks you to DO one of these things, emit a command directive on its own line, then give a short spoken confirmation:
+You are connected to the EDITH NETWORK execution engine. When the user asks you to DO one of these things, emit a command directive on its own line, then give a short spoken confirmation:
 - Open the live world news / global dashboard ("pull up the latest world news", "world monitor"): [STYX_CMD]{"command":"open_world_news"}[/STYX_CMD]
 - Open a website in a new tab: [STYX_CMD]{"command":"open_website","args":{"url":"https://..."}}[/STYX_CMD] (https only, approved news/reference sites)
 - Search the web: [STYX_CMD]{"command":"search_web","args":{"query":"..."}}[/STYX_CMD]
@@ -56,13 +56,13 @@ export const askJarvis = createServerFn({ method: "POST" })
       );
     } catch (e) {
       const msg = e instanceof Error ? e.message : "";
-      if (msg === "RATE_LIMITED") return { reply: "Systems are throttled, sir. Please try again in a moment." };
-      if (msg === "CREDITS_DEPLETED") return { reply: "AI credits are depleted, sir. Please top up to continue." };
-      if (msg === "BAD_API_KEY") return { reply: "My Gemini API key appears to be invalid, sir. Please check it in the settings." };
-      return { reply: "I'm experiencing a malfunction, sir. Please try again." };
+      if (msg === "RATE_LIMITED") return { reply: "Systems are throttled, boss. Please try again in a moment." };
+      if (msg === "CREDITS_DEPLETED") return { reply: "AI credits are depleted, boss. Please top up to continue." };
+      if (msg === "BAD_API_KEY") return { reply: "My Gemini API key appears to be invalid, boss. Please check it in the settings." };
+      return { reply: "I'm experiencing a malfunction, boss. Please try again." };
     }
 
-    // Execute a STYX NETWORK directive if the AI emitted one.
+    // Execute a EDITH NETWORK directive if the AI emitted one.
     const match = out.match(CMD_RE);
     let network: NetworkPayload | undefined;
     let reply = out;
@@ -91,7 +91,7 @@ export const askJarvis = createServerFn({ method: "POST" })
           }
         }
       } catch {
-        reply = `${reply ? reply + " " : ""}I could not reach the Network, sir.`;
+        reply = `${reply ? reply + " " : ""}I could not reach the Network, boss.`;
       }
     }
     return { reply: reply || "...", network };

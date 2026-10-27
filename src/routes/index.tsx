@@ -24,10 +24,10 @@ export const Route = createFileRoute("/")({
   },
   head: () => ({
     meta: [
-      { title: "S.T.Y.X. — Your Personal Intelligent System" },
-      { name: "description", content: "Talk to S.T.Y.X., your personal AI assistant." },
-      { property: "og:title", content: "S.T.Y.X. AI Assistant" },
-      { property: "og:description", content: "Talk to S.T.Y.X., your personal AI assistant." },
+      { title: "EDITH X1 — Even Dead, I'm The Hero" },
+      { name: "description", content: "Talk to E.D.I.T.H., your personal AI assistant." },
+      { property: "og:title", content: "E.D.I.T.H. AI Assistant" },
+      { property: "og:description", content: "Talk to E.D.I.T.H., your personal AI assistant." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -121,7 +121,7 @@ function Index() {
         if (r.error) setVoiceError(r.error);
         emptyStreak.current += 1;
         if (emptyStreak.current >= 3) {
-          setVoiceError("I didn't hear anything, sir. Tap the globe to try again.");
+          setVoiceError("I didn't hear anything, boss. Tap the globe to try again.");
           return void stopConvo();
         }
         return void listen();
@@ -188,7 +188,7 @@ function Index() {
     return () => sub.subscription.unsubscribe();
   }, []);
 
-  // Poll STYX NETWORK status; states come from real backend responses.
+  // Poll EDITH NETWORK status; states come from real backend responses.
   useEffect(() => {
     if (!session) return;
     let dead = false;
@@ -240,7 +240,7 @@ function Index() {
   async function signIn() {
     setAuthError("");
     const r = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
-    if (r.error) setAuthError("Sign-in failed, sir. Please try again.");
+    if (r.error) setAuthError("Sign-in failed, boss. Please try again.");
   }
 
   async function clearChat() {
@@ -288,7 +288,7 @@ function Index() {
     return (
       <main className="hud-bg flex min-h-screen flex-col items-center justify-center px-6 text-center">
         <div className="animate-float"><Core /></div>
-        <h1 className="jarvis-title animate-rise-in mt-10 text-4xl sm:text-5xl">S.T.Y.X.</h1>
+        <h1 className="jarvis-title animate-rise-in mt-10 text-4xl sm:text-5xl">E.D.I.T.H.</h1>
         <p className="animate-rise-in-delay mt-3 tracking-wider text-muted-foreground">Your Personal Intelligent System</p>
         <button onClick={signIn} className="hud-button animate-rise-in-delay-2 mt-10">Continue with Google</button>
         {authError && <p className="mt-4 text-sm text-destructive">{authError}</p>}
@@ -300,16 +300,16 @@ function Index() {
   return (
     <main className="hud-bg flex h-screen flex-col">
       {showSettings && (
-        <SettingsPanel settings={settings} onChange={saveSettings} onClose={() => setShowSettings(false)} onPreview={(v) => speak("Hello. I am Styx, at your service.", v)} />
+        <SettingsPanel settings={settings} onChange={saveSettings} onClose={() => setShowSettings(false)} onPreview={(v) => speak("Hello. I am EDITH, at your service.", v)} />
       )}
       <header className="flex items-center gap-2 border-b border-border px-5 py-3">
         <Core size={36} active={loading} />
         <div>
-          <div className="jarvis-title text-base sm:text-lg">S.T.Y.X.</div>
+          <div className="jarvis-title text-base sm:text-lg">E.D.I.T.H.</div>
           <div className="text-xs tracking-widest text-muted-foreground">{loading ? "PROCESSING..." : "ONLINE"}</div>
         </div>
         <div className="ml-auto flex shrink-0 gap-3 whitespace-nowrap text-[10px] sm:text-xs tracking-wider text-muted-foreground">
-          <button onClick={() => setShowNet(!showNet)} className="flex items-center gap-1.5 hover:text-primary" aria-label="STYX NETWORK status">
+          <button onClick={() => setShowNet(!showNet)} className="flex items-center gap-1.5 hover:text-primary" aria-label="EDITH NETWORK status">
             <span className={`inline-block h-2 w-2 rounded-full ${net.status === "connected" ? "bg-green-400" : net.status === "connecting" ? "animate-pulse bg-yellow-400" : "bg-red-500"}`} />
             NET {net.status === "connected" ? "CONNECTED" : net.status === "connecting" ? "CONNECTING" : "DISCONNECTED"}
           </button>
@@ -322,7 +322,7 @@ function Index() {
       {showNet && (
         <div className="border-b border-border bg-background/80 px-5 py-3 text-xs backdrop-blur">
           <div className="mx-auto flex max-w-3xl flex-col gap-2">
-            <div className="tracking-widest text-primary">STYX NETWORK — {net.status.toUpperCase()}{net.error ? ` (${net.error})` : ""}</div>
+            <div className="tracking-widest text-primary">EDITH NETWORK — {net.status.toUpperCase()}{net.error ? ` (${net.error})` : ""}</div>
             {net.tools.length > 0 && <div className="text-muted-foreground">Available: {net.tools.map((t) => t.name).join(", ")}</div>}
             {net.misconfigured.map((t) => (
               <div key={t.name} className="text-yellow-400">⚠ {t.name}: {t.reason} {t.setup}</div>
@@ -355,7 +355,7 @@ function Index() {
           {messages.length === 0 && (
             <div className="animate-fade-in mt-16 flex flex-col items-center text-center">
               <div className="animate-float"><Core size={140} /></div>
-              <p className="mt-6 text-muted-foreground">Good day, sir. How may I assist you?</p>
+              <p className="mt-6 text-muted-foreground">Good day, boss. How may I assist you?</p>
             </div>
           )}
           {messages.map((m, i) => (
