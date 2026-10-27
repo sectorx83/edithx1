@@ -121,7 +121,7 @@ function Index() {
         if (r.error) setVoiceError(r.error);
         emptyStreak.current += 1;
         if (emptyStreak.current >= 3) {
-          setVoiceError("I didn't hear anything, boss. Tap the globe to try again.");
+          setVoiceError("I didn't hear anything, sir. Tap the globe to try again.");
           return void stopConvo();
         }
         return void listen();
@@ -240,7 +240,7 @@ function Index() {
   async function signIn() {
     setAuthError("");
     const r = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
-    if (r.error) setAuthError("Sign-in failed, boss. Please try again.");
+    if (r.error) setAuthError("Sign-in failed, sir. Please try again.");
   }
 
   async function clearChat() {
@@ -355,7 +355,7 @@ function Index() {
           {messages.length === 0 && (
             <div className="animate-fade-in mt-16 flex flex-col items-center text-center">
               <div className="animate-float"><Core size={140} /></div>
-              <p className="mt-6 text-muted-foreground">Good day, boss. How may I assist you?</p>
+              <p className="mt-6 text-muted-foreground">Good day, sir. How may I assist you?</p>
             </div>
           )}
           {messages.map((m, i) => (
