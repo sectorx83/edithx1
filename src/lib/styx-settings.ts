@@ -8,7 +8,7 @@ export type StyxSettings = {
 export const DEFAULT_SETTINGS: StyxSettings = {
   speak_replies: false,
   voice: "Charon",
-  tone: "witty",
+  tone: "formal",
   sensitive: "balanced",
 };
 
