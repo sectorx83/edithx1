@@ -8,7 +8,7 @@ import { TaskPanel } from "@/components/TaskPanel";
 import { getNetworkStatus, reportBrowserAction } from "@/lib/styx-network.functions";
 import { transcribeAudio } from "@/lib/transcribe.functions";
 import { recordWav } from "@/lib/record-wav";
-import { streamSpeech } from "@/lib/stream-speech";
+import { streamSpeech, unlockAudio } from "@/lib/stream-speech";
 import { audioLevel } from "@/lib/audio-level";
 import { SettingsPanel } from "@/components/SettingsPanel";
 import { DEFAULT_SETTINGS, type StyxSettings } from "@/lib/styx-settings";
@@ -135,7 +135,7 @@ function Index() {
     if (convoRef.current) void listen();
   }
 
-  function startConvo() { convoRef.current = true; setConvo(true); emptyStreak.current = 0; void listen(); }
+  function startConvo() { unlockAudio(); convoRef.current = true; setConvo(true); emptyStreak.current = 0; void listen(); }
   function stopConvo() {
     convoRef.current = false; setConvo(false); setPhase("idle");
     speechAbort.current?.abort();
@@ -162,6 +162,7 @@ function Index() {
   }
 
   async function toggleMic() {
+    unlockAudio();
     setVoiceError("");
     if (!recording) {
       try { recRef.current = await recordWav(); setRecording(true); }

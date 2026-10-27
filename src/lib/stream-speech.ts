@@ -44,7 +44,7 @@ export async function streamSpeech(endpoint: string, body: Record<string, unknow
   const tick = () => { audioLevel.value = readLevel(analyser, lvlBuf); audioLevel.source = "ai"; raf = requestAnimationFrame(tick); };
   raf = requestAnimationFrame(tick);
   try {
-    if (context.state === "suspended") await context.resume();
+    if (context.state !== "running") await Promise.race([context.resume(), new Promise((r) => setTimeout(r, 1500))]);
     const response = await fetch(endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...headers },
@@ -107,6 +107,6 @@ export async function streamSpeech(endpoint: string, body: Record<string, unknow
     signal?.removeEventListener("abort", abort);
     controller.abort();
     for (const source of sources) source.stop();
-    await context.close();
+    analyser.disconnect();
   }
 }
