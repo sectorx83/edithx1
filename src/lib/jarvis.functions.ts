@@ -56,10 +56,10 @@ export const askJarvis = createServerFn({ method: "POST" })
       );
     } catch (e) {
       const msg = e instanceof Error ? e.message : "";
-      if (msg === "RATE_LIMITED") return { reply: "Systems are throttled, boss. Please try again in a moment." };
-      if (msg === "CREDITS_DEPLETED") return { reply: "AI credits are depleted, boss. Please top up to continue." };
-      if (msg === "BAD_API_KEY") return { reply: "My Gemini API key appears to be invalid, boss. Please check it in the settings." };
-      return { reply: "I'm experiencing a malfunction, boss. Please try again." };
+      if (msg === "RATE_LIMITED") return { reply: "Systems are throttled, sir. Please try again in a moment." };
+      if (msg === "CREDITS_DEPLETED") return { reply: "AI credits are depleted, sir. Please top up to continue." };
+      if (msg === "BAD_API_KEY") return { reply: "My Gemini API key appears to be invalid, sir. Please check it in the settings." };
+      return { reply: "I'm experiencing a malfunction, sir. Please try again." };
     }
 
     // Execute a EDITH NETWORK directive if the AI emitted one.
@@ -91,7 +91,7 @@ export const askJarvis = createServerFn({ method: "POST" })
           }
         }
       } catch {
-        reply = `${reply ? reply + " " : ""}I could not reach the Network, boss.`;
+        reply = `${reply ? reply + " " : ""}I could not reach the Network, sir.`;
       }
     }
     return { reply: reply || "...", network };
