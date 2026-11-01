@@ -1,6 +1,6 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Mic, Square, Loader2, MessageSquare, AudioLines, Settings, Activity, Trash2 } from "lucide-react";
+import { Mic, Square, Loader2, MessageSquare, AudioLines, Settings, Activity } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { useServerFn } from "@tanstack/react-start";
 import { askJarvis, type NetworkPayload } from "@/lib/jarvis.functions";
@@ -23,9 +23,9 @@ export const Route = createFileRoute("/")({
   },
   head: () => ({
     meta: [
-      { title: "EDITH X1 — Even Dead, I'm The Hero" },
+      { title: "EDITH X1" },
       { name: "description", content: "Talk to E.D.I.T.H., your personal AI assistant." },
-      { property: "og:title", content: "E.D.I.T.H. AI Assistant" },
+      { property: "og:title", content: "EDITH X1" },
       { property: "og:description", content: "Talk to E.D.I.T.H., your personal AI assistant." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -483,7 +483,7 @@ function Index() {
       <header className="glass-panel app-header flex items-center gap-3 border-b border-border px-5 py-3">
         <Core size={38} active={loading} />
         <div className="min-w-0">
-          <div className="jarvis-title text-base sm:text-lg">E.D.I.T.H.</div>
+          <div className="jarvis-title text-base sm:text-lg">EDITH X1</div>
           <div className="text-[10px] tracking-[0.28em] text-muted-foreground">{loading ? "PROCESSING" : "PERSONAL AI SYSTEM"}</div>
         </div>
         <span className="ml-auto hidden text-[10px] tracking-[0.22em] text-muted-foreground sm:block">BLACK GLASS INTERFACE</span>
@@ -557,7 +557,7 @@ function Index() {
           {!net.error && net.tools.length === 0 && net.misconfigured.length === 0 && net.unavailable.length === 0 && <p className="network-detail">Checking connected services…</p>}
         </aside>
       )}
-      <nav className="floating-nav fixed" aria-label="Main navigation">
+      {!showSettings && <nav className="floating-nav fixed" aria-label="Main navigation">
         <button type="button" onClick={() => switchMode("voice")} className={mode === "voice" ? "floating-nav-item is-active" : "floating-nav-item"} aria-label="Voice mode">
           <AudioLines className="h-5 w-5" /><span>Voice</span>
         </button>
@@ -567,7 +567,7 @@ function Index() {
         <button type="button" onClick={() => setShowNet(!showNet)} className={showNet ? "floating-nav-item is-active network-nav-item" : "floating-nav-item network-nav-item"} aria-label="Network status" aria-expanded={showNet}>
           <span className={`network-indicator network-${net.status}`} /><Activity className="h-5 w-5" /><span>Network</span>
         </button>
-        <button type="button" onClick={() => setShowSettings(true)} className="floating-nav-item" aria-label="Settings">
+        <button type="button" onClick={() => { setShowNet(false); setShowSettings(true); }} className="floating-nav-item" aria-label="Settings">
           <Settings className="h-5 w-5" /><span>Settings</span>
         </button>
         {messages.length > 0 && <button type="button" onClick={clearChat} className="floating-nav-item" aria-label="Clear chat">
