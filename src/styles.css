@@ -1581,3 +1581,43 @@ html, body, #root, body { background: #000 !important; }
   .floating-nav{width:calc(100vw - 24px)!important;max-width:calc(100vw - 24px)!important}
   .floating-nav-item{flex-basis:84px!important;width:84px!important;min-width:84px!important;max-width:84px!important}
 }
+
+
+/* Dock carousel sizing: deliberately wider than its viewport so overflow always exists. */
+.floating-nav{
+  width:min(560px,calc(100vw - 20px))!important;
+  max-width:calc(100vw - 20px)!important;
+  min-width:0!important;
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  justify-content:flex-start!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  gap:8px!important;
+  padding:6px 9px!important;
+  box-sizing:border-box!important;
+  white-space:nowrap!important;
+  scroll-snap-type:x proximity;
+  scroll-behavior:smooth;
+  overscroll-behavior-x:contain;
+  -webkit-overflow-scrolling:touch;
+  touch-action:pan-y!important;
+  scrollbar-width:none!important;
+  cursor:grab;
+  user-select:none;
+  -webkit-user-select:none;
+}
+.floating-nav:active{cursor:grabbing}
+.floating-nav::-webkit-scrollbar{display:none!important}
+.floating-nav-item{
+  flex:0 0 112px!important;
+  width:112px!important;
+  min-width:112px!important;
+  max-width:112px!important;
+  scroll-snap-align:center;
+  touch-action:pan-y!important;
+}
+@media(max-width:640px){
+ .floating-nav{width:calc(100vw - 20px)!important;max-width:calc(100vw - 20px)!important}
+ .floating-nav-item{flex-basis:104px!important;width:104px!important;min-width:104px!important;max-width:104px!important}
+}
