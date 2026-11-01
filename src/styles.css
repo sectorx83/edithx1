@@ -1034,3 +1034,52 @@ html, body, #root, body { background: #000 !important; }
 @media (prefers-reduced-motion: reduce) {
   .settings-backdrop, .settings-option, .settings-toggle-row input, .settings-toggle-row input::before { animation: none; transition: none; }
 }
+
+/* Signal control styled after the compact waveform indicator in the reference */
+.signal-button {
+  position: relative;
+  display: grid;
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+  place-items: center;
+  border: 1px solid rgba(255,255,255,.13);
+  border-radius: 15px;
+  color: rgba(255,255,255,.92);
+  background: linear-gradient(145deg, rgba(255,255,255,.1), rgba(255,255,255,.025));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 8px 24px rgba(0,0,0,.32);
+  -webkit-backdrop-filter: blur(22px);
+  backdrop-filter: blur(22px);
+  transition: background .2s ease, border-color .2s ease, transform .2s ease;
+}
+.signal-button svg { filter: drop-shadow(0 0 5px rgba(255,255,255,.28)); }
+.signal-button:active { transform: scale(.94); }
+.signal-button.is-active { border-color: rgba(255,255,255,.42); background: rgba(255,255,255,.14); }
+.signal-status {
+  position: absolute;
+  right: 7px;
+  bottom: 7px;
+  width: 7px;
+  height: 7px;
+  border: 1px solid #050505;
+  border-radius: 50%;
+  background: #888;
+}
+.signal-connected { background: #e8e8e8; box-shadow: 0 0 8px rgba(255,255,255,.75); }
+.signal-connecting { background: #aaa; animation: signal-pulse 1.1s ease-in-out infinite; }
+.signal-disconnected { background: #555; }
+@keyframes signal-pulse { 50% { opacity: .35; transform: scale(.78); } }
+
+/* Keep the WebGL canvas transparent at its corners so it never reads as a square tile. */
+.core-fluid { position: relative; border-radius: 50%; background: transparent !important; }
+.core-fluid-canvas {
+  background: transparent !important;
+  border-radius: 50%;
+  -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 57%, rgba(0,0,0,.92) 72%, transparent 100%);
+  mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 57%, rgba(0,0,0,.92) 72%, transparent 100%);
+}
+.core-fluid-halo { pointer-events: none; }
+.core-fluid-edge { pointer-events: none; }
+@media (max-width: 480px) {
+  .signal-button { width: 42px; height: 42px; flex-basis: 42px; border-radius: 14px; }
+}
