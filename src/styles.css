@@ -1485,3 +1485,68 @@ html, body, #root, body { background: #000 !important; }
     touch-action: pan-x pan-y !important;
   }
 }
+
+
+/* EDITH X1 command-centre home: adaptive glass telemetry, not a generic admin template. */
+.edith-dashboard{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:clamp(18px,3vw,38px) clamp(14px,3vw,42px) 112px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.2) transparent}
+.dashboard-heading{max-width:1440px;margin:0 auto 22px;display:flex;align-items:flex-end;justify-content:space-between;gap:16px}
+.dashboard-eyebrow,.dashboard-card-top,.dashboard-quick-label{font-size:9px;letter-spacing:.2em;color:#85858b;font-weight:650}
+.dashboard-heading h1{font-size:clamp(24px,3.4vw,39px);font-weight:500;letter-spacing:-.045em;margin:8px 0 4px;color:#f3f3f5}
+.dashboard-heading h1 span{color:#85858d}
+.dashboard-heading p{font-size:12px;color:#77777e;margin:0}
+.dashboard-live{display:flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.12);border-radius:30px;padding:9px 13px;background:rgba(255,255,255,.035);font-size:9px;letter-spacing:.13em;color:#aaa;white-space:nowrap}
+.dashboard-live i,.dashboard-footer i{width:6px;height:6px;border-radius:50%;background:#777;box-shadow:0 0 10px #777}
+.dashboard-live i.is-online{background:#ddd;box-shadow:0 0 10px #fff}
+.dashboard-grid{max-width:1440px;margin:auto;display:grid;grid-template-columns:minmax(0,1.18fr) minmax(280px,.82fr);gap:14px}
+.dashboard-card{position:relative;min-width:0;overflow:hidden;border:1px solid rgba(255,255,255,.13);border-radius:23px;padding:17px;background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.018) 68%,rgba(255,255,255,.035));box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 18px 48px rgba(0,0,0,.24);-webkit-backdrop-filter:blur(28px) saturate(145%);backdrop-filter:blur(28px) saturate(145%)}
+.dashboard-card:after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(100% 80% at 0 0,rgba(255,255,255,.07),transparent 65%)}
+.dashboard-card-top{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.dashboard-card-top>span:first-child{display:flex;align-items:center;gap:8px;color:#c6c6cb}
+.dashboard-card-top>span:last-child{font-size:8px;color:#777;letter-spacing:.14em}
+.dashboard-core-card{min-height:330px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 55%,rgba(205,215,235,.09),transparent 56%),linear-gradient(145deg,rgba(255,255,255,.07),rgba(255,255,255,.012))}
+.dashboard-core-button{position:relative;z-index:1;display:grid;place-items:center;margin:0 auto;border-radius:50%;transition:transform .35s ease,filter .35s ease}
+.dashboard-core-button:active{transform:scale(.97)}
+.dashboard-core-caption{font-size:10px;letter-spacing:.25em;color:#d4d4d8;margin-top:-3px}
+.dashboard-core-sub{font-size:10px;color:#66666d;margin-top:8px}
+.dashboard-live-label{color:#bbb!important}
+.dashboard-status-card{display:flex;flex-direction:column;gap:14px}
+.dashboard-metric{position:relative;z-index:1;display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.075)}
+.metric-icon{width:34px;height:34px;display:grid;place-items:center;border-radius:11px;background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.025));border:1px solid rgba(255,255,255,.12);color:#ccc}
+.metric-icon svg{width:16px;height:16px}
+.dashboard-metric>div:nth-child(2){display:flex;flex:1;min-width:0;flex-direction:column;gap:3px}
+.dashboard-metric b{font-size:10px;letter-spacing:.08em;color:#ddd;font-weight:600}
+.dashboard-metric small{font-size:9px;color:#777}
+.dashboard-metric strong{font-size:9px;letter-spacing:.1em;color:#c7c7cc;font-weight:600}
+.dashboard-metric strong.metric-working{animation:signal-pulse 1s infinite}
+.dashboard-text-link{position:relative;z-index:1;display:flex;align-items:center;gap:6px;align-self:flex-start;color:#aaa;font-size:9px;letter-spacing:.13em;margin-top:auto;padding-top:3px}
+.dashboard-command-card{grid-column:1/-1}
+.dashboard-command-form{position:relative;z-index:1;display:flex;gap:9px;margin:14px 0 18px}
+.dashboard-command-form input{flex:1;min-width:0;height:48px;border:1px solid rgba(255,255,255,.15);border-radius:15px;background:rgba(0,0,0,.28);padding:0 15px;color:#eee;font-size:13px;outline:none}
+.dashboard-command-form input:focus{border-color:rgba(255,255,255,.38);box-shadow:0 0 0 3px rgba(255,255,255,.04)}
+.dashboard-command-form button{width:48px;height:48px;display:grid;place-items:center;border-radius:15px;border:1px solid rgba(255,255,255,.2);background:linear-gradient(145deg,rgba(255,255,255,.2),rgba(255,255,255,.06));color:white}
+.dashboard-quick-actions{position:relative;z-index:1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px}
+.dashboard-quick-actions button{min-height:42px;display:flex;align-items:center;gap:8px;padding:9px 11px;border:1px solid rgba(255,255,255,.09);border-radius:12px;background:rgba(255,255,255,.025);color:#aaa;text-align:left;font-size:10px;transition:.2s}
+.dashboard-quick-actions button:hover,.dashboard-module-grid button:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.22);color:#fff}
+.dashboard-quick-actions svg{width:15px;height:15px;flex:0 0 auto}
+.dashboard-activity-card,.dashboard-tools-card{min-height:190px}
+.dashboard-activity-list{position:relative;z-index:1;display:flex;flex-direction:column;margin-top:10px}
+.dashboard-activity-list button{display:flex;align-items:center;gap:10px;text-align:left;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.07);color:#999}
+.dashboard-activity-list button>span:nth-child(2){display:flex;flex:1;min-width:0;flex-direction:column;gap:4px}
+.dashboard-activity-list b{font-size:8px;letter-spacing:.14em;color:#bbb}
+.dashboard-activity-list small{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#777}
+.activity-dot{width:6px;height:6px;border-radius:50%;background:#aaa;box-shadow:0 0 9px #aaa}
+.dashboard-empty{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;padding:20px;color:#888}
+.activity-orbit{width:42px;height:42px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.13);border-radius:50%;margin-bottom:3px}
+.activity-orbit svg{width:17px}
+.dashboard-empty b{font-size:10px;font-weight:500;color:#bbb}
+.dashboard-empty small{font-size:9px;color:#666}
+.dashboard-module-grid{position:relative;z-index:1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:16px}
+.dashboard-module-grid button{display:flex;flex-direction:column;align-items:flex-start;gap:7px;min-width:0;padding:12px 10px;border:1px solid rgba(255,255,255,.09);border-radius:14px;background:rgba(255,255,255,.025);text-align:left;color:#aaa;transition:.2s}
+.dashboard-module-grid svg{width:17px;height:17px}
+.dashboard-module-grid b{font-size:10px;color:#ddd;font-weight:550}
+.dashboard-module-grid small{font-size:9px;color:#777;line-height:1.35}
+.dashboard-footer{max-width:1440px;margin:17px auto 0;display:flex;justify-content:space-between;gap:10px;color:#626268;font-size:8px;letter-spacing:.15em}
+.dashboard-footer span:first-child{display:flex;align-items:center;gap:8px}
+@media(max-width:760px){.edith-dashboard{padding:17px 12px 116px}.dashboard-heading{align-items:flex-start;flex-direction:column;margin-bottom:15px}.dashboard-grid{grid-template-columns:1fr;gap:10px}.dashboard-core-card{min-height:275px}.dashboard-core-button .core-fluid{width:185px!important;height:185px!important}.dashboard-command-card{grid-column:auto}.dashboard-quick-actions{grid-template-columns:repeat(2,minmax(0,1fr))}.dashboard-module-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.dashboard-card{border-radius:19px;padding:15px}.dashboard-footer span:last-child{display:none}}
+@media(min-width:1100px){.dashboard-core-card{grid-row:span 1}.dashboard-command-card{grid-column:1/-1}.dashboard-activity-card,.dashboard-tools-card{min-height:210px}}
+@media(prefers-reduced-motion:reduce){.dashboard-core-button,.dashboard-quick-actions button,.dashboard-module-grid button{transition:none}}
