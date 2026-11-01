@@ -1,6 +1,6 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Mic, Square, Loader2, MessageSquare, AudioLines, Settings, Activity } from "lucide-react";
+import { Mic, Square, Loader2, MessageSquare, AudioLines, Settings, Activity, LayoutDashboard, BrainCircuit, Wrench, Clock3, ArrowUpRight } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { useServerFn } from "@tanstack/react-start";
 import { askJarvis, type NetworkPayload } from "@/lib/jarvis.functions";
@@ -210,6 +210,7 @@ function Index() {
   const [showSettings, setShowSettings] = useState(false);
   const speechAbort = useRef<AbortController | null>(null);
   const [mode, setMode] = useState<"voice" | "text">("voice");
+  const [dashboard, setDashboard] = useState(true);
   const [convo, setConvo] = useState(false);
   const convoRef = useRef(false);
   const [phase, setPhase] = useState<"idle" | "listening" | "thinking" | "speaking">("idle");
@@ -507,7 +508,42 @@ function Index() {
         </button>
       </header>
 
-      {mode === "voice" ? (
+      {dashboard ? (
+        <section className="edith-dashboard">
+          <div className="dashboard-heading">
+            <div><div className="dashboard-eyebrow">PERSONAL INTELLIGENCE SYSTEM</div><h1>Good day. <span>EDITH is ready.</span></h1><p>Your command centre is standing by.</p></div>
+            <div className="dashboard-live"><i className={net.status === "connected" ? "is-online" : ""} /> SYSTEM {net.status.toUpperCase()}</div>
+          </div>
+          <div className="dashboard-grid">
+            <article className="dashboard-card dashboard-core-card">
+              <div className="dashboard-card-top"><span>EDITH CORE</span><span className="dashboard-live-label">{loading ? "PROCESSING" : phase.toUpperCase()}</span></div>
+              <button className="dashboard-core-button" onClick={() => { setDashboard(false); switchMode("voice"); }} aria-label="Open voice command mode"><Core size={210} reactive active={loading || phase === "thinking"} /></button>
+              <div className="dashboard-core-caption">TAP TO ACTIVATE VOICE</div>
+              <div className="dashboard-core-sub">Your interface. Your intelligence.</div>
+            </article>
+            <article className="dashboard-card dashboard-status-card">
+              <div className="dashboard-card-top"><span><Activity size={15}/> SYSTEM OVERVIEW</span><span>LIVE</span></div>
+              <div className="dashboard-metric"><div className="metric-icon"><BrainCircuit/></div><div><b>AI ENGINE</b><small>Conversation service</small></div><strong className={loading ? "metric-working" : ""}>{loading ? "BUSY" : "READY"}</strong></div>
+              <div className="dashboard-metric"><div className="metric-icon"><Activity/></div><div><b>NETWORK</b><small>STYX connectivity</small></div><strong>{net.status.toUpperCase()}</strong></div>
+              <div className="dashboard-metric"><div className="metric-icon"><AudioLines/></div><div><b>VOICE SYSTEM</b><small>Microphone & speech</small></div><strong>{convo || recording ? "ACTIVE" : "STANDBY"}</strong></div>
+              <div className="dashboard-metric"><div className="metric-icon"><MessageSquare/></div><div><b>CONVERSATIONS</b><small>Saved in this session</small></div><strong>{messages.length}</strong></div>
+              <button className="dashboard-text-link" onClick={() => setShowNet(true)}>VIEW NETWORK DETAILS <ArrowUpRight size={14}/></button>
+            </article>
+            <article className="dashboard-card dashboard-command-card">
+              <div className="dashboard-card-top"><span>COMMAND INPUT</span><span>TEXT / VOICE</span></div>
+              <form className="dashboard-command-form" onSubmit={send}><input value={input} onChange={e=>setInput(e.target.value)} placeholder="What can I do for you?" aria-label="Enter a command"/><button disabled={loading || !input.trim()} aria-label="Send command"><ArrowUpRight size={18}/></button></form>
+              <div className="dashboard-quick-label">QUICK COMMANDS</div>
+              <div className="dashboard-quick-actions"><button onClick={()=>void sendText("Give me a concise briefing of what you can help me with.")}><BrainCircuit/> Intelligence briefing</button><button onClick={()=>{setShowNet(true)}}><Activity/> Check system connections</button><button onClick={()=>{setDashboard(false);switchMode("text")}}><MessageSquare/> Open conversation</button><button onClick={()=>{setDashboard(false);switchMode("voice")}}><AudioLines/> Start voice session</button></div>
+            </article>
+            <article className="dashboard-card dashboard-activity-card">
+              <div className="dashboard-card-top"><span><Clock3 size={15}/> RECENT ACTIVITY</span><span>{messages.length} ITEMS</span></div>
+              {messages.length ? <div className="dashboard-activity-list">{messages.slice(-3).reverse().map((m,i)=><button key={`${i}-${m.role}`} onClick={()=>{setDashboard(false);switchMode("text")}}><span className="activity-dot"/><span><b>{m.role === "user" ? "YOU" : "EDITH"}</b><small>{m.content.replace(/[*_#`]/g,"").slice(0,92)}</small></span><ArrowUpRight size={14}/></button>)}</div> : <div className="dashboard-empty"><div className="activity-orbit"><Clock3/></div><b>No recent activity</b><small>Your interactions will appear here.</small></div>}
+            </article>
+            <article className="dashboard-card dashboard-tools-card"><div className="dashboard-card-top"><span><Wrench size={15}/> SYSTEM MODULES</span><span>AVAILABLE</span></div><div className="dashboard-module-grid"><button onClick={()=>setShowNet(true)}><Activity/><b>Network</b><small>Connections & status</small></button><button onClick={()=>{setDashboard(false);switchMode("text")}}><BrainCircuit/><b>Intelligence</b><small>Chat with EDITH</small></button><button onClick={()=>setShowSettings(true)}><Settings/><b>Preferences</b><small>Voice & behaviour</small></button></div></article>
+          </div>
+          <div className="dashboard-footer"><span>EDITH X1 <i/> PRIVATE SYSTEM</span><span>ALL SYSTEMS ARE MONITORED LOCALLY</span></div>
+        </section>
+      ) : mode === "voice" ? (
         <section className="voice-stage flex flex-1 flex-col items-center justify-center gap-8 overflow-hidden px-6 pb-28 text-center">
           <button onClick={convo ? stopConvo : startConvo} aria-label={convo ? "End conversation" : "Start talking"} className="rounded-full">
             <Core size={260} reactive active={phase === "thinking"} />
@@ -572,10 +608,11 @@ function Index() {
         </aside>
       )}
       {!showSettings && <nav className="floating-nav fixed" aria-label="Main navigation">
-        <button type="button" onClick={() => switchMode("voice")} className={mode === "voice" ? "floating-nav-item is-active" : "floating-nav-item"} aria-label="Voice mode">
+        <button type="button" onClick={() => setDashboard(true)} className="floating-nav-item" aria-label="Dashboard"><LayoutDashboard className="h-5 w-5" /><span>Home</span></button>
+        <button type="button" onClick={() => { setDashboard(false); switchMode("voice"); }} className={!dashboard && mode === "voice" ? "floating-nav-item is-active" : "floating-nav-item"} aria-label="Voice mode">
           <AudioLines className="h-5 w-5" /><span>Voice</span>
         </button>
-        <button type="button" onClick={() => switchMode("text")} className={mode === "text" ? "floating-nav-item is-active" : "floating-nav-item"} aria-label="Text mode">
+        <button type="button" onClick={() => { setDashboard(false); switchMode("text"); }} className={!dashboard && mode === "text" ? "floating-nav-item is-active" : "floating-nav-item"} aria-label="Text mode">
           <MessageSquare className="h-5 w-5" /><span>Chat</span>
         </button>
         <button type="button" onClick={() => setShowNet(!showNet)} className={showNet ? "floating-nav-item is-active network-nav-item" : "floating-nav-item network-nav-item"} aria-label="Network status" aria-expanded={showNet}>
