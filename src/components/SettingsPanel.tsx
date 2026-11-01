@@ -34,6 +34,8 @@ export function SettingsPanel({ settings, onChange, onClose, onPreview }: Props)
   useEffect(() => {
     const update = () => setVoices(localVoices());
     update();
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     window.speechSynthesis?.addEventListener("voiceschanged", update);
     window.addEventListener("keydown", onKey);
     function onKey(event: KeyboardEvent) {
@@ -42,6 +44,7 @@ export function SettingsPanel({ settings, onChange, onClose, onPreview }: Props)
     return () => {
       window.speechSynthesis?.removeEventListener("voiceschanged", update);
       window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = previousOverflow;
     };
   }, [onClose]);
 
@@ -49,7 +52,11 @@ export function SettingsPanel({ settings, onChange, onClose, onPreview }: Props)
   const selectedVoice = voices.some((voice) => voice.voiceURI === settings.voice) ? settings.voice : "device-default";
 
   return (
-    <div\n      className="settings-backdrop"\n      onPointerDown={(event) => { if (event.target === event.currentTarget) onClose(); }}\n      onClick={(event) => { if (event.target === event.currentTarget) onClose(); }}\n    >
+    <div
+      className="settings-backdrop"
+      onPointerDown={(event) => { if (event.target === event.currentTarget) onClose(); }}
+      onClick={(event) => { if (event.target === event.currentTarget) onClose(); }}
+    >
       <section className="settings-window" role="dialog" aria-modal="true" aria-labelledby="settings-title">
         <header className="settings-header">
           <div className="flex min-w-0 items-center gap-3">
