@@ -325,25 +325,17 @@ function Index() {
   }
 
   return (
-    <main className="hud-bg flex h-screen flex-col">
+    <main className="hud-bg app-shell flex h-dvh flex-col">
       {showSettings && (
         <SettingsPanel settings={settings} onChange={saveSettings} onClose={() => setShowSettings(false)} onPreview={(v) => speak("Hello. I am EDITH, at your service.", v)} />
       )}
-      <header className="glass-panel flex items-center gap-2 border-b border-border px-5 py-3">
-        <Core size={36} active={loading} />
-        <div>
+      <header className="glass-panel app-header flex items-center gap-3 border-b border-border px-5 py-3">
+        <Core size={38} active={loading} />
+        <div className="min-w-0">
           <div className="jarvis-title text-base sm:text-lg">E.D.I.T.H.</div>
-          <div className="text-xs tracking-widest text-muted-foreground">{loading ? "PROCESSING..." : "ONLINE"}</div>
+          <div className="text-[10px] tracking-[0.28em] text-muted-foreground">{loading ? "PROCESSING" : "PERSONAL AI SYSTEM"}</div>
         </div>
-        <div className="ml-auto flex shrink-0 gap-3 whitespace-nowrap text-[10px] sm:text-xs tracking-wider text-muted-foreground">
-          <button onClick={() => setShowNet(!showNet)} className="flex items-center gap-1.5 hover:text-primary" aria-label="EDITH NETWORK status">
-            <span className={`inline-block h-2 w-2 rounded-full ${net.status === "connected" ? "bg-green-400" : net.status === "connecting" ? "animate-pulse bg-yellow-400" : "bg-red-500"}`} />
-            NET {net.status === "connected" ? "CONNECTED" : net.status === "connecting" ? "CONNECTING" : "DISCONNECTED"}
-          </button>
-          <button onClick={() => { if (mode === "voice") stopConvo(); setMode(mode === "voice" ? "text" : "voice"); }} className="flex items-center gap-1 hover:text-primary">{mode === "voice" ? <><MessageSquare className="h-3 w-3" />TEXT</> : <><AudioLines className="h-3 w-3" />VOICE</>}</button>
-          <button onClick={() => setShowSettings(true)} className="hover:text-primary">SETTINGS</button>
-          {messages.length > 0 && <button onClick={clearChat} className="hover:text-primary">CLEAR</button>}
-        </div>
+        <span className="ml-auto hidden text-[10px] tracking-[0.22em] text-muted-foreground sm:block">BLACK GLASS INTERFACE</span>
       </header>
       {showNet && (
         <div className="border-b border-border bg-background/80 px-5 py-3 text-xs backdrop-blur">
@@ -358,7 +350,7 @@ function Index() {
         </div>
       )}
       {mode === "voice" ? (
-        <section className="flex flex-1 flex-col items-center justify-center gap-8 overflow-hidden px-6 pb-24 text-center">
+        <section className="voice-stage flex flex-1 flex-col items-center justify-center gap-8 overflow-hidden px-6 pb-28 text-center">
           <button onClick={convo ? stopConvo : startConvo} aria-label={convo ? "End conversation" : "Start talking"} className="rounded-full">
             <Core size={260} reactive active={phase === "thinking"} />
           </button>
@@ -420,9 +412,7 @@ function Index() {
         <button type="button" onClick={() => setShowSettings(true)} className="floating-nav-item" aria-label="Settings">
           <Settings className="h-5 w-5" /><span>Settings</span>
         </button>
-        {messages.length > 0 && <button type="button" onClick={clearChat} className="floating-nav-item" aria-label="Clear chat">
-          <Trash2 className="h-5 w-5" /><span>Clear</span>
-        </button>}
+
       </nav>
     </main>
   );
