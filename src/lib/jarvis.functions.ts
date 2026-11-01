@@ -54,8 +54,17 @@ export const askJarvis = createServerFn({ method: "POST" })
         buildSystemPrompt(settings) + "\nThis is primarily a spoken voice conversation: answer in 1-3 short, natural sentences with no markdown, lists, or emojis unless the user asks for detail." + NETWORK_PROMPT,
         data.messages,
       );
-    } catch {
-      return { reply: "I couldn't respond just now, sir. Please try again shortly." };
+    } catch (error) {
+      const code = error instanceof Error ? error.message : "AI_PROVIDER_ERROR";
+      console.error("[EDITH AI] Chat generation failed", { code });
+      const safeMessages: Record<string, string> = {
+        AI_NOT_CONFIGURED: "AI is not configured on the server. Add GEMINI_API_KEY_1 in Vercel → Settings → Environment Variables, then redeploy.",
+        AI_BAD_API_KEY: "The Gemini API key configured on the server was rejected. Replace it with a valid Gemini API key in Vercel, then redeploy.",
+        AI_RATE_LIMITED: "Gemini is currently rate-limiting this app or its API quota is exhausted. Check the Gemini API quota and billing, then try again.",
+        AI_TIMEOUT: "Gemini took too long to respond. Please try again.",
+        AI_PROVIDER_ERROR: "The Gemini service could not be reached. Check the server logs and try again.",
+      };
+      return { reply: safeMessages[code] ?? "The AI service failed unexpectedly. Check the Vercel runtime logs for the safe error category." };
     }
 
     // Execute a EDITH NETWORK directive if the AI emitted one.
