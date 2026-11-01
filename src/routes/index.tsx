@@ -412,7 +412,9 @@ function Index() {
         <button type="button" onClick={() => setShowSettings(true)} className="floating-nav-item" aria-label="Settings">
           <Settings className="h-5 w-5" /><span>Settings</span>
         </button>
-
+        {messages.length > 0 && <button type="button" onClick={clearChat} className="floating-nav-item" aria-label="Clear chat">
+          <Trash2 className="h-5 w-5" /><span>Clear</span>
+        </button>}
       </nav>
     </main>
   );
