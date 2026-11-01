@@ -38,6 +38,8 @@ type Msg = { role: "user" | "assistant"; content: string; network?: NetworkPaylo
 
 function Core({ size = 220, active = false, reactive = false }: { size?: number; active?: boolean; reactive?: boolean }) {
   const canvas = useRef<HTMLCanvasElement>(null);
+  const activeRef = useRef(active);
+  activeRef.current = active;
   useEffect(() => {
     if (!reactive || !canvas.current) return;
     const element = canvas.current;
@@ -114,13 +116,14 @@ function Core({ size = 220, active = false, reactive = false }: { size?: number;
           float edge = pow(1.0-abs(dot(n,view)), 3.5);
           float liquidFlow = .5 + .5*sin(p.x*8.0+p.y*5.0-time*(.8+energy*3.0));
           color = vec3(.035,.035,.04) + vec3(.34,.35,.38)*diffuse*.72;
-          color += vec3(.72,.76,.82)*spec*1.15;
-          color += vec3(.72,.78,.9)*rim*(.58+energy*.95);
-          color += vec3(.4,.45,.52)*edge*(.12+liquidFlow*.24+energy*.38);
+          color += vec3(.42,.46,.52)*spec*.72;
+          color += vec3(.38,.43,.52)*rim*(.28+energy*.42);
+          color += vec3(.22,.26,.32)*edge*(.08+liquidFlow*.16+energy*.18);
         }
         float vignette = smoothstep(1.45,.18,length(uv));
         color *= vignette;
-        gl_FragColor = vec4(color, hit ? 1.0 : 0.0);
+        color = min(color, vec3(.78,.82,.9));
+        gl_FragColor = vec4(color, hit ? .96 : 0.0);
       }
     `;
     const compile = (type: number, source: string) => {
@@ -163,7 +166,7 @@ function Core({ size = 220, active = false, reactive = false }: { size?: number;
       const dt = Math.min(48, now-previous); previous=now;
       const target = Math.min(1,audioLevel.value);
       smooth += (target-smooth) * (target>smooth ? .24 : .055);
-      const drive = Math.max(smooth, active ? .075 : 0);
+      const drive = Math.max(smooth, activeRef.current ? .025 : 0);
       elapsed += dt * (.00034 + drive*.0029);
       gl.viewport(0, 0, element.width, element.height);
       gl.clear(gl.COLOR_BUFFER_BIT);
@@ -175,7 +178,7 @@ function Core({ size = 220, active = false, reactive = false }: { size?: number;
     };
     raf=requestAnimationFrame(loop);
     return () => { cancelAnimationFrame(raf); gl.getExtension("WEBGL_lose_context")?.loseContext(); };
-  }, [reactive, active]);
+  }, [reactive]);
   return (
     <div className="core-fluid relative" style={{ width: size, height: size }}>
       <div className="core-fluid-halo" />
@@ -193,6 +196,7 @@ function Index() {
   const [messages, setMessagesState] = useState<Msg[]>([]);
   const messagesRef = useRef<Msg[]>([]);
   const busyRef = useRef(false);
+  const voiceTurnRef = useRef(false);
   const setMessages = (m: Msg[]) => { messagesRef.current = m; setMessagesState(m); };
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -227,29 +231,39 @@ function Index() {
   }
 
   async function finishTurn() {
-    const rec = recRef.current; recRef.current = null;
+    if (voiceTurnRef.current) return;
+    const rec = recRef.current;
     if (!rec || !convoRef.current) return;
+    voiceTurnRef.current = true;
+    recRef.current = null;
     setPhase("thinking");
     try {
       const file = await rec.stop();
+      if (!convoRef.current) return;
       const r = await transcribeLocal(file);
       if (!convoRef.current) return;
       if (r.error || !r.text?.trim()) {
         if (r.error) setVoiceError(r.error);
         emptyStreak.current += 1;
         if (emptyStreak.current >= 3) {
-          setVoiceError("I didn't hear anything, sir. Tap the globe to try again.");
-          return void stopConvo();
+          setVoiceError("I didn't hear anything. Tap the core to restart voice chat.");
+          stopConvo();
+          return;
         }
-        return void listen();
+        return;
       }
       emptyStreak.current = 0;
       const reply = await sendText(r.text, false);
-      if (reply && convoRef.current) { setPhase("speaking"); await speak(reply); }
+      if (reply && convoRef.current) {
+        setPhase("speaking");
+        await speak(reply);
+      }
     } catch (e) {
-      setVoiceError(e instanceof Error ? e.message : "Recording failed.");
+      if (convoRef.current) setVoiceError(e instanceof Error ? e.message : "Voice processing failed. Try again.");
+    } finally {
+      voiceTurnRef.current = false;
+      if (convoRef.current) void listen();
     }
-    if (convoRef.current) void listen();
   }
 
   function startConvo() {
