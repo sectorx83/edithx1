@@ -1247,3 +1247,38 @@ html, body, #root, body { background: #000 !important; }
 .core-fluid-canvas { filter: contrast(1.04) brightness(.88); }
 .network-popover { border: 1px solid rgba(255,255,255,.2); background: linear-gradient(145deg, rgba(48,48,54,.94), rgba(8,8,11,.96)); box-shadow: 0 22px 70px rgba(0,0,0,.72), inset 0 1px 0 rgba(255,255,255,.2); }
 @media (prefers-reduced-motion: reduce) { .floating-nav-item:active, .hud-button:active, .hud-mic:active, .settings-option:active { transform: none; } }
+
+/* iOS-style horizontal glass dock: swipe sideways when navigation grows. */
+.floating-nav {
+  justify-content: flex-start !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  white-space: nowrap;
+}
+.floating-nav::-webkit-scrollbar { display: none; }
+.floating-nav-item {
+  flex: 0 0 auto !important;
+  min-width: 76px;
+  scroll-snap-align: center;
+  touch-action: manipulation;
+}
+@media (max-width: 480px) {
+  .floating-nav {
+    width: max-content;
+    max-width: calc(100vw - 16px);
+    justify-content: flex-start !important;
+    gap: 4px;
+    padding: 6px 8px;
+    scroll-padding-inline: 8px;
+  }
+  .floating-nav-item { min-width: 76px; padding-inline: 9px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .floating-nav { scroll-behavior: smooth; }
+}
