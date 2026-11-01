@@ -1,6 +1,6 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Mic, Square, Loader2, MessageSquare, AudioLines, Settings, Activity, LayoutDashboard, BrainCircuit, Wrench, Clock3, ArrowUpRight } from "lucide-react";
+import { Mic, Square, Loader2, MessageSquare, AudioLines, Settings, Activity, LayoutDashboard, BrainCircuit, Wrench, Clock3, ArrowUpRight, Zap, ShieldCheck, Radio, Server, Sparkles } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { useServerFn } from "@tanstack/react-start";
 import { askJarvis, type NetworkPayload } from "@/lib/jarvis.functions";
@@ -542,6 +542,28 @@ function Index() {
               {messages.length ? <div className="dashboard-activity-list">{messages.slice(-3).reverse().map((m,i)=><button key={`${i}-${m.role}`} onClick={()=>{setDashboard(false);switchMode("text")}}><span className="activity-dot"/><span><b>{m.role === "user" ? "YOU" : "EDITH"}</b><small>{m.content.replace(/[*_#`]/g,"").slice(0,92)}</small></span><ArrowUpRight size={14}/></button>)}</div> : <div className="dashboard-empty"><div className="activity-orbit"><Clock3/></div><b>No recent activity</b><small>Your interactions will appear here.</small></div>}
             </article>
             <article className="dashboard-card dashboard-tools-card"><div className="dashboard-card-top"><span><Wrench size={15}/> SYSTEM MODULES</span><span>AVAILABLE</span></div><div className="dashboard-module-grid"><button onClick={()=>setShowNet(true)}><Activity/><b>Network</b><small>Connections & status</small></button><button onClick={()=>{setDashboard(false);switchMode("text")}}><BrainCircuit/><b>Intelligence</b><small>Chat with EDITH</small></button><button onClick={()=>setShowSettings(true)}><Settings/><b>Preferences</b><small>Voice & behaviour</small></button></div></article>
+            <article className="dashboard-card dashboard-mission-card">
+              <div className="dashboard-card-top"><span><Zap size={15}/> MISSION TIMELINE</span><span>LIVE SESSION</span></div>
+              <div className="mission-steps">
+                <div className="mission-step is-complete"><i/><span><b>SESSION</b><small>Private session established</small></span><em>READY</em></div>
+                <div className={net.status === "connected" ? "mission-step is-complete" : "mission-step is-current"}><i/><span><b>NETWORK</b><small>{net.status === "connected" ? "Connected services checked" : net.status === "connecting" ? "Checking connected services" : "Connection needs attention"}</small></span><em>{net.status.toUpperCase()}</em></div>
+                <div className={loading ? "mission-step is-current" : "mission-step"}><i/><span><b>INTELLIGENCE</b><small>{loading ? "Processing your latest command" : "Awaiting your next command"}</small></span><em>{loading ? "WORKING" : "STANDBY"}</em></div>
+                <div className={phase !== "idle" || recording || transcribing ? "mission-step is-current" : "mission-step"}><i/><span><b>VOICE INTERFACE</b><small>{phase === "listening" || recording ? "Listening for input" : phase === "thinking" || transcribing ? "Processing audio" : phase === "speaking" ? "Speaking response" : "Voice interface standing by"}</small></span><em>{phase === "idle" && !recording && !transcribing ? "IDLE" : phase.toUpperCase()}</em></div>
+              </div>
+            </article>
+            <article className="dashboard-card dashboard-provider-card">
+              <div className="dashboard-card-top"><span><Radio size={15}/> CONNECTED SERVICES</span><span>{net.tools.length} AVAILABLE</span></div>
+              {net.tools.length || net.misconfigured.length || net.unavailable.length ? <div className="provider-list">
+                {net.tools.map((tool)=><div className="provider-row" key={tool.name}><span className="provider-state good"><ShieldCheck size={14}/></span><span><b>{tool.name}</b><small>{tool.description || "Connected service"}</small></span><em>AVAILABLE</em></div>)}
+                {net.misconfigured.map((tool)=><div className="provider-row" key={tool.name}><span className="provider-state warn"><Settings size={14}/></span><span><b>{tool.name}</b><small>{tool.reason}</small></span><em>SETUP</em></div>)}
+                {net.unavailable.map((tool)=><div className="provider-row" key={tool.name}><span className="provider-state off"><Server size={14}/></span><span><b>{tool.name}</b><small>{tool.reason}</small></span><em>OFFLINE</em></div>)}
+              </div> : <div className="provider-empty"><Sparkles size={17}/><span>{net.status === "connecting" ? "Discovering connected services…" : "No external services reported by the network."}</span></div>}
+              <button className="dashboard-text-link" onClick={()=>setShowNet(true)}>OPEN SERVICE DIAGNOSTICS <ArrowUpRight size={14}/></button>
+            </article>
+            <article className="dashboard-card dashboard-memory-card">
+              <div className="dashboard-card-top"><span><BrainCircuit size={15}/> CONTEXT SNAPSHOT</span><span>SESSION HISTORY</span></div>
+              {messages.length ? <><div className="context-count"><strong>{messages.length}</strong><span>conversation entries<br/>in your session history</span></div><div className="context-latest"><small>LATEST USER COMMAND</small><p>{[...messages].reverse().find(m=>m.role==="user")?.content || "No command recorded yet."}</p></div><button className="dashboard-text-link" onClick={()=>{setDashboard(false);switchMode("text")}}>OPEN CONVERSATION <ArrowUpRight size={14}/></button></> : <div className="provider-empty"><BrainCircuit size={17}/><span>Your conversation context will appear here after your first command.</span></div>}
+            </article>
           </div>
           <div className="dashboard-footer"><span>EDITH X1 <i/> PRIVATE SYSTEM</span><span>ALL SYSTEMS ARE MONITORED LOCALLY</span></div>
         </section>
