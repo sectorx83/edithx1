@@ -211,6 +211,8 @@ function Index() {
   const speechAbort = useRef<AbortController | null>(null);
   const [mode, setMode] = useState<"voice" | "text">("voice");
   const [dashboard, setDashboard] = useState(true);
+  const navRef = useRef<HTMLElement | null>(null);
+  const navTouch = useRef({ x: 0, y: 0, left: 0, horizontal: false });
   const [convo, setConvo] = useState(false);
   const convoRef = useRef(false);
   const [phase, setPhase] = useState<"idle" | "listening" | "thinking" | "speaking">("idle");
@@ -607,7 +609,11 @@ function Index() {
           {!net.error && net.tools.length === 0 && net.misconfigured.length === 0 && net.unavailable.length === 0 && <p className="network-detail">Checking connected services…</p>}
         </aside>
       )}
-      {!showSettings && <nav className="floating-nav fixed" aria-label="Main navigation">
+      {!showSettings && <nav ref={navRef} className="floating-nav fixed" aria-label="Main navigation"
+        onTouchStart={(e) => { const t = e.touches[0]; navTouch.current = { x: t.clientX, y: t.clientY, left: navRef.current?.scrollLeft ?? 0, horizontal: false }; }}
+        onTouchMove={(e) => { const t = e.touches[0]; const dx = t.clientX - navTouch.current.x; const dy = t.clientY - navTouch.current.y; if (!navTouch.current.horizontal && Math.abs(dx) > 7 && Math.abs(dx) > Math.abs(dy) * 1.15) navTouch.current.horizontal = true; if (navTouch.current.horizontal) { e.preventDefault(); if (navRef.current) navRef.current.scrollLeft = navTouch.current.left - dx; } }}
+        onTouchEnd={() => { navTouch.current.horizontal = false; }}
+      >
         <button type="button" onClick={() => setDashboard(true)} className="floating-nav-item" aria-label="Dashboard"><LayoutDashboard className="h-5 w-5" /><span>Home</span></button>
         <button type="button" onClick={() => { setDashboard(false); switchMode("voice"); }} className={!dashboard && mode === "voice" ? "floating-nav-item is-active" : "floating-nav-item"} aria-label="Voice mode">
           <AudioLines className="h-5 w-5" /><span>Voice</span>
