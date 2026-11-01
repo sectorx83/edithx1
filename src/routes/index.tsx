@@ -37,40 +37,146 @@ export const Route = createFileRoute("/")({
 type Msg = { role: "user" | "assistant"; content: string; network?: NetworkPayload | undefined };
 
 function Core({ size = 220, active = false, reactive = false }: { size?: number; active?: boolean; reactive?: boolean }) {
-  const r1 = useRef<HTMLDivElement>(null), r2 = useRef<HTMLDivElement>(null), r3 = useRef<HTMLDivElement>(null), orb = useRef<HTMLDivElement>(null);
+  const canvas = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
-    if (!reactive) return;
-    let raf = 0, a = 0, smooth = 0, last = performance.now();
-    const loop = (t: number) => {
-      const dt = Math.min(64, t - last); last = t;
-      smooth += (audioLevel.value - smooth) * 0.16;
-      const energy = Math.min(1, smooth);
-      a += (0.012 + energy * 0.7 + (active ? 0.055 : 0)) * dt;
-      if (r1.current) r1.current.style.transform = `rotate(${a * 0.28}deg) scale(${1 + energy * 0.035})`;
-      if (r2.current) r2.current.style.transform = `rotate(${-a * 0.62}deg) scale(${1 + energy * 0.075})`;
-      if (r3.current) r3.current.style.transform = `rotate(${a}deg) scale(${1 + energy * 0.12})`;
-      if (orb.current) {
-        orb.current.style.transform = `scale(${1 + energy * 0.22}) rotate(${Math.sin(a / 90) * 5}deg)`;
-        orb.current.style.filter = `brightness(${0.92 + energy * 0.52}) contrast(${1.08 + energy * 0.24})`;
-        orb.current.style.borderRadius = `${48 + Math.sin(a / 115) * (2 + energy * 7)}% ${52 - Math.sin(a / 115) * (2 + energy * 7)}% ${49 + Math.cos(a / 140) * (2 + energy * 6)}% ${51 - Math.cos(a / 140) * (2 + energy * 6)}% / 52% 48% ${48 + energy * 5}% ${52 - energy * 5}%`;
+    if (!reactive || !canvas.current) return;
+    const element = canvas.current;
+    const gl = element.getContext("webgl", { alpha: true, antialias: true, premultipliedAlpha: false });
+    if (!gl) return;
+    const vertexSource = `
+      attribute vec2 position;
+      varying vec2 vUv;
+      void main() { vUv = position * 0.5 + 0.5; gl_Position = vec4(position, 0.0, 1.0); }
+    `;
+    const fragmentSource = `
+      precision highp float;
+      varying vec2 vUv;
+      uniform vec2 resolution;
+      uniform float time;
+      uniform float energy;
+      float smoothUnion(float a, float b, float k) {
+        float h = clamp(0.5 + 0.5 * (b - a) / k, 0.0, 1.0);
+        return mix(b, a, h) - k * h * (1.0 - h);
       }
-      raf = requestAnimationFrame(loop);
+      float blob(vec3 p, vec3 center, vec3 radius) {
+        vec3 q = (p - center) / radius;
+        return (length(q) - 1.0) * min(radius.x, min(radius.y, radius.z));
+      }
+      float scene(vec3 p) {
+        float t = time;
+        float speed = 0.48 + energy * 2.9;
+        vec3 warp = vec3(
+          sin(p.y * 4.4 + t * speed) * 0.055,
+          cos(p.z * 4.0 - t * speed * 0.8) * 0.06,
+          sin(p.x * 4.8 + t * speed * 0.65) * 0.05
+        ) * (0.45 + energy * 1.6);
+        vec3 q = p + warp;
+        float a = blob(q, vec3(sin(t*.73)*.15, cos(t*.61)*.13, sin(t*.49)*.08), vec3(.72,.69,.68));
+        float b = blob(q, vec3(sin(t*.52+2.0)*.43, sin(t*.81+1.2)*.36, cos(t*.57)*.24), vec3(.51,.53,.56));
+        float c = blob(q, vec3(cos(t*.64+3.1)*.44, sin(t*.55+3.0)*.42, sin(t*.72+2.0)*.2), vec3(.47,.5,.51));
+        float d = blob(q, vec3(sin(t*.9+1.0)*.3, cos(t*.7+4.0)*.51, cos(t*.6+2.0)*.28), vec3(.38,.43,.4));
+        float fluid = smoothUnion(a,b,.34 + energy*.1);
+        fluid = smoothUnion(fluid,c,.32 + energy*.11);
+        fluid = smoothUnion(fluid,d,.29 + energy*.1);
+        return fluid - (0.012 + energy*.025) * sin(p.x*8.0+t*speed) * sin(p.y*7.0-t*speed*.8) * sin(p.z*8.0+t*speed*.7);
+      }
+      vec3 normalAt(vec3 p) {
+        vec2 e = vec2(.0025,0.0);
+        return normalize(vec3(
+          scene(p+e.xyy)-scene(p-e.xyy),
+          scene(p+e.yxy)-scene(p-e.yxy),
+          scene(p+e.yyx)-scene(p-e.yyx)
+        ));
+      }
+      void main() {
+        vec2 uv = (gl_FragCoord.xy - .5 * resolution) / min(resolution.x,resolution.y);
+        vec3 ro = vec3(0.0,0.0,3.05);
+        vec3 rd = normalize(vec3(uv, -1.9));
+        float travel = 0.0;
+        float distanceField = 0.0;
+        bool hit = false;
+        vec3 p;
+        for (int i=0; i<88; i++) {
+          p = ro + rd * travel;
+          distanceField = scene(p);
+          if (distanceField < .0025) { hit = true; break; }
+          travel += max(distanceField * .72, .006);
+          if (travel > 6.0) break;
+        }
+        vec3 color = vec3(0.0);
+        if (hit) {
+          vec3 n = normalAt(p);
+          vec3 light = normalize(vec3(-.55,.8,1.2));
+          vec3 view = normalize(ro-p);
+          float diffuse = max(dot(n,light),0.0);
+          float spec = pow(max(dot(reflect(-light,n),view),0.0), 42.0);
+          float rim = pow(1.0-max(dot(n,view),0.0), 2.35);
+          float edge = pow(1.0-abs(dot(n,view)), 3.5);
+          float liquidFlow = .5 + .5*sin(p.x*8.0+p.y*5.0-time*(.8+energy*3.0));
+          color = vec3(.035,.035,.04) + vec3(.34,.35,.38)*diffuse*.72;
+          color += vec3(.72,.76,.82)*spec*1.15;
+          color += vec3(.72,.78,.9)*rim*(.58+energy*.95);
+          color += vec3(.4,.45,.52)*edge*(.12+liquidFlow*.24+energy*.38);
+        }
+        float vignette = smoothstep(1.45,.18,length(uv));
+        color *= vignette;
+        gl_FragColor = vec4(color, hit ? 1.0 : 0.0);
+      }
+    `;
+    const compile = (type: number, source: string) => {
+      const shader = gl.createShader(type);
+      if (!shader) return null;
+      gl.shaderSource(shader, source); gl.compileShader(shader);
+      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) { gl.deleteShader(shader); return null; }
+      return shader;
     };
-    raf = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(raf);
+    const vertex = compile(gl.VERTEX_SHADER, vertexSource);
+    const fragment = compile(gl.FRAGMENT_SHADER, fragmentSource);
+    if (!vertex || !fragment) return;
+    const program = gl.createProgram();
+    if (!program) return;
+    gl.attachShader(program, vertex); gl.attachShader(program, fragment); gl.linkProgram(program);
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) return;
+    gl.useProgram(program);
+    const buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,1,-1,-1,1,1,1]), gl.STATIC_DRAW);
+    const position = gl.getAttribLocation(program, "position");
+    gl.enableVertexAttribArray(position); gl.vertexAttribPointer(position,2,gl.FLOAT,false,0,0);
+    const resolution = gl.getUniformLocation(program,"resolution");
+    const timeUniform = gl.getUniformLocation(program,"time");
+    const energyUniform = gl.getUniformLocation(program,"energy");
+    let raf = 0, start = performance.now(), previous = start, smooth = 0, elapsed = 0;
+    const resize = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const width = Math.max(1, Math.round(element.clientWidth*dpr));
+      const height = Math.max(1, Math.round(element.clientHeight*dpr));
+      if (element.width !== width || element.height !== height) {
+        element.width = width; element.height = height; gl.viewport(0,0,width,height);
+      }
+    };
+    const loop = (now: number) => {
+      resize();
+      const dt = Math.min(48, now-previous); previous=now;
+      const target = Math.min(1,audioLevel.value);
+      smooth += (target-smooth) * (target>smooth ? .24 : .055);
+      const drive = Math.max(smooth, active ? .075 : 0);
+      elapsed += dt * (.00034 + drive*.0029);
+      gl.uniform2f(resolution,element.width,element.height);
+      gl.uniform1f(timeUniform,elapsed);
+      gl.uniform1f(energyUniform,drive);
+      gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+      raf=requestAnimationFrame(loop);
+    };
+    raf=requestAnimationFrame(loop);
+    return () => { cancelAnimationFrame(raf); gl.getExtension("WEBGL_lose_context")?.loseContext(); };
   }, [reactive, active]);
   return (
     <div className="core-fluid relative" style={{ width: size, height: size }}>
-      <div ref={r1} className="core-fluid-orbit core-fluid-orbit-a" />
-      <div ref={r2} className="core-fluid-orbit core-fluid-orbit-b" />
-      <div ref={r3} className="core-fluid-orbit core-fluid-orbit-c" />
-      <div className="core-fluid-aura" />
-      <div className="core-fluid-sphere">
-        <div className="core-fluid-sheen" />
-        <div className="core-fluid-current core-fluid-current-a" />
-        <div className="core-fluid-current core-fluid-current-b" />
-        <div ref={orb} className={`core-orb core-fluid-body ${reactive ? "" : active ? "animate-pulse-fast" : "animate-pulse-slow"}`} />
-      </div>
+      <div className="core-fluid-halo" />
+      <div className="core-fluid-edge" />
+      <canvas ref={canvas} className="core-fluid-canvas" aria-label="Live flowing liquid core" />
+      {!reactive && <div className="core-fluid-idle" />}
     </div>
   );
 }
