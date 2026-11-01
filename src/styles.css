@@ -1450,3 +1450,38 @@ html, body, #root, body { background: #000 !important; }
 @media (prefers-reduced-motion: reduce) {
   .floating-nav-item, .hud-input, .hud-button, .hud-mic, .signal-button { transition: none; }
 }
+
+
+/* Mobile dock + composer spacing correction. Keep the dock scrollable even
+   when the current set of tabs nearly fits the viewport. */
+@media (max-width: 640px) {
+  .chat-composer {
+    padding-bottom: calc(4.25rem + env(safe-area-inset-bottom)) !important;
+  }
+  .floating-nav {
+    box-sizing: border-box;
+    width: calc(100vw - 24px) !important;
+    max-width: calc(100vw - 24px) !important;
+    min-width: 0;
+    justify-content: flex-start !important;
+    flex-wrap: nowrap !important;
+    gap: 4px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    padding: 6px 8px !important;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y !important;
+    scrollbar-width: none;
+  }
+  .floating-nav::-webkit-scrollbar { display: none; }
+  .floating-nav-item {
+    box-sizing: border-box;
+    flex: 0 0 84px !important;
+    min-width: 84px !important;
+    width: 84px;
+    scroll-snap-align: center;
+    touch-action: pan-x pan-y !important;
+  }
+}
