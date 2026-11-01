@@ -211,6 +211,9 @@ function Index() {
   const speechAbort = useRef<AbortController | null>(null);
   const [mode, setMode] = useState<"voice" | "text">("voice");
   const [dashboard, setDashboard] = useState(true);
+  const [missionInput, setMissionInput] = useState("");
+  const [missionRunning, setMissionRunning] = useState(false);
+  const [localNow, setLocalNow] = useState(() => new Date());
   const navRef = useRef<HTMLElement | null>(null);
   const navTouch = useRef({ x: 0, y: 0, left: 0, horizontal: false, pointerId: -1 });
   const [convo, setConvo] = useState(false);
@@ -347,6 +350,29 @@ function Index() {
     } finally { setTranscribing(false); }
   }
   const endRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setLocalNow(new Date()), 1000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  async function launchMission(e: React.FormEvent) {
+    e.preventDefault();
+    const goal = missionInput.trim();
+    if (!goal || missionRunning || loading) return;
+    setMissionRunning(true);
+    setMissionInput("");
+    try {
+      await sendText("Act as EDITH X1 Agent. Mission objective: " + goal + "\\nBreak this into safe steps. Use EDITH NETWORK multi-step execution tools when relevant and supported. Execute supported actions, verify results, and clearly report completed, failed, and unavailable steps. Ask before irreversible or sensitive actions. Never claim actions you did not execute.");
+    } finally {
+      setMissionRunning(false);
+    }
+  }
+
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "Local device time";
+  const clockTime = new Intl.DateTimeFormat(undefined, { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: true }).format(localNow);
+  const clockDate = new Intl.DateTimeFormat(undefined, { weekday: "long", day: "numeric", month: "long", year: "numeric" }).format(localNow);
+  const latestMission = [...messages].reverse().find((m) => m.network?.steps?.length)?.network;
 
   useEffect(() => {
     let alive = true;
@@ -531,6 +557,12 @@ function Index() {
               <div className="dashboard-metric"><div className="metric-icon"><MessageSquare/></div><div><b>CONVERSATIONS</b><small>Saved in this session</small></div><strong>{messages.length}</strong></div>
               <button className="dashboard-text-link" onClick={() => setShowNet(true)}>VIEW NETWORK DETAILS <ArrowUpRight size={14}/></button>
             </article>
+            <article className="dashboard-card dashboard-clock-card">
+              <div className="dashboard-card-top"><span><Clock3 size={15}/> LOCAL SYSTEM TIME</span><span>AUTO DETECTED</span></div>
+              <div className="dashboard-clock-time">{clockTime}</div>
+              <div className="dashboard-clock-date">{clockDate}</div>
+              <div className="dashboard-clock-zone"><Radio size={13}/>{timezone}</div>
+            </article>
             <article className="dashboard-card dashboard-command-card">
               <div className="dashboard-card-top"><span>COMMAND INPUT</span><span>TEXT / VOICE</span></div>
               <form className="dashboard-command-form" onSubmit={send}><input value={input} onChange={e=>setInput(e.target.value)} placeholder="What can I do for you?" aria-label="Enter a command"/><button disabled={loading || !input.trim()} aria-label="Send command"><ArrowUpRight size={18}/></button></form>
@@ -542,6 +574,15 @@ function Index() {
               {messages.length ? <div className="dashboard-activity-list">{messages.slice(-3).reverse().map((m,i)=><button key={`${i}-${m.role}`} onClick={()=>{setDashboard(false);switchMode("text")}}><span className="activity-dot"/><span><b>{m.role === "user" ? "YOU" : "EDITH"}</b><small>{m.content.replace(/[*_#`]/g,"").slice(0,92)}</small></span><ArrowUpRight size={14}/></button>)}</div> : <div className="dashboard-empty"><div className="activity-orbit"><Clock3/></div><b>No recent activity</b><small>Your interactions will appear here.</small></div>}
             </article>
             <article className="dashboard-card dashboard-tools-card"><div className="dashboard-card-top"><span><Wrench size={15}/> SYSTEM MODULES</span><span>AVAILABLE</span></div><div className="dashboard-module-grid"><button onClick={()=>setShowNet(true)}><Activity/><b>Network</b><small>Connections & status</small></button><button onClick={()=>{setDashboard(false);switchMode("text")}}><BrainCircuit/><b>Intelligence</b><small>Chat with EDITH</small></button><button onClick={()=>setShowSettings(true)}><Settings/><b>Preferences</b><small>Voice & behaviour</small></button></div></article>
+            <article className="dashboard-card dashboard-agent-card">
+              <div className="dashboard-card-top"><span><Sparkles size={15}/> AGENT MISSION MODE</span><span>{missionRunning || loading ? "EXECUTING" : "READY"}</span></div>
+              <p className="agent-intro">Give EDITH an objective. It will plan the work, run supported network actions and report what actually happened.</p>
+              <form className="agent-mission-form" onSubmit={launchMission}>
+                <textarea value={missionInput} onChange={(e)=>setMissionInput(e.target.value)} placeholder="Example: Research the latest AI developments and summarise the three biggest changes." aria-label="Describe an agent mission" rows={3}/>
+                <button type="submit" disabled={!missionInput.trim() || missionRunning || loading}>{missionRunning || loading ? <Loader2 className="animate-spin" size={16}/> : <Zap size={16}/>} {missionRunning || loading ? "RUNNING MISSION" : "START MISSION"}</button>
+              </form>
+              {latestMission?.steps?.length ? <div className="agent-result-steps">{latestMission.steps.map((step)=><div className="agent-result-step" key={step.id}><span className={step.status === "succeeded" ? "step-status done" : step.status === "failed" ? "step-status failed" : "step-status"} /> <b>{step.tool.replaceAll("_"," ")}</b><small>{step.status}{step.error ? " · "+step.error : ""}</small></div>)}</div> : <div className="agent-empty"><Sparkles size={16}/>Completed mission steps will appear here.</div>}
+            </article>
             <article className="dashboard-card dashboard-mission-card">
               <div className="dashboard-card-top"><span><Zap size={15}/> MISSION TIMELINE</span><span>LIVE SESSION</span></div>
               <div className="mission-steps">
