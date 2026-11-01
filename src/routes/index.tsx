@@ -1,6 +1,6 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Mic, Square, Loader2, MessageSquare, AudioLines } from "lucide-react";
+import { Mic, Square, Loader2, MessageSquare, AudioLines, Settings, Activity, Trash2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { useServerFn } from "@tanstack/react-start";
 import { askJarvis, type NetworkPayload } from "@/lib/jarvis.functions";
@@ -329,7 +329,7 @@ function Index() {
       {showSettings && (
         <SettingsPanel settings={settings} onChange={saveSettings} onClose={() => setShowSettings(false)} onPreview={(v) => speak("Hello. I am EDITH, at your service.", v)} />
       )}
-      <header className="flex items-center gap-2 border-b border-border px-5 py-3">
+      <header className="glass-panel flex items-center gap-2 border-b border-border px-5 py-3">
         <Core size={36} active={loading} />
         <div>
           <div className="jarvis-title text-base sm:text-lg">E.D.I.T.H.</div>
@@ -395,7 +395,7 @@ function Index() {
           <div ref={endRef} />
         </div>
       </section>
-      <form onSubmit={send} className="border-t border-border p-4">
+      <form onSubmit={send} className="glass-panel chat-composer border-t border-border p-4">
         <div className="mx-auto flex max-w-3xl gap-2">
           <button type="button" onClick={toggleMic} disabled={loading || transcribing} aria-label={recording ? "Stop recording" : "Speak"} className={recording ? "hud-mic hud-mic-on" : "hud-mic"}>
             {transcribing ? <Loader2 className="h-5 w-5 animate-spin" /> : recording ? <Square className="h-4 w-4 fill-current" /> : <Mic className="h-5 w-5" />}
@@ -406,6 +406,24 @@ function Index() {
         {voiceError && <p className="mx-auto mt-2 max-w-3xl text-sm text-destructive">{voiceError}</p>}
       </form>
       </>)}
+
+      <nav className="floating-nav" aria-label="Main navigation">
+        <button type="button" onClick={() => { if (mode === "voice") stopConvo(); setMode("voice"); }} className={mode === "voice" ? "floating-nav-item is-active" : "floating-nav-item"} aria-label="Voice mode">
+          <AudioLines className="h-5 w-5" /><span>Voice</span>
+        </button>
+        <button type="button" onClick={() => { if (mode === "voice") stopConvo(); setMode("text"); }} className={mode === "text" ? "floating-nav-item is-active" : "floating-nav-item"} aria-label="Text mode">
+          <MessageSquare className="h-5 w-5" /><span>Chat</span>
+        </button>
+        <button type="button" onClick={() => setShowNet(!showNet)} className={showNet ? "floating-nav-item is-active" : "floating-nav-item"} aria-label="Network status">
+          <Activity className="h-5 w-5" /><span>Network</span>
+        </button>
+        <button type="button" onClick={() => setShowSettings(true)} className="floating-nav-item" aria-label="Settings">
+          <Settings className="h-5 w-5" /><span>Settings</span>
+        </button>
+        {messages.length > 0 && <button type="button" onClick={clearChat} className="floating-nav-item" aria-label="Clear chat">
+          <Trash2 className="h-5 w-5" /><span>Clear</span>
+        </button>}
+      </nav>
     </main>
   );
 }
