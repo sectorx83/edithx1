@@ -1650,3 +1650,31 @@ html, body, #root, body { background: #000 !important; }
 .context-latest p{font-size:11px;line-height:1.55;color:#c3c3c8;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin:7px 0}
 @media(min-width:761px){.dashboard-mission-card,.dashboard-provider-card,.dashboard-memory-card{grid-column:span 1}}
 @media(max-width:760px){.dashboard-mission-card,.dashboard-provider-card,.dashboard-memory-card{min-height:unset}.mission-step{padding:9px 0}.provider-empty{min-height:95px}}
+
+
+/* Agent mission console and device-local clock */
+.dashboard-clock-card{display:flex;flex-direction:column;justify-content:center;min-height:145px;background:radial-gradient(ellipse at 15% 20%,rgba(255,255,255,.09),transparent 65%),linear-gradient(145deg,rgba(255,255,255,.065),rgba(255,255,255,.015))}
+.dashboard-clock-time{position:relative;z-index:1;margin-top:13px;font-size:clamp(29px,4vw,42px);line-height:1.1;font-weight:350;letter-spacing:-.055em;font-variant-numeric:tabular-nums;color:#f0f0f2}
+.dashboard-clock-date{position:relative;z-index:1;margin-top:6px;font-size:10px;color:#aaa}
+.dashboard-clock-zone{position:relative;z-index:1;display:flex;align-items:center;gap:6px;margin-top:11px;font-size:9px;color:#777;letter-spacing:.06em;overflow-wrap:anywhere}
+.dashboard-agent-card{grid-column:1/-1}
+.agent-intro{position:relative;z-index:1;margin:12px 0;color:#888;font-size:11px;line-height:1.55}
+.agent-mission-form{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:stretch}
+.agent-mission-form textarea{min-width:0;resize:vertical;min-height:66px;border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:12px;background:rgba(0,0,0,.25);color:#eee;font:inherit;font-size:11px;outline:none}
+.agent-mission-form textarea:focus{border-color:rgba(255,255,255,.38);box-shadow:0 0 0 3px rgba(255,255,255,.035)}
+.agent-mission-form button{display:flex;align-items:center;justify-content:center;gap:8px;min-width:145px;padding:0 15px;border:1px solid rgba(255,255,255,.2);border-radius:14px;background:linear-gradient(145deg,rgba(255,255,255,.17),rgba(255,255,255,.045));color:#e8e8eb;font-size:9px;letter-spacing:.12em}
+.agent-mission-form button:disabled{opacity:.45;cursor:not-allowed}
+.agent-empty{position:relative;z-index:1;display:flex;align-items:center;gap:8px;padding:13px 2px 2px;color:#777;font-size:10px}
+.agent-result-steps{position:relative;z-index:1;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;margin-top:12px}
+.agent-result-step{display:grid;grid-template-columns:8px minmax(0,1fr);gap:3px 8px;align-items:center;padding:10px;border:1px solid rgba(255,255,255,.08);border-radius:11px;background:rgba(255,255,255,.025)}
+.agent-result-step b{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:#c8c8cd}
+.agent-result-step small{grid-column:2;font-size:9px;color:#777}
+.step-status{width:6px;height:6px;border-radius:50%;background:#777}
+.step-status.done{background:#ddd;box-shadow:0 0 8px rgba(255,255,255,.5)}
+.step-status.failed{background:#999;box-shadow:0 0 8px rgba(255,255,255,.25)}
+@media(max-width:760px){
+ .dashboard-agent-card{grid-column:auto}
+ .agent-mission-form{grid-template-columns:1fr}
+ .agent-mission-form button{min-height:43px}
+ .dashboard-clock-card{min-height:135px}
+}
