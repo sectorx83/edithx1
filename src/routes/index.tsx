@@ -213,6 +213,8 @@ function Index() {
   const [dashboard, setDashboard] = useState(true);
   const [missionInput, setMissionInput] = useState("");
   const [missionRunning, setMissionRunning] = useState(false);
+  const [missionStatus, setMissionStatus] = useState<"idle" | "dispatching" | "completed" | "failed">("idle");
+  const [missionDuration, setMissionDuration] = useState<number | null>(null);
   const [localNow, setLocalNow] = useState(() => new Date());
   const navRef = useRef<HTMLElement | null>(null);
   const navTouch = useRef({ x: 0, y: 0, left: 0, horizontal: false, pointerId: -1 });
@@ -360,11 +362,21 @@ function Index() {
     e.preventDefault();
     const goal = missionInput.trim();
     if (!goal || missionRunning || loading) return;
+    const started = Date.now();
     setMissionRunning(true);
+    setMissionStatus("dispatching");
+    setMissionDuration(null);
     setMissionInput("");
     try {
-      await sendText("Act as EDITH X1 Agent. Mission objective: " + goal + "\\nBreak this into safe steps. Use EDITH NETWORK multi-step execution tools when relevant and supported. Execute supported actions, verify results, and clearly report completed, failed, and unavailable steps. Ask before irreversible or sensitive actions. Never claim actions you did not execute.");
+      const reply = await sendText(
+        "You are EDITH X1 Agent. Mission objective: " + goal +
+        "\\nCreate an ordered plan, then execute relevant actions supported by EDITH NETWORK. Prefer one multi-step execute_task directive. Verify returned results and report each step as completed, failed, or skipped with evidence. Never claim actions without tool confirmation. Ask before irreversible, financial, account-changing, or sensitive actions. Clearly explain unsupported steps."
+      );
+      setMissionStatus(reply ? "completed" : "failed");
+    } catch {
+      setMissionStatus("failed");
     } finally {
+      setMissionDuration(Math.max(1, Math.round((Date.now() - started) / 1000)));
       setMissionRunning(false);
     }
   }
@@ -372,6 +384,7 @@ function Index() {
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "Local device time";
   const clockTime = new Intl.DateTimeFormat(undefined, { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: true }).format(localNow);
   const clockDate = new Intl.DateTimeFormat(undefined, { weekday: "long", day: "numeric", month: "long", year: "numeric" }).format(localNow);
+  const timezoneOffset = new Intl.DateTimeFormat(undefined, { timeZoneName: "shortOffset" }).formatToParts(localNow).find((part) => part.type === "timeZoneName")?.value ?? "Local";
   const latestMission = [...messages].reverse().find((m) => m.network?.steps?.length)?.network;
 
   useEffect(() => {
@@ -561,7 +574,7 @@ function Index() {
               <div className="dashboard-card-top"><span><Clock3 size={15}/> LOCAL SYSTEM TIME</span><span>AUTO DETECTED</span></div>
               <div className="dashboard-clock-time">{clockTime}</div>
               <div className="dashboard-clock-date">{clockDate}</div>
-              <div className="dashboard-clock-zone"><Radio size={13}/>{timezone}</div>
+              <div className="dashboard-clock-zone"><Radio size={13}/>{timezone} <span>{timezoneOffset}</span></div>
             </article>
             <article className="dashboard-card dashboard-command-card">
               <div className="dashboard-card-top"><span>COMMAND INPUT</span><span>TEXT / VOICE</span></div>
@@ -575,13 +588,13 @@ function Index() {
             </article>
             <article className="dashboard-card dashboard-tools-card"><div className="dashboard-card-top"><span><Wrench size={15}/> SYSTEM MODULES</span><span>AVAILABLE</span></div><div className="dashboard-module-grid"><button onClick={()=>setShowNet(true)}><Activity/><b>Network</b><small>Connections & status</small></button><button onClick={()=>{setDashboard(false);switchMode("text")}}><BrainCircuit/><b>Intelligence</b><small>Chat with EDITH</small></button><button onClick={()=>setShowSettings(true)}><Settings/><b>Preferences</b><small>Voice & behaviour</small></button></div></article>
             <article className="dashboard-card dashboard-agent-card">
-              <div className="dashboard-card-top"><span><Sparkles size={15}/> AGENT MISSION MODE</span><span>{missionRunning || loading ? "EXECUTING" : "READY"}</span></div>
-              <p className="agent-intro">Give EDITH an objective. It will plan the work, run supported network actions and report what actually happened.</p>
+              <div className="dashboard-card-top"><span><Sparkles size={15}/> AGENT MISSION MODE</span><span>{missionRunning ? "AGENT ACTIVE" : missionStatus === "completed" ? "MISSION COMPLETE" : missionStatus === "failed" ? "MISSION FAILED" : "READY"}</span></div>
+              <p className="agent-intro">Assign an objective. EDITH plans the work, invokes supported tools, verifies returned results and reports what actually happened. Sensitive actions require approval.</p>
               <form className="agent-mission-form" onSubmit={launchMission}>
                 <textarea value={missionInput} onChange={(e)=>setMissionInput(e.target.value)} placeholder="Example: Research the latest AI developments and summarise the three biggest changes." aria-label="Describe an agent mission" rows={3}/>
                 <button type="submit" disabled={!missionInput.trim() || missionRunning || loading}>{missionRunning || loading ? <Loader2 className="animate-spin" size={16}/> : <Zap size={16}/>} {missionRunning || loading ? "RUNNING MISSION" : "START MISSION"}</button>
               </form>
-              {latestMission?.steps?.length ? <div className="agent-result-steps">{latestMission.steps.map((step)=><div className="agent-result-step" key={step.id}><span className={step.status === "succeeded" ? "step-status done" : step.status === "failed" ? "step-status failed" : "step-status"} /> <b>{step.tool.replaceAll("_"," ")}</b><small>{step.status}{step.error ? " · "+step.error : ""}</small></div>)}</div> : <div className="agent-empty"><Sparkles size={16}/>Completed mission steps will appear here.</div>}
+              {missionRunning ? <div className="agent-live-progress"><Loader2 size={15} className="animate-spin"/><span><b>EXECUTING OBJECTIVE</b><small>Waiting for verified AI and network tool results.</small></span></div> : latestMission?.steps?.length ? <div className="agent-result-steps">{latestMission.steps.map((step)=><div className="agent-result-step" key={step.id}><span className={step.status === "succeeded" ? "step-status done" : step.status === "failed" ? "step-status failed" : "step-status"} /> <b>{step.tool.replaceAll("_"," ")}</b><small>{step.status}{step.error ? " · "+step.error : ""}</small></div>)}</div> : <div className="agent-empty"><Sparkles size={16}/>Verified execution steps will appear here after a mission.</div>}
             </article>
             <article className="dashboard-card dashboard-mission-card">
               <div className="dashboard-card-top"><span><Zap size={15}/> MISSION TIMELINE</span><span>LIVE SESSION</span></div>
