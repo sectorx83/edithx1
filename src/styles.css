@@ -1083,3 +1083,104 @@ html, body, #root, body { background: #000 !important; }
 @media (max-width: 480px) {
   .signal-button { width: 42px; height: 42px; flex-basis: 42px; border-radius: 14px; }
 }
+
+
+/* Mobile layout hardening: keep the dock inside the viewport and make the
+   settings body the only scrolling region (including Android Chrome). */
+.floating-nav {
+  position: fixed;
+  left: 50%;
+  right: auto;
+  bottom: calc( max(10px, env(safe-area-inset-bottom)) + 8px );
+  width: min(560px, calc(100vw - 16px));
+  max-width: calc(100vw - 16px);
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-around;
+  gap: 3px;
+  padding: 6px;
+  transform: translateX(-50%);
+  z-index: 100;
+}
+.floating-nav-item {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 48px;
+  padding: 5px 2px;
+  gap: 3px;
+  font-size: clamp(9px, 2.5vw, 11px);
+  white-space: nowrap;
+}
+.floating-nav-item svg { width: 19px; height: 19px; }
+.chat-composer {
+  padding-bottom: calc(5.4rem + env(safe-area-inset-bottom)) !important;
+}
+.network-popover {
+  bottom: calc(5.7rem + env(safe-area-inset-bottom));
+  max-height: min(48dvh, 380px);
+  z-index: 110;
+}
+.settings-backdrop {
+  position: fixed;
+  inset: 0;
+  height: 100dvh;
+  min-height: 0;
+  box-sizing: border-box;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  align-items: stretch;
+  justify-content: center;
+  z-index: 200;
+}
+.settings-window {
+  min-height: 0;
+  height: min(900px, calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom)));
+  max-height: calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+}
+.settings-scroll {
+  flex: 1 1 0;
+  min-height: 0;
+  height: 0;
+  overflow-y: auto !important;
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,.28) transparent;
+}
+.settings-scroll::-webkit-scrollbar { width: 4px; }
+.settings-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,.25); border-radius: 8px; }
+@media (max-width: 640px) {
+  .settings-backdrop {
+    padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+    align-items: stretch;
+    justify-content: flex-start;
+  }
+  .settings-window {
+    width: 100%;
+    height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    min-height: 0;
+    max-height: none;
+    flex: 1 1 auto;
+    border-radius: 0;
+  }
+  .settings-header, .settings-footer { flex-shrink: 0; }
+  .settings-scroll {
+    flex: 1 1 0;
+    height: 0;
+    min-height: 0;
+    padding-bottom: max(28px, env(safe-area-inset-bottom));
+  }
+}
+@media (max-width: 380px) {
+  .floating-nav { width: calc(100vw - 12px); max-width: calc(100vw - 12px); }
+  .floating-nav-item { min-height: 46px; padding-inline: 0; font-size: 9px; }
+}
+@media (max-height: 620px) {
+  .settings-header { padding-top: 10px; padding-bottom: 10px; }
+  .settings-scroll { padding-top: 14px; padding-bottom: 18px; }
+  .settings-footer { padding-top: 8px; padding-bottom: 8px; }
+}
