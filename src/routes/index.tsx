@@ -247,14 +247,47 @@ function Index() {
     if (convoRef.current) void listen();
   }
 
-  function startConvo() { unlockAudio(); convoRef.current = true; setConvo(true); emptyStreak.current = 0; void listen(); }
+  function startConvo() {
+    unlockAudio();
+    speechAbort.current?.abort();
+    convoRef.current = true;
+    setConvo(true);
+    setPhase("idle");
+    setVoiceError("");
+    emptyStreak.current = 0;
+    void listen();
+  }
+
   function stopConvo() {
-    convoRef.current = false; setConvo(false); setPhase("idle");
+    convoRef.current = false;
+    setConvo(false);
+    setPhase("idle");
     speechAbort.current?.abort();
     cancelLocalTranscription();
-    const rec = recRef.current; recRef.current = null;
+    const rec = recRef.current;
+    recRef.current = null;
     rec?.stop().catch(() => {});
     audioLevel.value = 0;
+  }
+
+  function switchMode(next: "voice" | "text") {
+    if (next === mode) return;
+    // Tear down every voice task before changing the stage so no stale recorder,
+    // transcription, or speech callback can keep the previous mode alive.
+    convoRef.current = false;
+    setConvo(false);
+    setPhase("idle");
+    speechAbort.current?.abort();
+    cancelLocalTranscription();
+    const rec = recRef.current;
+    recRef.current = null;
+    rec?.stop().catch(() => {});
+    setRecording(false);
+    setTranscribing(false);
+    setVoiceError("");
+    audioLevel.value = 0;
+    setShowNet(false);
+    setMode(next);
   }
   useEffect(() => () => { convoRef.current = false; speechAbort.current?.abort(); cancelLocalTranscription(); recRef.current?.stop().catch(() => {}); }, []);
 
@@ -516,10 +549,10 @@ function Index() {
         </aside>
       )}
       <nav className="floating-nav fixed" aria-label="Main navigation">
-        <button type="button" onClick={() => { if (mode === "voice") stopConvo(); setMode("voice"); }} className={mode === "voice" ? "floating-nav-item is-active" : "floating-nav-item"} aria-label="Voice mode">
+        <button type="button" onClick={() => switchMode("voice")} className={mode === "voice" ? "floating-nav-item is-active" : "floating-nav-item"} aria-label="Voice mode">
           <AudioLines className="h-5 w-5" /><span>Voice</span>
         </button>
-        <button type="button" onClick={() => { if (mode === "voice") stopConvo(); setMode("text"); }} className={mode === "text" ? "floating-nav-item is-active" : "floating-nav-item"} aria-label="Text mode">
+        <button type="button" onClick={() => switchMode("text")} className={mode === "text" ? "floating-nav-item is-active" : "floating-nav-item"} aria-label="Text mode">
           <MessageSquare className="h-5 w-5" /><span>Chat</span>
         </button>
         <button type="button" onClick={() => setShowNet(!showNet)} className={showNet ? "floating-nav-item is-active network-nav-item" : "floating-nav-item network-nav-item"} aria-label="Network status" aria-expanded={showNet}>
