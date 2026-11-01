@@ -358,7 +358,7 @@ function Index() {
         </div>
       )}
       {mode === "voice" ? (
-        <section className="flex flex-1 flex-col items-center justify-center gap-8 overflow-hidden px-6 text-center">
+        <section className="flex flex-1 flex-col items-center justify-center gap-8 overflow-hidden px-6 pb-24 text-center">
           <button onClick={convo ? stopConvo : startConvo} aria-label={convo ? "End conversation" : "Start talking"} className="rounded-full">
             <Core size={260} reactive active={phase === "thinking"} />
           </button>
@@ -407,7 +407,7 @@ function Index() {
       </form>
       </>)}
 
-      <nav className="floating-nav" aria-label="Main navigation">
+      <nav className="floating-nav fixed" aria-label="Main navigation">
         <button type="button" onClick={() => { if (mode === "voice") stopConvo(); setMode("voice"); }} className={mode === "voice" ? "floating-nav-item is-active" : "floating-nav-item"} aria-label="Voice mode">
           <AudioLines className="h-5 w-5" /><span>Voice</span>
         </button>
