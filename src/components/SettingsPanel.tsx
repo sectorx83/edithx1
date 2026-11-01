@@ -1,4 +1,6 @@
-import { SENSITIVE, TONES, VOICES, type StyxSettings } from "@/lib/styx-settings";
+import { useEffect, useState } from "react";
+import { SENSITIVE, TONES, type StyxSettings } from "@/lib/styx-settings";
+import { localVoices } from "@/lib/local-voice";
 
 type Props = {
   settings: StyxSettings;
@@ -20,6 +22,13 @@ function Options({ items, value, onPick }: { items: [string, string][]; value: s
 }
 
 export function SettingsPanel({ settings, onChange, onClose, onPreview }: Props) {
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+  useEffect(() => {
+    const update = () => setVoices(localVoices());
+    update();
+    window.speechSynthesis?.addEventListener("voiceschanged", update);
+    return () => window.speechSynthesis?.removeEventListener("voiceschanged", update);
+  }, []);
   const set = (patch: Partial<StyxSettings>) => onChange({ ...settings, ...patch });
   return (
     <div className="animate-fade-in fixed inset-0 z-50 flex justify-end bg-background/70 backdrop-blur-sm" onClick={onClose}>
@@ -35,8 +44,9 @@ export function SettingsPanel({ settings, onChange, onClose, onPreview }: Props)
             Read replies aloud
             <input type="checkbox" checked={settings.speak_replies} onChange={(e) => set({ speak_replies: e.target.checked })} className="h-5 w-5 accent-primary" />
           </label>
-          <select value={settings.voice} onChange={(e) => set({ voice: e.target.value })} className="hud-input w-full">
-            {VOICES.map((v) => <option key={v.id} value={v.id}>{v.label}</option>)}
+          <select value={voices.some((v) => v.voiceURI === settings.voice) ? settings.voice : "device-default"} onChange={(e) => set({ voice: e.target.value })} className="hud-input w-full">
+            <option value="device-default">Device default</option>
+            {voices.map((v) => <option key={v.voiceURI} value={v.voiceURI}>{v.name} — {v.lang}</option>)}
           </select>
           <button onClick={() => onPreview(settings.voice)} className="mt-2 text-xs tracking-widest text-primary">▶ PREVIEW VOICE</button>
         </section>

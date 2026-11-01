@@ -6,9 +6,9 @@ import { useServerFn } from "@tanstack/react-start";
 import { askJarvis, type NetworkPayload } from "@/lib/jarvis.functions";
 import { TaskPanel } from "@/components/TaskPanel";
 import { getNetworkStatus, reportBrowserAction } from "@/lib/styx-network.functions";
-import { transcribeAudio } from "@/lib/transcribe.functions";
+import { transcribeLocal, speakLocal, cancelLocalTranscription } from "@/lib/local-voice";
 import { recordWav } from "@/lib/record-wav";
-import { streamSpeech, unlockAudio } from "@/lib/stream-speech";
+import { unlockAudio } from "@/lib/stream-speech";
 import { audioLevel } from "@/lib/audio-level";
 import { SettingsPanel } from "@/components/SettingsPanel";
 import { DEFAULT_SETTINGS, type StyxSettings } from "@/lib/styx-settings";
@@ -80,7 +80,6 @@ function Index() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const ask = useServerFn(askJarvis);
-  const transcribe = useServerFn(transcribeAudio);
   const recRef = useRef<{ stop: () => Promise<File> } | null>(null);
   const emptyStreak = useRef(0);
   const [recording, setRecording] = useState(false);
@@ -105,6 +104,7 @@ function Index() {
     try {
       setPhase("listening");
       const rec = await recordWav(() => void finishTurn());
+      if (!convoRef.current) { await rec.stop(); return; }
       recRef.current = rec;
     } catch { setVoiceError("Microphone access was blocked."); stopConvo(); }
   }
@@ -115,8 +115,8 @@ function Index() {
     setPhase("thinking");
     try {
       const file = await rec.stop();
-      const fd = new FormData(); fd.append("file", file);
-      const r = await transcribe({ data: fd });
+      const r = await transcribeLocal(file);
+      if (!convoRef.current) return;
       if (r.error || !r.text?.trim()) {
         if (r.error) setVoiceError(r.error);
         emptyStreak.current += 1;
@@ -139,25 +139,22 @@ function Index() {
   function stopConvo() {
     convoRef.current = false; setConvo(false); setPhase("idle");
     speechAbort.current?.abort();
+    cancelLocalTranscription();
     const rec = recRef.current; recRef.current = null;
     rec?.stop().catch(() => {});
     audioLevel.value = 0;
   }
-  useEffect(() => () => { convoRef.current = false; speechAbort.current?.abort(); recRef.current?.stop().catch(() => {}); }, []);
+  useEffect(() => () => { convoRef.current = false; speechAbort.current?.abort(); cancelLocalTranscription(); recRef.current?.stop().catch(() => {}); }, []);
 
   async function speak(text: string, voice = settings.voice) {
     speechAbort.current?.abort();
     const ac = new AbortController();
     speechAbort.current = ac;
     text = text.replace(/[*_#`>|]/g, "").replace(/\[(.*?)\]\(.*?\)/g, "$1");
-    const { data } = await supabase.auth.getSession();
-    const token = data.session?.access_token;
-    if (!token) return;
     try {
-      await streamSpeech("/api/speak", { text, voice }, { Authorization: `Bearer ${token}` }, ac.signal);
+      await speakLocal(text, voice, ac.signal);
     } catch (e) {
-      if (!ac.signal.aborted) setVoiceError("Couldn't play the voice reply.");
-      console.error(e);
+      if (!ac.signal.aborted) setVoiceError(e instanceof Error ? e.message : "Couldn't play the device voice, sir.");
     }
   }
 
@@ -165,16 +162,17 @@ function Index() {
     unlockAudio();
     setVoiceError("");
     if (!recording) {
-      try { recRef.current = await recordWav(); setRecording(true); }
+      try { recRef.current = await recordWav(() => void toggleMic()); setRecording(true); }
       catch { setVoiceError("Microphone access was blocked."); }
       return;
     }
     setRecording(false);
     setTranscribing(true);
     try {
-      const file = await recRef.current!.stop();
-      const fd = new FormData(); fd.append("file", file);
-      const r = await transcribe({ data: fd });
+      const rec = recRef.current; recRef.current = null;
+      if (!rec) return;
+      const file = await rec.stop();
+      const r = await transcribeLocal(file);
       if (r.error) setVoiceError(r.error);
       else if (r.text) await sendText(r.text);
     } catch (e) {
@@ -233,8 +231,9 @@ function Index() {
   }, [uid]);
 
   async function saveSettings(next: StyxSettings) {
+    if (!uid) return;
     setSettings(next);
-    const { error } = await supabase.from("user_settings").upsert({ user_id: uid!, ...next, updated_at: new Date().toISOString() });
+    const { error } = await supabase.from("user_settings").upsert({ user_id: uid, ...next, updated_at: new Date().toISOString() });
     if (error) setVoiceError("Couldn't save settings.");
   }
 
@@ -245,7 +244,8 @@ function Index() {
   }
 
   async function clearChat() {
-    await supabase.from("messages").delete().eq("user_id", uid!);
+    if (!uid) return;
+    await supabase.from("messages").delete().eq("user_id", uid);
     setMessages([]);
   }
 
@@ -341,7 +341,7 @@ function Index() {
             {phase === "listening" ? "LISTENING..." : phase === "thinking" ? "THINKING..." : phase === "speaking" ? "SPEAKING..." : "TAP THE CORE TO TALK"}
           </div>
           {messages.length > 0 && (
-            <p className="line-clamp-3 max-w-md text-sm text-muted-foreground">{messages[messages.length - 1]!.content.replace(/[*_#`]/g, "")}</p>
+            <p className="line-clamp-3 max-w-md text-sm text-muted-foreground">{messages.at(-1)?.content.replace(/[*_#`]/g, "")}</p>
           )}
           <div className="flex gap-3">
             {phase === "listening" && <button onClick={() => void finishTurn()} className="hud-button">Done speaking</button>}
