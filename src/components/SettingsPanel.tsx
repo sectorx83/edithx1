@@ -49,7 +49,7 @@ export function SettingsPanel({ settings, onChange, onClose, onPreview }: Props)
   const selectedVoice = voices.some((voice) => voice.voiceURI === settings.voice) ? settings.voice : "device-default";
 
   return (
-    <div className="settings-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
+    <div\n      className="settings-backdrop"\n      onPointerDown={(event) => { if (event.target === event.currentTarget) onClose(); }}\n      onClick={(event) => { if (event.target === event.currentTarget) onClose(); }}\n    >
       <section className="settings-window" role="dialog" aria-modal="true" aria-labelledby="settings-title">
         <header className="settings-header">
           <div className="flex min-w-0 items-center gap-3">
@@ -59,7 +59,7 @@ export function SettingsPanel({ settings, onChange, onClose, onPreview }: Props)
               <h2 id="settings-title" className="settings-title">Settings</h2>
             </div>
           </div>
-          <button type="button" onClick={onClose} aria-label="Close settings" className="settings-close"><X className="h-5 w-5" /></button>
+          <button type="button" onClick={onClose} aria-label="Close settings" className="settings-close" title="Close settings"><X className="h-5 w-5" /></button>
         </header>
 
         <div className="settings-scroll">
