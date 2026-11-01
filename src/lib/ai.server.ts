@@ -28,17 +28,25 @@ export async function callChat(systemPrompt: string, messages: ChatMessage[]): P
   const supplied = [process.env["GEMINI_API_KEY_1"], process.env["GEMINI_API_KEY_2"], process.env["GEMINI_API_KEY_3"], process.env["GEMINI_API_KEY_4"]];
   const keys = [...new Set(supplied.filter((key): key is string => Boolean(key)))];
   if (!keys.length && process.env["GEMINI_API_KEY"]) keys.push(process.env["GEMINI_API_KEY"]);
-  if (!keys.length) throw new Error("AI_UNAVAILABLE");
+  if (!keys.length) throw new Error("AI_NOT_CONFIGURED");
+  let sawQuota = false;
+  let sawBadKey = false;
   for (const key of keys) {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 20000);
     try {
       return await callGeminiDirect(systemPrompt, messages, key, controller.signal);
     } catch (error) {
-      // Quota, billing and credential failures can be resolved by another key.
+      // Rotate only for quota/billing or credential failures; never expose the key.
       const reason = error instanceof Error ? error.message : "";
-      if (reason !== "RATE_LIMITED" && reason !== "BAD_API_KEY") throw new Error("AI_UNAVAILABLE");
+      if (reason === "RATE_LIMITED") { sawQuota = true; continue; }
+      if (reason === "BAD_API_KEY") { sawBadKey = true; continue; }
+      const category = reason === "AbortError" ? "timeout" : "network_or_provider_error";
+      console.error("[EDITH AI] Gemini request failed", { category });
+      throw new Error(reason === "AbortError" ? "AI_TIMEOUT" : "AI_PROVIDER_ERROR");
     } finally { clearTimeout(timer); }
   }
-  throw new Error("AI_UNAVAILABLE");
+  if (sawQuota) throw new Error("AI_RATE_LIMITED");
+  if (sawBadKey) throw new Error("AI_BAD_API_KEY");
+  throw new Error("AI_PROVIDER_ERROR");
 }
