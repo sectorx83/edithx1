@@ -543,7 +543,7 @@ function Index() {
       </form>
       </>)}
 
-      {showNet && (
+      {showNet && !showSettings && (
         <aside className="network-popover glass-panel" role="dialog" aria-label="EDITH Network status">
           <div className="network-popover-heading">
             <span className={`network-indicator network-${net.status}`} />
