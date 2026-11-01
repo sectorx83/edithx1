@@ -43,27 +43,34 @@ function Core({ size = 220, active = false, reactive = false }: { size?: number;
     let raf = 0, a = 0, smooth = 0, last = performance.now();
     const loop = (t: number) => {
       const dt = Math.min(64, t - last); last = t;
-      smooth += (audioLevel.value - smooth) * 0.2;
-      const speed = 0.02 + smooth * 0.9 + (active ? 0.08 : 0);
-      a += speed * dt;
-      if (r1.current) r1.current.style.transform = `rotate(${a * 0.5}deg)`;
-      if (r2.current) r2.current.style.transform = `rotate(${-a}deg) scale(${1 + smooth * 0.06})`;
-      if (r3.current) r3.current.style.transform = `rotate(${a * 1.6}deg) scale(${1 + smooth * 0.1})`;
-      if (orb.current) { orb.current.style.transform = `scale(${1 + smooth * 0.45})`; orb.current.style.filter = `brightness(${1 + smooth * 0.8})`; }
+      smooth += (audioLevel.value - smooth) * 0.16;
+      const energy = Math.min(1, smooth);
+      a += (0.012 + energy * 0.7 + (active ? 0.055 : 0)) * dt;
+      if (r1.current) r1.current.style.transform = `rotate(${a * 0.28}deg) scale(${1 + energy * 0.035})`;
+      if (r2.current) r2.current.style.transform = `rotate(${-a * 0.62}deg) scale(${1 + energy * 0.075})`;
+      if (r3.current) r3.current.style.transform = `rotate(${a}deg) scale(${1 + energy * 0.12})`;
+      if (orb.current) {
+        orb.current.style.transform = `scale(${1 + energy * 0.22}) rotate(${Math.sin(a / 90) * 5}deg)`;
+        orb.current.style.filter = `brightness(${0.92 + energy * 0.52}) contrast(${1.08 + energy * 0.24})`;
+        orb.current.style.borderRadius = `${48 + Math.sin(a / 115) * (2 + energy * 7)}% ${52 - Math.sin(a / 115) * (2 + energy * 7)}% ${49 + Math.cos(a / 140) * (2 + energy * 6)}% ${51 - Math.cos(a / 140) * (2 + energy * 6)}% / 52% 48% ${48 + energy * 5}% ${52 - energy * 5}%`;
+      }
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
   }, [reactive, active]);
   return (
-    <div className="relative" style={{ width: size, height: size }}>
-      <div ref={r1} className={`absolute inset-0 rounded-full border-2 border-dashed border-primary/40 ${reactive ? "" : "animate-spin-slow"}`} />
-      <div ref={r2} className={`absolute inset-[8%] rounded-full border-[3px] border-transparent border-t-primary border-r-primary/60 glow-ring ${reactive ? "" : "animate-spin-rev"}`} />
-      <div ref={r3} className={`absolute inset-[18%] rounded-full border-[3px] border-transparent border-l-primary border-b-primary glow-ring ${reactive ? "" : "animate-spin-mid"}`} />
-      <div className="absolute inset-[18%] rounded-full core-haze" />
-      <div className="core-ripple" />
-      <div className="core-ripple core-ripple-2" />
-      <div className="absolute inset-[37%]"><div ref={orb} className={`h-full w-full rounded-full core-orb ${reactive ? "" : active ? "animate-pulse-fast" : "animate-pulse-slow"}`} /></div>
+    <div className="core-fluid relative" style={{ width: size, height: size }}>
+      <div ref={r1} className="core-fluid-orbit core-fluid-orbit-a" />
+      <div ref={r2} className="core-fluid-orbit core-fluid-orbit-b" />
+      <div ref={r3} className="core-fluid-orbit core-fluid-orbit-c" />
+      <div className="core-fluid-aura" />
+      <div className="core-fluid-sphere">
+        <div className="core-fluid-sheen" />
+        <div className="core-fluid-current core-fluid-current-a" />
+        <div className="core-fluid-current core-fluid-current-b" />
+        <div ref={orb} className={`core-orb core-fluid-body ${reactive ? "" : active ? "animate-pulse-fast" : "animate-pulse-slow"}`} />
+      </div>
     </div>
   );
 }
@@ -337,18 +344,7 @@ function Index() {
         </div>
         <span className="ml-auto hidden text-[10px] tracking-[0.22em] text-muted-foreground sm:block">BLACK GLASS INTERFACE</span>
       </header>
-      {showNet && (
-        <div className="border-b border-border bg-background/80 px-5 py-3 text-xs backdrop-blur">
-          <div className="mx-auto flex max-w-3xl flex-col gap-2">
-            <div className="tracking-widest text-primary">EDITH NETWORK — {net.status.toUpperCase()}{net.error ? ` (${net.error})` : ""}</div>
-            {net.tools.length > 0 && <div className="text-muted-foreground">Available: {net.tools.map((t) => t.name).join(", ")}</div>}
-            {net.misconfigured.map((t) => (
-              <div key={t.name} className="text-yellow-400">⚠ {t.name}: {t.reason} {t.setup}</div>
-            ))}
-            {net.unavailable.length > 0 && <div className="text-muted-foreground">Unavailable: {net.unavailable.map((t) => t.name).join(", ")}</div>}
-          </div>
-        </div>
-      )}
+
       {mode === "voice" ? (
         <section className="voice-stage flex flex-1 flex-col items-center justify-center gap-8 overflow-hidden px-6 pb-28 text-center">
           <button onClick={convo ? stopConvo : startConvo} aria-label={convo ? "End conversation" : "Start talking"} className="rounded-full">
@@ -399,6 +395,20 @@ function Index() {
       </form>
       </>)}
 
+      {showNet && (
+        <aside className="network-popover glass-panel" role="dialog" aria-label="EDITH Network status">
+          <div className="network-popover-heading">
+            <span className={`network-indicator network-${net.status}`} />
+            <span>EDITH NETWORK</span>
+            <strong>{net.status.toUpperCase()}</strong>
+          </div>
+          {net.error && <p className="network-detail">{net.error}</p>}
+          {net.tools.length > 0 && <p className="network-detail"><b>Available</b> · {net.tools.map((t) => t.name).join(", ")}</p>}
+          {net.misconfigured.map((t) => <p key={t.name} className="network-detail"><b>{t.name}</b> · {t.reason} {t.setup}</p>)}
+          {net.unavailable.length > 0 && <p className="network-detail"><b>Unavailable</b> · {net.unavailable.map((t) => t.name).join(", ")}</p>}
+          {!net.error && net.tools.length === 0 && net.misconfigured.length === 0 && net.unavailable.length === 0 && <p className="network-detail">Checking connected services…</p>}
+        </aside>
+      )}
       <nav className="floating-nav fixed" aria-label="Main navigation">
         <button type="button" onClick={() => { if (mode === "voice") stopConvo(); setMode("voice"); }} className={mode === "voice" ? "floating-nav-item is-active" : "floating-nav-item"} aria-label="Voice mode">
           <AudioLines className="h-5 w-5" /><span>Voice</span>
@@ -406,8 +416,8 @@ function Index() {
         <button type="button" onClick={() => { if (mode === "voice") stopConvo(); setMode("text"); }} className={mode === "text" ? "floating-nav-item is-active" : "floating-nav-item"} aria-label="Text mode">
           <MessageSquare className="h-5 w-5" /><span>Chat</span>
         </button>
-        <button type="button" onClick={() => setShowNet(!showNet)} className={showNet ? "floating-nav-item is-active" : "floating-nav-item"} aria-label="Network status">
-          <Activity className="h-5 w-5" /><span>Network</span>
+        <button type="button" onClick={() => setShowNet(!showNet)} className={showNet ? "floating-nav-item is-active network-nav-item" : "floating-nav-item network-nav-item"} aria-label="Network status" aria-expanded={showNet}>
+          <span className={`network-indicator network-${net.status}`} /><Activity className="h-5 w-5" /><span>Network</span>
         </button>
         <button type="button" onClick={() => setShowSettings(true)} className="floating-nav-item" aria-label="Settings">
           <Settings className="h-5 w-5" /><span>Settings</span>
