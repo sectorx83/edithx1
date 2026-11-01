@@ -1282,3 +1282,171 @@ html, body, #root, body { background: #000 !important; }
 @media (prefers-reduced-motion: no-preference) {
   .floating-nav { scroll-behavior: smooth; }
 }
+
+
+/* EDITH X1 — refined optical liquid glass system.
+   Layered refraction cues, soft specular reflections and depth across the
+   existing interface; keeps the established monochrome layout intact. */
+:root {
+  --glass-edge: rgba(255,255,255,.22);
+  --glass-fill: rgba(255,255,255,.055);
+  --glass-shadow: 0 22px 60px rgba(0,0,0,.48), 0 3px 12px rgba(0,0,0,.24);
+  --glass-highlight: inset 0 1px 0 rgba(255,255,255,.28);
+}
+.glass-panel,
+.app-header,
+.floating-nav,
+.settings-card,
+.network-popover,
+.settings-window,
+.msg-user,
+.msg-ai,
+.hud-input,
+.hud-button,
+.hud-mic,
+.hud-chip,
+.signal-button {
+  position: relative;
+  isolation: isolate;
+  border-color: var(--glass-edge);
+  background:
+    linear-gradient(148deg, rgba(255,255,255,.13) 0%, rgba(255,255,255,.045) 34%, rgba(255,255,255,.018) 68%, rgba(255,255,255,.075) 100%);
+  box-shadow: var(--glass-shadow), var(--glass-highlight), inset 0 -1px 0 rgba(255,255,255,.055);
+  -webkit-backdrop-filter: blur(36px) saturate(180%) contrast(108%);
+  backdrop-filter: blur(36px) saturate(180%) contrast(108%);
+}
+.glass-panel::before,
+.app-header::before,
+.floating-nav::before,
+.settings-card::before,
+.network-popover::before,
+.settings-window::before,
+.msg-user::before,
+.msg-ai::before,
+.hud-input::before,
+.hud-button::before,
+.hud-mic::before,
+.hud-chip::before,
+.signal-button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(130% 95% at 0% 0%, rgba(255,255,255,.17), transparent 48%),
+    linear-gradient(112deg, transparent 18%, rgba(255,255,255,.055) 42%, transparent 66%);
+  opacity: .82;
+}
+.glass-panel::after,
+.floating-nav::after,
+.settings-card::after,
+.network-popover::after,
+.settings-window::after,
+.msg-user::after,
+.msg-ai::after,
+.hud-input::after,
+.hud-button::after,
+.hud-mic::after,
+.hud-chip::after,
+.signal-button::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  border: 1px solid rgba(255,255,255,.055);
+  mask-image: linear-gradient(145deg, #000 0%, transparent 56%);
+}
+.app-header {
+  background: linear-gradient(180deg, rgba(255,255,255,.105), rgba(255,255,255,.025) 75%, rgba(255,255,255,.012));
+  box-shadow: 0 12px 38px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.3);
+}
+.floating-nav {
+  background:
+    radial-gradient(120% 160% at 12% 0%, rgba(255,255,255,.17), transparent 48%),
+    linear-gradient(145deg, rgba(66,66,72,.74), rgba(18,18,22,.83) 55%, rgba(7,7,10,.9));
+  border-color: rgba(255,255,255,.27);
+  box-shadow: 0 24px 70px rgba(0,0,0,.7), 0 5px 18px rgba(0,0,0,.35),
+    inset 0 1px 0 rgba(255,255,255,.34), inset 0 -1px 0 rgba(255,255,255,.07);
+  -webkit-backdrop-filter: blur(44px) saturate(190%) contrast(112%);
+  backdrop-filter: blur(44px) saturate(190%) contrast(112%);
+}
+.floating-nav-item {
+  border-radius: 14px;
+  transition: background .28s cubic-bezier(.2,.8,.2,1), border-color .28s ease, color .28s ease, transform .22s ease, box-shadow .28s ease;
+}
+.floating-nav-item.is-active {
+  background: linear-gradient(145deg, rgba(255,255,255,.19), rgba(255,255,255,.055));
+  border-color: rgba(255,255,255,.2);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.24), 0 4px 18px rgba(0,0,0,.2);
+}
+.msg-user, .msg-ai {
+  overflow: hidden;
+  border-radius: 20px;
+  -webkit-backdrop-filter: blur(26px) saturate(165%);
+  backdrop-filter: blur(26px) saturate(165%);
+}
+.hud-input {
+  border-radius: 17px;
+  background: linear-gradient(145deg, rgba(255,255,255,.09), rgba(255,255,255,.025));
+  transition: border-color .25s ease, background .25s ease, box-shadow .25s ease;
+}
+.hud-input:focus {
+  border-color: rgba(255,255,255,.42);
+  background: rgba(255,255,255,.085);
+  box-shadow: 0 0 0 4px rgba(255,255,255,.055), inset 0 1px 0 rgba(255,255,255,.16);
+}
+.hud-button, .hud-mic, .signal-button {
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform .22s cubic-bezier(.2,.8,.2,1), border-color .25s ease, background .25s ease, box-shadow .25s ease;
+}
+.hud-button:hover:not(:disabled), .hud-mic:hover:not(:disabled), .signal-button:hover {
+  border-color: rgba(255,255,255,.4);
+  box-shadow: 0 12px 30px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.3), 0 0 22px rgba(255,255,255,.055);
+}
+.settings-card {
+  border-radius: 22px;
+  background: linear-gradient(145deg, rgba(255,255,255,.085), rgba(255,255,255,.018) 72%);
+  box-shadow: 0 14px 38px rgba(0,0,0,.26), inset 0 1px 0 rgba(255,255,255,.15);
+}
+.settings-window {
+  background: linear-gradient(145deg, rgba(34,34,38,.97), rgba(7,7,9,.985) 65%);
+  border-color: rgba(255,255,255,.23);
+  box-shadow: 0 40px 120px rgba(0,0,0,.82), inset 0 1px 0 rgba(255,255,255,.22);
+}
+.network-popover {
+  background: linear-gradient(145deg, rgba(55,55,62,.92), rgba(10,10,13,.96));
+  border-radius: 22px;
+}
+.chat-composer {
+  background: linear-gradient(180deg, rgba(24,24,28,.58), rgba(5,5,7,.88));
+  -webkit-backdrop-filter: blur(38px) saturate(175%);
+  backdrop-filter: blur(38px) saturate(175%);
+}
+.core-fluid { filter: drop-shadow(0 20px 42px rgba(0,0,0,.58)); }
+.core-fluid-edge {
+  border-color: rgba(245,248,255,.24);
+  box-shadow: 0 0 28px rgba(225,232,245,.16), inset 0 0 30px rgba(235,240,255,.13);
+}
+@media (max-width: 640px) {
+  .floating-nav {
+    -webkit-backdrop-filter: blur(42px) saturate(185%) contrast(110%);
+    backdrop-filter: blur(42px) saturate(185%) contrast(110%);
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .glass-panel, .app-header, .floating-nav, .settings-card, .network-popover,
+  .settings-window, .msg-user, .msg-ai, .hud-input, .hud-button, .hud-mic,
+  .hud-chip, .signal-button, .chat-composer {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background-color: rgba(18,18,20,.96);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .floating-nav-item, .hud-input, .hud-button, .hud-mic, .signal-button { transition: none; }
+}
