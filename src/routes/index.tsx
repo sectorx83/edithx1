@@ -13,7 +13,6 @@ import { audioLevel } from "@/lib/audio-level";
 import { SettingsPanel } from "@/components/SettingsPanel";
 import { DEFAULT_SETTINGS, type StyxSettings } from "@/lib/styx-settings";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
 import type { Session } from "@supabase/supabase-js";
 
 export const Route = createFileRoute("/")({
@@ -182,9 +181,42 @@ function Index() {
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setSession(s));
-    supabase.auth.getSession().then(({ data }) => { setSession(data.session); setReady(true); });
-    return () => sub.subscription.unsubscribe();
+    let alive = true;
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+      if (alive) setSession(nextSession);
+    });
+
+    async function establishSingleUserSession() {
+      try {
+        const { data, error } = await supabase.auth.getSession();
+        if (error) throw error;
+        if (data.session) {
+          if (alive) setSession(data.session);
+        } else {
+          // Password gate protects the app; Supabase anonymous auth supplies
+          // the per-browser identity used by existing database policies.
+          const result = await supabase.auth.signInAnonymously();
+          if (result.error || !result.data.session) {
+            throw result.error ?? new Error("Anonymous sign-in did not return a session");
+          }
+          if (alive) setSession(result.data.session);
+        }
+      } catch (error) {
+        if (alive) setAuthError(
+          error instanceof Error
+            ? error.message
+            : "Could not start the private session. Enable Anonymous Sign-Ins in Supabase Auth.",
+        );
+      } finally {
+        if (alive) setReady(true);
+      }
+    }
+
+    void establishSingleUserSession();
+    return () => {
+      alive = false;
+      sub.subscription.unsubscribe();
+    };
   }, []);
 
   // Poll EDITH NETWORK status; states come from real backend responses.
@@ -237,12 +269,6 @@ function Index() {
     if (error) setVoiceError("Couldn't save settings.");
   }
 
-  async function signIn() {
-    setAuthError("");
-    const r = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
-    if (r.error) setAuthError("Sign-in failed, sir. Please try again.");
-  }
-
   async function clearChat() {
     if (!uid) return;
     await supabase.from("messages").delete().eq("user_id", uid);
@@ -289,11 +315,11 @@ function Index() {
     return (
       <main className="hud-bg flex min-h-screen flex-col items-center justify-center px-6 text-center">
         <div className="animate-float"><Core /></div>
-        <h1 className="jarvis-title animate-rise-in mt-10 text-4xl sm:text-5xl">E.D.I.T.H.</h1>
-        <p className="animate-rise-in-delay mt-3 tracking-wider text-muted-foreground">Your Personal Intelligent System</p>
-        <button onClick={signIn} className="hud-button animate-rise-in-delay-2 mt-10">Continue with Google</button>
-        {authError && <p className="mt-4 text-sm text-destructive">{authError}</p>}
-        <a href="https://instagram.com/manazz.io" target="_blank" rel="noopener noreferrer" className="animate-rise-in-delay-2 mt-8 text-xs tracking-[0.25em] text-muted-foreground transition-colors hover:text-primary">CREATED BY @manazz.io</a>
+        <h1 className="jarvis-title mt-10 text-4xl sm:text-5xl">E.D.I.T.H.</h1>
+        <p className="mt-3 tracking-wider text-muted-foreground">Private session unavailable</p>
+        <p className="mt-4 max-w-md text-sm text-destructive">
+          {authError || "Enable Anonymous Sign-Ins in Supabase Authentication settings, then reload EDITH."}
+        </p>
       </main>
     );
   }
@@ -317,7 +343,6 @@ function Index() {
           <button onClick={() => { if (mode === "voice") stopConvo(); setMode(mode === "voice" ? "text" : "voice"); }} className="flex items-center gap-1 hover:text-primary">{mode === "voice" ? <><MessageSquare className="h-3 w-3" />TEXT</> : <><AudioLines className="h-3 w-3" />VOICE</>}</button>
           <button onClick={() => setShowSettings(true)} className="hover:text-primary">SETTINGS</button>
           {messages.length > 0 && <button onClick={clearChat} className="hover:text-primary">CLEAR</button>}
-          <button onClick={() => supabase.auth.signOut()} className="hover:text-primary">SIGN OUT</button>
         </div>
       </header>
       {showNet && (
