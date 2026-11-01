@@ -215,6 +215,7 @@ function Index() {
   const [missionRunning, setMissionRunning] = useState(false);
   const [missionStatus, setMissionStatus] = useState<"idle" | "dispatching" | "completed" | "failed">("idle");
   const [missionDuration, setMissionDuration] = useState<number | null>(null);
+  const lastNetworkResult = useRef<NetworkPayload | undefined>(undefined);
   const [localNow, setLocalNow] = useState(() => new Date());
   const navRef = useRef<HTMLElement | null>(null);
   const navTouch = useRef({ x: 0, y: 0, left: 0, horizontal: false, pointerId: -1 });
@@ -366,13 +367,18 @@ function Index() {
     setMissionRunning(true);
     setMissionStatus("dispatching");
     setMissionDuration(null);
+    lastNetworkResult.current = undefined;
     setMissionInput("");
     try {
       const reply = await sendText(
         "You are EDITH X1 Agent. Mission objective: " + goal +
         "\\nCreate an ordered plan, then execute relevant actions supported by EDITH NETWORK. Prefer one multi-step execute_task directive. Verify returned results and report each step as completed, failed, or skipped with evidence. Never claim actions without tool confirmation. Ask before irreversible, financial, account-changing, or sensitive actions. Clearly explain unsupported steps."
       );
-      setMissionStatus(reply ? "completed" : "failed");
+      const execution = lastNetworkResult.current;
+      const hasFailedStep = execution?.steps?.some((step) => step.status === "failed") ?? false;
+      const networkFailed = Boolean(execution?.error) || execution?.taskStatus === "failed" || hasFailedStep;
+      const transportFailed = !reply || reply.startsWith("Connection lost.");
+      setMissionStatus(networkFailed || transportFailed ? "failed" : "completed");
     } catch {
       setMissionStatus("failed");
     } finally {
@@ -503,6 +509,7 @@ function Index() {
     try {
       await supabase.from("messages").insert({ role: "user", content: text });
       const { reply, network } = await ask({ data: { messages: next } });
+      lastNetworkResult.current = network;
       setMessages([...messagesRef.current, { role: "assistant", content: reply, network }]);
       await supabase.from("messages").insert({ role: "assistant", content: reply, network: network ? JSON.parse(JSON.stringify(network)) : null });
       if (network?.browserAction) void handleBrowserAction(network);
