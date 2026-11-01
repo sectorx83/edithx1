@@ -570,8 +570,7 @@ function Index() {
         <button type="button" onClick={() => { setShowNet(false); setShowSettings(true); }} className="floating-nav-item" aria-label="Settings">
           <Settings className="h-5 w-5" /><span>Settings</span>
         </button>
-
-      </nav>
+      </nav>}
     </main>
   );
 }
