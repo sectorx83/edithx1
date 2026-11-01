@@ -138,6 +138,9 @@ function Core({ size = 220, active = false, reactive = false }: { size?: number;
     gl.attachShader(program, vertex); gl.attachShader(program, fragment); gl.linkProgram(program);
     if (!gl.getProgramParameter(program, gl.LINK_STATUS)) return;
     gl.useProgram(program);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.clearColor(0, 0, 0, 0);
     const buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,1,-1,-1,1,1,1]), gl.STATIC_DRAW);
@@ -162,6 +165,8 @@ function Core({ size = 220, active = false, reactive = false }: { size?: number;
       smooth += (target-smooth) * (target>smooth ? .24 : .055);
       const drive = Math.max(smooth, active ? .075 : 0);
       elapsed += dt * (.00034 + drive*.0029);
+      gl.viewport(0, 0, element.width, element.height);
+      gl.clear(gl.COLOR_BUFFER_BIT);
       gl.uniform2f(resolution,element.width,element.height);
       gl.uniform1f(timeUniform,elapsed);
       gl.uniform1f(energyUniform,drive);
@@ -482,6 +487,10 @@ function Index() {
           <div className="text-[10px] tracking-[0.28em] text-muted-foreground">{loading ? "PROCESSING" : "PERSONAL AI SYSTEM"}</div>
         </div>
         <span className="ml-auto hidden text-[10px] tracking-[0.22em] text-muted-foreground sm:block">BLACK GLASS INTERFACE</span>
+        <button type="button" onClick={() => setShowNet((open) => !open)} className={showNet ? "signal-button is-active" : "signal-button"} aria-label="Open network signal status" aria-expanded={showNet}>
+          <Activity className="h-7 w-7" strokeWidth={2.1} />
+          <span className={`signal-status signal-${net.status}`} />
+        </button>
       </header>
 
       {mode === "voice" ? (
