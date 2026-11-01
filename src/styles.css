@@ -1229,3 +1229,21 @@ html, body, #root, body { background: #000 !important; }
   .settings-header { padding-top: max(14px, env(safe-area-inset-top)); }
   .settings-footer { padding-bottom: max(12px, env(safe-area-inset-bottom)); }
 }
+/* Premium monochrome liquid-glass pass: consistent depth, edge light and tactile controls. */
+.glass-panel, .settings-card, .network-popover, .msg-user, .msg-ai, .hud-input, .hud-button, .hud-mic, .signal-button, .floating-nav {
+  -webkit-backdrop-filter: blur(28px) saturate(155%);
+  backdrop-filter: blur(28px) saturate(155%);
+}
+.app-header { background: linear-gradient(145deg, rgba(255,255,255,.105), rgba(255,255,255,.025) 58%, rgba(255,255,255,.055)); border-bottom-color: rgba(255,255,255,.16); }
+.floating-nav { background: linear-gradient(145deg, rgba(54,54,60,.78), rgba(12,12,15,.88)); border-color: rgba(255,255,255,.22); box-shadow: 0 18px 54px rgba(0,0,0,.62), inset 0 1px 0 rgba(255,255,255,.24), inset 0 -1px 0 rgba(255,255,255,.035); }
+.floating-nav-item { border: 1px solid transparent; border-radius: 13px; transition: background .2s ease, border-color .2s ease, transform .2s ease; }
+.floating-nav-item:active, .hud-button:active, .hud-mic:active, .settings-option:active { transform: scale(.97); }
+.msg-user, .msg-ai { border: 1px solid rgba(255,255,255,.12); background: linear-gradient(145deg, rgba(255,255,255,.075), rgba(255,255,255,.022)); box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 12px 32px rgba(0,0,0,.22); }
+.hud-input { border: 1px solid rgba(255,255,255,.16); background: linear-gradient(145deg, rgba(255,255,255,.075), rgba(255,255,255,.025)); box-shadow: inset 0 1px 0 rgba(255,255,255,.08); }
+.hud-button, .hud-mic { border: 1px solid rgba(255,255,255,.22); background: linear-gradient(145deg, rgba(255,255,255,.19), rgba(255,255,255,.045)); box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 8px 22px rgba(0,0,0,.24); }
+.core-fluid { filter: drop-shadow(0 16px 34px rgba(0,0,0,.52)); }
+.core-fluid-halo { background: radial-gradient(ellipse, rgba(205,215,235,.13), rgba(145,155,180,.045) 38%, transparent 72%); }
+.core-fluid-edge { border-color: rgba(225,232,245,.17); box-shadow: 0 0 22px rgba(210,220,240,.12), inset 0 0 24px rgba(220,230,255,.1); }
+.core-fluid-canvas { filter: contrast(1.04) brightness(.88); }
+.network-popover { border: 1px solid rgba(255,255,255,.2); background: linear-gradient(145deg, rgba(48,48,54,.94), rgba(8,8,11,.96)); box-shadow: 0 22px 70px rgba(0,0,0,.72), inset 0 1px 0 rgba(255,255,255,.2); }
+@media (prefers-reduced-motion: reduce) { .floating-nav-item:active, .hud-button:active, .hud-mic:active, .settings-option:active { transform: none; } }
