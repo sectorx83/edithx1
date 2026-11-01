@@ -6,7 +6,7 @@ export const getNetworkStatus = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async () => {
     if (!process.env["STYX_NETWORK_API_KEY"]) {
-      return { status: "disconnected" as const, error: "API key not configured", tools: [], misconfigured: [], unavailable: [] };
+      return { status: "disconnected" as const, error: "STYX_NETWORK_API_KEY is missing from Vercel. Add it as a server-side secret for Production, Preview and Development.", tools: [], misconfigured: [], unavailable: [] };
     }
     const r = await fetchNetworkTools();
     if (!r.ok) return { status: "disconnected" as const, error: r.error, tools: [], misconfigured: [], unavailable: [] };
