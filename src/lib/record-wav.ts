@@ -51,10 +51,10 @@ export async function recordWav(onSilence?: () => void): Promise<{ stop: () => P
       const lvl = Math.min(1, Math.sqrt(sum / data.length) * 6);
       audioLevel.value = lvl; audioLevel.source = "mic";
       const ms = (data.length / audioContext.sampleRate) * 1000;
-      if (lvl > 0.12) { heard = true; quietMs = 0; speechMs += ms; } else if (heard) quietMs += ms;
+      if (lvl > 0.075) { heard = true; quietMs = 0; speechMs += ms; } else if (heard) quietMs += ms;
       // Auto-send only after real speech (>= 0.5s total) followed by ~1.3s of quiet,
       // so background noise or a brief tap on the mic never fires a send.
-      if (heard && speechMs >= 500 && quietMs > 1300 && !fired) { fired = true; onSilence?.(); }
+      if (heard && speechMs >= 350 && quietMs > 1100 && !fired) { fired = true; onSilence?.(); }
     };
     source.connect(node);
     node.connect(audioContext.destination);
