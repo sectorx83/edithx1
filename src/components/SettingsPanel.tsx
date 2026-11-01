@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { AudioLines, Check, Mic2, ShieldCheck, SlidersHorizontal, Volume2, X } from "lucide-react";
 import { SENSITIVE, TONES, type StyxSettings } from "@/lib/styx-settings";
 import { localVoices } from "@/lib/local-voice";
@@ -51,7 +52,7 @@ export function SettingsPanel({ settings, onChange, onClose, onPreview }: Props)
   const set = (patch: Partial<StyxSettings>) => onChange({ ...settings, ...patch });
   const selectedVoice = voices.some((voice) => voice.voiceURI === settings.voice) ? settings.voice : "device-default";
 
-  return (
+  return createPortal((
     <div
       className="settings-backdrop"
       onPointerDown={(event) => { if (event.target === event.currentTarget) onClose(); }}
@@ -130,5 +131,5 @@ export function SettingsPanel({ settings, onChange, onClose, onPreview }: Props)
         <footer className="settings-footer"><span>EDITH X1 · PRIVATE CONTROL CENTER</span><button type="button" onClick={onClose}>Done</button></footer>
       </section>
     </div>
-  );
+  ), document.body);
 }
