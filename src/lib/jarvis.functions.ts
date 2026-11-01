@@ -54,12 +54,8 @@ export const askJarvis = createServerFn({ method: "POST" })
         buildSystemPrompt(settings) + "\nThis is primarily a spoken voice conversation: answer in 1-3 short, natural sentences with no markdown, lists, or emojis unless the user asks for detail." + NETWORK_PROMPT,
         data.messages,
       );
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : "";
-      if (msg === "RATE_LIMITED") return { reply: "Systems are throttled, sir. Please try again in a moment." };
-      if (msg === "CREDITS_DEPLETED") return { reply: "AI credits are depleted, sir. Please top up to continue." };
-      if (msg === "BAD_API_KEY") return { reply: "My Gemini API key appears to be invalid, sir. Please check it in the settings." };
-      return { reply: "I'm experiencing a malfunction, sir. Please try again." };
+    } catch {
+      return { reply: "I couldn't respond just now, sir. Please try again shortly." };
     }
 
     // Execute a EDITH NETWORK directive if the AI emitted one.
