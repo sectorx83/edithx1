@@ -675,3 +675,66 @@ html, body, #root, body { background: #000 !important; }
   .network-popover, .network-connecting, .core-fluid-aura, .core-fluid-sphere,
   .core-fluid-sheen, .core-fluid-current { animation: none !important; }
 }
+
+/* Procedural liquid core: no fixed sphere silhouette, only a continuously merging fluid surface. */
+.core-fluid {
+  isolation: isolate;
+  flex: 0 0 auto;
+  overflow: visible;
+  filter: drop-shadow(0 0 18px rgba(255,255,255,.12));
+}
+.core-fluid-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.core-fluid-halo {
+  position: absolute;
+  inset: 9%;
+  z-index: 0;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(255,255,255,.19) 0%, rgba(255,255,255,.065) 36%, transparent 70%);
+  filter: blur(20px);
+  animation: liquid-halo 5s ease-in-out infinite;
+}
+.core-fluid-edge {
+  position: absolute;
+  inset: 13%;
+  z-index: 1;
+  border-radius: 46% 54% 62% 38% / 55% 42% 58% 45%;
+  border: 1px solid rgba(255,255,255,.12);
+  box-shadow: 0 0 18px rgba(255,255,255,.12), inset 0 0 20px rgba(255,255,255,.08);
+  filter: blur(5px);
+  animation: liquid-edge 7s ease-in-out infinite alternate;
+}
+.core-fluid-idle {
+  position: absolute;
+  z-index: 2;
+  inset: 24%;
+  border-radius: 45% 55% 38% 62% / 53% 39% 61% 47%;
+  background:
+    radial-gradient(ellipse at 30% 22%, rgba(255,255,255,.95), transparent 17%),
+    radial-gradient(ellipse at 68% 70%, rgba(255,255,255,.35), transparent 28%),
+    radial-gradient(ellipse at 45% 42%, #aaa, #333 48%, #050505 78%);
+  box-shadow: inset -10px -14px 24px rgba(0,0,0,.8), inset 5px 6px 15px rgba(255,255,255,.32), 0 0 25px rgba(255,255,255,.18);
+  animation: idle-liquid 4s ease-in-out infinite alternate;
+}
+@keyframes liquid-halo {
+  0%,100% { opacity: .62; transform: scale(.92); }
+  50% { opacity: 1; transform: scale(1.13); }
+}
+@keyframes liquid-edge {
+  0% { transform: rotate(-12deg) scale(.93,1.02); border-radius: 44% 56% 59% 41% / 51% 42% 58% 49%; }
+  100% { transform: rotate(16deg) scale(1.07,.95); border-radius: 61% 39% 43% 57% / 42% 59% 41% 58%; }
+}
+@keyframes idle-liquid {
+  0% { transform: rotate(-9deg) scale(.92,.98); border-radius: 45% 55% 38% 62% / 53% 39% 61% 47%; }
+  100% { transform: rotate(11deg) scale(1.08,.94); border-radius: 62% 38% 58% 42% / 41% 58% 42% 59%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .core-fluid-halo, .core-fluid-edge, .core-fluid-idle { animation: none !important; }
+}
