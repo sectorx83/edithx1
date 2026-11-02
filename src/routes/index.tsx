@@ -107,25 +107,32 @@ function Core({ size = 220, active = false, reactive = false }: { size?: number;
           vec3 reflected = reflect(-keyLight,n);
           float sharpSpec = pow(max(dot(reflected,view),0.0),105.0);
           float softSpec = pow(max(dot(reflected,view),0.0),20.0);
-          // Flowing thin-film interference gives the pearl its pastel rainbow sheen.
-          float swirl = sin(p.x*3.6+p.y*2.8+sin(p.z*3.2+time*.24)*1.25-time*.16)
-                      + .55*sin(p.y*5.2-p.z*3.1+time*.19);
-          float film = .5 + .5*sin(swirl*1.15 + n.x*.8 - n.y*.55);
-          vec3 rainbow = .5 + .5*cos(6.28318*(film+vec3(.02,.34,.68)));
-          vec3 pastel = mix(vec3(.66,.91,.96),vec3(.94,.77,.98),rainbow.b*.52);
-          pastel = mix(pastel,vec3(.72,.94,.91),rainbow.g*.28);
-          vec3 pearlWhite = vec3(.82,.91,.96);
-          vec3 body = mix(pearlWhite,pastel,.28+film*.20);
-          float innerRibbon = .5+.5*sin(swirl*2.1 + p.x*2.0 - p.z*1.5);
-          vec3 ribbonTint = mix(vec3(.36,.88,.91),vec3(.78,.55,.96),innerRibbon);
-          body = mix(body,ribbonTint,.12 + fresnel*.14);
-          color = body * diffuse;
-          color += vec3(.22,.36,.43)*fill*.12;
-          color += vec3(.72,.91,1.0)*fresnel*.48;
-          color += vec3(.96,.99,1.0)*softSpec*.46;
-          color += vec3(1.0)*sharpSpec*1.25;
-          // A cool glass rim and soft luminous edge, without a neon outline.
-          color += mix(vec3(.36,.83,.91),vec3(.82,.68,1.0),film)*pow(fresnel,1.55)*.52;
+          // Strong liquid-opal interference: saturated ribbons, translucent depth, restrained highlights.
+          float swirlA = sin(p.x*5.2 + p.y*3.6 + sin(p.z*4.2 + time*.34)*1.7 - time*.26);
+          float swirlB = sin(p.y*6.4 - p.z*4.8 + sin(p.x*3.8-time*.22)*1.35 + time*.19);
+          float film = .5 + .5*sin(swirlA*1.55 + swirlB*.85 + n.x*1.15 - n.y*.8);
+          vec3 spectral = .5 + .5*cos(6.28318*(film + vec3(.02,.36,.69)));
+          vec3 cyan = vec3(.025,.78,.94);
+          vec3 lilac = vec3(.56,.28,.94);
+          vec3 pink = vec3(.96,.30,.78);
+          vec3 aqua = vec3(.18,.92,.77);
+          vec3 violet = mix(lilac,pink,smoothstep(.25,.8,spectral.r));
+          vec3 liquid = mix(cyan,violet,smoothstep(.12,.88,film));
+          liquid = mix(liquid,aqua,smoothstep(.64,.96,spectral.g)*.58);
+          liquid = mix(liquid,vec3(.66,.76,1.0),spectral.b*.22);
+          float ribbon = smoothstep(.52,.94,.5+.5*sin(swirlA*2.0-swirlB*1.2));
+          float caustic = pow(max(0.0,sin(swirlA*2.7+swirlB*1.6)),8.0);
+          vec3 body = liquid*(.38 + diffuse*.42 + fill*.12);
+          body += mix(cyan,pink,ribbon)*(.12 + ribbon*.24);
+          body += vec3(.10,.72,.95)*caustic*.34;
+          float edge = pow(1.0-max(dot(n,view),0.0),2.25);
+          float sharpSpec = pow(max(dot(reflect(-keyLight,n),view),0.0),92.0);
+          float broadSpec = pow(max(dot(reflect(-fillLight,n),view),0.0),18.0);
+          color = body;
+          color += mix(vec3(.04,.72,.95),vec3(.82,.36,.98),film)*edge*.62;
+          color += vec3(.68,.94,1.0)*broadSpec*.20;
+          color += vec3(.94,.99,1.0)*sharpSpec*.76;
+          color = color/(vec3(1.0)+color*.12);
           color = color/(vec3(1.0)+color*.16);
         }
         gl_FragColor = vec4(color, hit ? .985 : 0.0);
