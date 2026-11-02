@@ -4,12 +4,12 @@ import { Mic, Square, Loader2, MessageSquare, AudioLines, Settings, Activity, La
 import ReactMarkdown from "react-markdown";
 import { useServerFn } from "@tanstack/react-start";
 import { askJarvis, type NetworkPayload } from "@/lib/jarvis.functions";
-import { synthesizeSpeech, transcribeSpeech } from "@/lib/voice.functions";
+import { transcribeSpeech } from "@/lib/voice.functions";
 import { TaskPanel } from "@/components/TaskPanel";
 import { getNetworkStatus, reportBrowserAction } from "@/lib/styx-network.functions";
-import { transcribeLocal, speakLocal, cancelLocalTranscription } from "@/lib/local-voice";
+import { transcribeLocal, speakLocal, speakKokoro, cancelLocalTranscription } from "@/lib/local-voice";
 import { recordWav } from "@/lib/record-wav";
-import { unlockAudio, playSpeechAudio } from "@/lib/stream-speech";
+import { unlockAudio } from "@/lib/stream-speech";
 import { audioLevel } from "@/lib/audio-level";
 import { SettingsPanel } from "@/components/SettingsPanel";
 import { DEFAULT_SETTINGS, type StyxSettings } from "@/lib/styx-settings";
@@ -106,8 +106,6 @@ function Core({ size = 220, active = false, reactive = false }: { size?: number;
           float diffuse = .42 + .58*max(dot(n,keyLight),0.0);
           float fill = max(dot(n,fillLight),0.0);
           vec3 reflected = reflect(-keyLight,n);
-          float sharpSpec = pow(max(dot(reflected,view),0.0),105.0);
-          float softSpec = pow(max(dot(reflected,view),0.0),20.0);
           // Strong liquid-opal interference: saturated ribbons, translucent depth, restrained highlights.
           float swirlA = sin(p.x*5.2 + p.y*3.6 + sin(p.z*4.2 + time*.34)*1.7 - time*.26);
           float swirlB = sin(p.y*6.4 - p.z*4.8 + sin(p.x*3.8-time*.22)*1.35 + time*.19);
@@ -214,7 +212,6 @@ function Index() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const ask = useServerFn(askJarvis);
-  const synthesize = useServerFn(synthesizeSpeech);
   const transcribe = useServerFn(transcribeSpeech);
 
   async function recognizeSpeech(file: File): Promise<{ text: string; error: string }> {
@@ -477,9 +474,8 @@ function Index() {
     speechAbort.current = ac;
     text = text.replace(/[*_#`>|]/g, "").replace(/\[(.*?)\]\(.*?\)/g, "$1");
     try {
-      const result = await synthesize({ data: { text, voice } });
-      if (ac.signal.aborted) return;
-      await playSpeechAudio(result.audio, result.mimeType, ac.signal);
+      // Kokoro runs locally in a worker, so speech does not depend on a remote TTS API.
+      await speakKokoro(text, ac.signal);
     } catch (remoteError) {
       if (ac.signal.aborted) return;
       // Browser speech is a resilient fallback if the neural TTS provider is unavailable.
