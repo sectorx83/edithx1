@@ -117,6 +117,19 @@ export function SettingsPanel({ settings, onChange, onClose, onPreview }: Props)
               <p className="settings-description">{SENSITIVE[settings.sensitive]?.prompt}</p>
             </section>
 
+            <section className="settings-card settings-card-wide">
+              <div className="settings-card-heading">
+                <div className="settings-icon"><SlidersHorizontal className="h-5 w-5" /></div>
+                <div><h3>Google integrations</h3><p>Connect Google services to EDITH X1</p></div>
+              </div>
+              <div className="settings-info-row"><span>Gmail</span><b>OAuth setup required</b></div>
+              <div className="settings-info-row"><span>Google Calendar</span><b>OAuth setup required</b></div>
+              <div className="settings-info-row"><span>Google Drive</span><b>OAuth setup required</b></div>
+              <p className="settings-description">Secure account linking is not active yet. Google requires an OAuth application owned by you or your organization. EDITH will request access only after that application is configured; no Google account is connected right now.</p>
+              <a className="settings-preview" href="https://console.cloud.google.com/auth/clients" target="_blank" rel="noreferrer">Open Google OAuth setup</a>
+              <p className="settings-footnote">After creating a Web application OAuth client, add its Client ID and Client Secret to Vercel as GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET. Never paste the secret into this chat.</p>
+            </section>
+
             <section className="settings-card settings-card-wide settings-system-card">
               <div className="settings-card-heading">
                 <div className="settings-icon"><Mic2 className="h-5 w-5" /></div>
