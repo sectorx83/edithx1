@@ -37,26 +37,6 @@ export const Route = createFileRoute("/")({
 
 type Msg = { role: "user" | "assistant"; content: string; network?: NetworkPayload | undefined };
 
-async function recognizeSpeech(file: File): Promise<{ text: string; error: string }> {
-  try {
-    const bytes = new Uint8Array(await file.arrayBuffer());
-    let binary = "";
-    const chunkSize = 0x8000;
-    for (let i = 0; i < bytes.length; i += chunkSize) {
-      binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
-    }
-    const result = await transcribe({ data: { audio: btoa(binary), mimeType: "audio/wav" } });
-    return { text: result.text, error: "" };
-  } catch (remoteError) {
-    // Keep the on-device Whisper model as a backup if the network recognizer is unavailable.
-    try {
-      return await transcribeLocal(file);
-    } catch (localError) {
-      return { text: "", error: localError instanceof Error ? localError.message : remoteError instanceof Error ? remoteError.message : "Speech recognition failed." };
-    }
-  }
-}
-
 function formatAudioTime(value: number) { if (!Number.isFinite(value)) return "0:00"; const mins = Math.floor(value / 60); const secs = Math.floor(value % 60); return `${mins}:${String(secs).padStart(2, "0")}`; }
 
 function Core({ size = 220, active = false, reactive = false }: { size?: number; active?: boolean; reactive?: boolean }) {
@@ -236,6 +216,28 @@ function Index() {
   const ask = useServerFn(askJarvis);
   const synthesize = useServerFn(synthesizeSpeech);
   const transcribe = useServerFn(transcribeSpeech);
+
+  async function recognizeSpeech(file: File): Promise<{ text: string; error: string }> {
+    try {
+      const bytes = new Uint8Array(await file.arrayBuffer());
+      let binary = "";
+      const chunkSize = 0x8000;
+      for (let i = 0; i < bytes.length; i += chunkSize) {
+        binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+      }
+      const result = await transcribe({ data: { audio: btoa(binary), mimeType: "audio/wav" } });
+      return { text: result.text, error: "" };
+    } catch (remoteError) {
+      // Keep the on-device Whisper model as a backup if the network recognizer is unavailable.
+      try {
+        return await transcribeLocal(file);
+      } catch (localError) {
+        return { text: "", error: localError instanceof Error ? localError.message : remoteError instanceof Error ? remoteError.message : "Speech recognition failed." };
+      }
+    }
+  }
+
+
   const recRef = useRef<{ stop: () => Promise<File> } | null>(null);
   const emptyStreak = useRef(0);
   const [recording, setRecording] = useState(false);
