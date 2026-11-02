@@ -239,6 +239,7 @@ function Index() {
   const musicAudio = useRef<HTMLAudioElement | null>(null);
   const youtubePlayer = useRef<any>(null);
   const youtubeHost = useRef<HTMLDivElement | null>(null);
+  const youtubeProgressTimer = useRef<number | null>(null);
   const activeTrack = musicTracks[musicIndex];
 
   function addMusicFiles(files: FileList | null) {
@@ -320,7 +321,7 @@ function Index() {
         width: "100%", height: "180", videoId: activeTrack.youtubeId,
         playerVars: { playsinline: 1, rel: 0, modestbranding: 1, origin: window.location.origin },
         events: {
-          onReady: (event: any) => { event.target.setVolume(Math.round(musicVolume * 100)); if (musicPlaying) event.target.playVideo(); },
+          onReady: (event: any) => { event.target.setVolume(Math.round(musicVolume * 100)); if (musicPlaying) event.target.playVideo(); youtubeProgressTimer.current = window.setInterval(() => { const player = youtubePlayer.current; if (player?.getCurrentTime) { setMusicProgress(player.getCurrentTime() || 0); setMusicDuration(player.getDuration() || 0); } }, 500); },
           onStateChange: (event: any) => {
             const YT = (window as any).YT;
             if (event.data === YT.PlayerState.PLAYING) setMusicPlaying(true);
@@ -338,7 +339,7 @@ function Index() {
       const previous = (window as any).onYouTubeIframeAPIReady;
       (window as any).onYouTubeIframeAPIReady = () => { previous?.(); mount(); };
     }
-    return () => { cancelled = true; youtubePlayer.current?.destroy?.(); youtubePlayer.current = null; };
+    return () => { cancelled = true; if (youtubeProgressTimer.current !== null) window.clearInterval(youtubeProgressTimer.current); youtubeProgressTimer.current = null; youtubePlayer.current?.destroy?.(); youtubePlayer.current = null; };
   }, [activeTrack?.youtubeId]);
   useEffect(() => { if (youtubePlayer.current && activeTrack?.youtubeId) youtubePlayer.current.setVolume(Math.round(musicVolume * 100)); }, [musicVolume, activeTrack?.youtubeId]);
   useEffect(() => () => { musicTracks.forEach((track) => { if (track.file) URL.revokeObjectURL(track.src); }); }, []);
