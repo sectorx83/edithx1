@@ -1,6 +1,6 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Mic, Square, Loader2, MessageSquare, AudioLines, Settings, Activity, LayoutDashboard, BrainCircuit, Wrench, Clock3, ArrowUpRight, Zap, ShieldCheck, Radio, Server, Sparkles } from "lucide-react";
+import { Mic, Square, Loader2, MessageSquare, AudioLines, Settings, Activity, LayoutDashboard, BrainCircuit, Wrench, Clock3, ArrowUpRight, Zap, ShieldCheck, Radio, Server, Sparkles, Music, Play, Pause, SkipBack, SkipForward, Volume2, Upload, Plus, Mail, CalendarDays, HardDrive } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { useServerFn } from "@tanstack/react-start";
 import { askJarvis, type NetworkPayload } from "@/lib/jarvis.functions";
@@ -34,7 +34,7 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-type Msg = { role: "user" | "assistant"; content: string; network?: NetworkPayload | undefined };
+type Msg = { role: "user" | "assistant"; content: string; network?: NetworkPayload | undefined };\n\nfunction formatAudioTime(value: number) { if (!Number.isFinite(value)) return "0:00"; const mins = Math.floor(value / 60); const secs = Math.floor(value % 60); return `${mins}:${String(secs).padStart(2, "0")}`; }
 
 function Core({ size = 220, active = false, reactive = false }: { size?: number; active?: boolean; reactive?: boolean }) {
   const canvas = useRef<HTMLCanvasElement>(null);
@@ -227,6 +227,56 @@ function Index() {
   type NetStatus = { status: "connecting" | "connected" | "disconnected"; error?: string | undefined; tools: { name: string; description: string }[]; misconfigured: { name: string; reason: string; setup: string }[]; unavailable: { name: string; reason: string }[] };
   const [net, setNet] = useState<NetStatus>({ status: "connecting", tools: [], misconfigured: [], unavailable: [] });
   const [showNet, setShowNet] = useState(false);
+  type MusicTrack = { id: string; title: string; artist: string; src: string; file?: File };
+  const [musicTracks, setMusicTracks] = useState<MusicTrack[]>([]);
+  const [musicIndex, setMusicIndex] = useState(0);
+  const [musicPlaying, setMusicPlaying] = useState(false);
+  const [musicProgress, setMusicProgress] = useState(0);
+  const [musicDuration, setMusicDuration] = useState(0);
+  const [musicVolume, setMusicVolume] = useState(0.8);
+  const [musicUrl, setMusicUrl] = useState("");
+  const [musicError, setMusicError] = useState("");
+  const musicAudio = useRef<HTMLAudioElement | null>(null);
+  const activeTrack = musicTracks[musicIndex];
+
+  function addMusicFiles(files: FileList | null) {
+    if (!files?.length) return;
+    const accepted = Array.from(files).filter((file) => file.type.startsWith("audio/"));
+    if (!accepted.length) { setMusicError("Choose an audio file such as MP3, WAV, M4A or OGG."); return; }
+    const added = accepted.map((file) => ({ id: crypto.randomUUID(), title: file.name.replace(/\\.[^.]+$/, ""), artist: "Local file", src: URL.createObjectURL(file), file }));
+    setMusicTracks((current) => [...current, ...added]);
+    setMusicError("");
+    if (!musicTracks.length) setMusicIndex(0);
+  }
+  function addMusicUrl() {
+    const value = musicUrl.trim();
+    if (!/^https:\\/\\//i.test(value)) { setMusicError("Use a direct HTTPS link to an audio file."); return; }
+    const title = value.split("/").pop()?.split("?")[0] || "Audio stream";
+    setMusicTracks((current) => [...current, { id: crypto.randomUUID(), title: decodeURIComponent(title), artist: "Online audio", src: value }]);
+    setMusicUrl("");
+    setMusicError("");
+  }
+  async function toggleMusic() {
+    const audio = musicAudio.current;
+    if (!audio || !activeTrack) return;
+    try {
+      if (musicPlaying) { audio.pause(); setMusicPlaying(false); }
+      else { await audio.play(); setMusicPlaying(true); setMusicError(""); }
+    } catch { setMusicPlaying(false); setMusicError("This audio source could not be played. Try another file or direct audio URL."); }
+  }
+  function changeMusic(next: number) {
+    if (!musicTracks.length) return;
+    setMusicIndex((next + musicTracks.length) % musicTracks.length);
+    setMusicProgress(0);
+    setMusicPlaying(false);
+  }
+  useEffect(() => {
+    const audio = musicAudio.current;
+    if (!audio) return;
+    audio.volume = musicVolume;
+    if (musicPlaying) void audio.play().catch(() => { setMusicPlaying(false); setMusicError("Playback failed for this track."); });
+  }, [musicIndex, musicTracks, musicVolume]);
+  useEffect(() => () => { musicTracks.forEach((track) => { if (track.file) URL.revokeObjectURL(track.src); }); }, [musicTracks]);
 
   async function listen() {
     if (!convoRef.current) return;
@@ -626,6 +676,32 @@ function Index() {
               {messages.length ? <><div className="context-count"><strong>{messages.length}</strong><span>conversation entries<br/>in your session history</span></div><div className="context-latest"><small>LATEST USER COMMAND</small><p>{[...messages].reverse().find(m=>m.role==="user")?.content || "No command recorded yet."}</p></div><button className="dashboard-text-link" onClick={()=>{setDashboard(false);switchMode("text")}}>OPEN CONVERSATION <ArrowUpRight size={14}/></button></> : <div className="provider-empty"><BrainCircuit size={17}/><span>Your conversation context will appear here after your first command.</span></div>}
             </article>
           </div>
+            <article className="dashboard-card dashboard-music-card">
+              <div className="dashboard-card-top"><span><Music size={15}/> EDITH MUSIC</span><span>{musicTracks.length} TRACKS</span></div>
+              <div className="music-player-main">
+                <div className="music-art"><Music size={32}/><span className={musicPlaying ? "music-art-pulse" : ""}/></div>
+                <div className="music-track-meta"><b>{activeTrack?.title || "Nothing playing"}</b><small>{activeTrack?.artist || "Add a track to begin"}</small></div>
+                <button className="music-play-button" onClick={toggleMusic} disabled={!activeTrack} aria-label={musicPlaying ? "Pause music" : "Play music"}>{musicPlaying ? <Pause size={20}/> : <Play size={20}/>}</button>
+              </div>
+              <input className="music-seek" type="range" min="0" max={musicDuration || 1} value={Math.min(musicProgress,musicDuration || 1)} onChange={e=>{const v=Number(e.target.value);setMusicProgress(v);if(musicAudio.current)musicAudio.current.currentTime=v;}} aria-label="Music position"/>
+              <div className="music-time-row"><span>{formatAudioTime(musicProgress)}</span><span>{formatAudioTime(musicDuration)}</span></div>
+              <div className="music-controls"><button onClick={()=>changeMusic(musicIndex-1)} disabled={!musicTracks.length} aria-label="Previous track"><SkipBack/></button><button onClick={toggleMusic} disabled={!activeTrack} aria-label={musicPlaying ? "Pause" : "Play"}>{musicPlaying ? <Pause/> : <Play/>}</button><button onClick={()=>changeMusic(musicIndex+1)} disabled={!musicTracks.length} aria-label="Next track"><SkipForward/></button><Volume2 size={16}/><input type="range" min="0" max="1" step=".01" value={musicVolume} onChange={e=>setMusicVolume(Number(e.target.value))} aria-label="Volume"/></div>
+              <audio ref={musicAudio} src={activeTrack?.src} onTimeUpdate={e=>setMusicProgress(e.currentTarget.currentTime)} onLoadedMetadata={e=>setMusicDuration(e.currentTarget.duration || 0)} onEnded={()=>changeMusic(musicIndex+1)} onError={()=>{setMusicPlaying(false);setMusicError("Unable to load this audio source.");}}/>
+              <div className="music-add-row"><label className="music-upload"><Upload size={14}/> Add files<input type="file" accept="audio/*" multiple onChange={e=>addMusicFiles(e.target.files)}/></label><form onSubmit={e=>{e.preventDefault();addMusicUrl();}}><input value={musicUrl} onChange={e=>setMusicUrl(e.target.value)} placeholder="Direct audio URL"/><button type="submit" aria-label="Add audio URL"><Plus size={15}/></button></form></div>
+              {musicTracks.length>0 && <div className="music-queue">{musicTracks.map((track,index)=><button key={track.id} className={index===musicIndex ? "is-current" : ""} onClick={()=>changeMusic(index)}><span>{index+1}</span><b>{track.title}</b><small>{index===musicIndex && musicPlaying ? "PLAYING" : track.artist}</small></button>)}</div>}
+              {musicError && <p className="music-error">{musicError}</p>}
+              <p className="music-note">Plays your uploaded audio files or direct audio links. No STYX music endpoint required.</p>
+            </article>
+            <article className="dashboard-card dashboard-google-card">
+              <div className="dashboard-card-top"><span><Sparkles size={15}/> GOOGLE WORKSPACE</span><span>QUICK ACCESS</span></div>
+              <p className="google-intro">Open your Google tools from EDITH. Full in-app account sync requires Google OAuth credentials and a configured callback.</p>
+              <div className="google-service-grid">
+                <a href="https://mail.google.com/" target="_blank" rel="noopener noreferrer"><Mail/><b>Gmail</b><small>Inbox & compose</small><ArrowUpRight/></a>
+                <a href="https://calendar.google.com/" target="_blank" rel="noopener noreferrer"><CalendarDays/><b>Calendar</b><small>Events & schedule</small><ArrowUpRight/></a>
+                <a href="https://drive.google.com/" target="_blank" rel="noopener noreferrer"><HardDrive/><b>Drive</b><small>Files & documents</small><ArrowUpRight/></a>
+              </div>
+              <div className="google-connector-status"><span/> OAuth connector setup required for direct EDITH actions</div>
+            </article>
           <div className="dashboard-footer"><span>EDITH X1 <i/> PRIVATE SYSTEM</span><span>ALL SYSTEMS ARE MONITORED LOCALLY</span></div>
         </section>
       ) : mode === "voice" ? (
