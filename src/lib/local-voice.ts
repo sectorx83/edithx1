@@ -47,36 +47,68 @@ export async function transcribeLocal(file: File): Promise<{ text: string; error
 }
 
 export function localVoices(): SpeechSynthesisVoice[] {
-  return window.speechSynthesis?.getVoices().filter((voice) => voice.localService) ?? [];
+  return window.speechSynthesis?.getVoices() ?? [];
 }
 
 export async function speakLocal(text: string, voiceId: string, signal: AbortSignal): Promise<void> {
-  if (!window.speechSynthesis) throw new Error("Device speech playback is unavailable, sir.");
+  if (!("speechSynthesis" in window) || typeof SpeechSynthesisUtterance === "undefined") {
+    throw new Error("Speech playback is not supported by this browser. Open EDITH in Chrome.");
+  }
   const synth = window.speechSynthesis;
   signal.throwIfAborted();
-  // Some devices populate their voices asynchronously.
-  if (!localVoices().length) await new Promise<void>((resolve) => {
-    const finish = () => { clearTimeout(timer); synth.removeEventListener("voiceschanged", finish); resolve(); };
-    const timer = setTimeout(finish, 1500);
-    synth.addEventListener("voiceschanged", finish);
-  });
-  signal.throwIfAborted();
-  const voices = localVoices();
-  const voice = voices.find((v) => v.voiceURI === voiceId) ?? voices.find((v) => v.lang.startsWith("en")) ?? voices[0];
-  if (!voice) throw new Error("No offline voice is installed on this device, sir.");
   synth.cancel();
+
+  // Android/Chrome may load installed voices after the page. Wait briefly, but
+  // never make speech depend on an offline voice being installed.
+  let voices = synth.getVoices();
+  if (!voices.length) {
+    await new Promise<void>((resolve) => {
+      const finish = () => { clearTimeout(timer); synth.removeEventListener("voiceschanged", finish); resolve(); };
+      const timer = window.setTimeout(finish, 900);
+      synth.addEventListener("voiceschanged", finish, { once: true });
+    });
+    voices = synth.getVoices();
+  }
+  signal.throwIfAborted();
+  const voice = voices.find((v) => v.voiceURI === voiceId)
+    ?? voices.find((v) => /^en(-|_)/i.test(v.lang))
+    ?? voices[0];
+
   const utterance = new SpeechSynthesisUtterance(text);
-  utterance.voice = voice; utterance.lang = voice.lang;
+  if (voice) { utterance.voice = voice; utterance.lang = voice.lang; }
+  else utterance.lang = "en-US";
+  utterance.rate = 1.0;
+  utterance.pitch = 1.0;
+  utterance.volume = 1.0;
+
   return new Promise<void>((resolve, reject) => {
-    const cleanup = () => { clearTimeout(timer); signal.removeEventListener("abort", abort); audioLevel.value = 0; audioLevel.source = "idle"; };
-    const abort = () => { synth.cancel(); cleanup(); reject(new DOMException("Cancelled", "AbortError")); };
-    const timer = setTimeout(() => { synth.cancel(); cleanup(); reject(new Error("Device speech playback stalled, sir.")); }, Math.max(30000, text.length * 120));
-    utterance.onstart = () => { audioLevel.source = "ai"; audioLevel.value = 0.2; };
-    // Device synthesis doesn't expose PCM; boundaries reflect speech cadence, not loudness.
-    utterance.onboundary = () => { audioLevel.value = 0.2 + Math.min(0.5, (utterance.text.length % 7) / 10); };
-    utterance.onend = () => { cleanup(); resolve(); };
-    utterance.onerror = () => { cleanup(); reject(new Error("Couldn't play the device voice, sir.")); };
+    let settled = false;
+    const cleanup = () => {
+      window.clearTimeout(timer);
+      signal.removeEventListener("abort", abort);
+      audioLevel.value = 0;
+      audioLevel.source = "idle";
+    };
+    const finish = (error?: Error) => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      if (error) reject(error); else resolve();
+    };
+    const abort = () => { synth.cancel(); finish(new DOMException("Cancelled", "AbortError")); };
+    const timer = window.setTimeout(() => {
+      synth.cancel();
+      finish(new Error("Speech playback timed out. Tap the voice core and try again."));
+    }, Math.max(30000, text.length * 180));
+    utterance.onstart = () => { audioLevel.source = "ai"; audioLevel.value = .34; };
+    utterance.onboundary = () => { audioLevel.value = .42 + Math.min(.38, (utterance.text.length % 7) / 16); };
+    utterance.onend = () => finish();
+    utterance.onerror = (event) => finish(new Error(event.error === "not-allowed"
+      ? "Tap the voice core once to allow audio playback."
+      : "The device could not play its speech voice."));
     signal.addEventListener("abort", abort, { once: true });
     synth.speak(utterance);
+    // Chrome on Android can pause a long utterance in the background.
+    window.setTimeout(() => { if (!settled && synth.paused) synth.resume(); }, 250);
   });
 }
