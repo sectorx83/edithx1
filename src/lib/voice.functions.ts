@@ -86,7 +86,7 @@ export const transcribeSpeech = createServerFn({ method: "POST" })
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 30000);
       try {
-        const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent", {
+        const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-transcribe:generateContent", {
           method: "POST",
           signal: controller.signal,
           headers: { "x-goog-api-key": key, "Content-Type": "application/json" },
@@ -97,7 +97,7 @@ export const transcribeSpeech = createServerFn({ method: "POST" })
                 { inline_data: { mime_type: data.mimeType, data: data.audio } },
               ],
             }],
-            generationConfig: { temperature: 0, maxOutputTokens: 1200 },
+            generationConfig: { temperature: 0, maxOutputTokens: 1200, audioTranscriptionConfig: { mode: "VERBATIM" } },
           }),
         });
         if (response.status === 429 || response.status === 402) { quota = true; continue; }
