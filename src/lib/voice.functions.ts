@@ -62,3 +62,59 @@ export const synthesizeSpeech = createServerFn({ method: "POST" })
     if (lastStatus === 429 || lastStatus === 402) throw new Error("Gemini speech quota is currently unavailable.");
     throw new Error("Gemini rejected the configured speech credentials. Check the server API key.");
   });
+
+
+export const transcribeSpeech = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { audio: string; mimeType?: string }) => {
+    const audio = typeof data?.audio === "string" ? data.audio : "";
+    if (!audio || audio.length > 12_000_000) throw new Error("Audio recording is empty or too large. Please record a shorter message.");
+    return { audio, mimeType: data.mimeType === "audio/wav" ? "audio/wav" : "audio/wav" };
+  })
+  .handler(async ({ data }) => {
+    const supplied = [
+      process.env["GEMINI_API_KEY_1"],
+      process.env["GEMINI_API_KEY_2"],
+      process.env["GEMINI_API_KEY_3"],
+      process.env["GEMINI_API_KEY_4"],
+      process.env["GEMINI_API_KEY"],
+    ];
+    const keys = [...new Set(supplied.filter((key): key is string => Boolean(key)))];
+    if (!keys.length) throw new Error("Speech recognition is not configured on the server.");
+    let quota = false;
+    for (const key of keys) {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 30000);
+      try {
+        const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent", {
+          method: "POST",
+          signal: controller.signal,
+          headers: { "x-goog-api-key": key, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{
+              parts: [
+                { text: "Transcribe the spoken words in this audio verbatim. Return only the transcript, with no commentary. If no intelligible speech is present, return an empty string." },
+                { inline_data: { mime_type: data.mimeType, data: data.audio } },
+              ],
+            }],
+            generationConfig: { temperature: 0, maxOutputTokens: 1200 },
+          }),
+        });
+        if (response.status === 429 || response.status === 402) { quota = true; continue; }
+        if (response.status === 401 || response.status === 403) continue;
+        if (!response.ok) {
+          console.error("[EDITH STT] Provider rejected audio", { status: response.status });
+          throw new Error("Speech recognition failed. Please try again.");
+        }
+        const result = await response.json() as { candidates?: { content?: { parts?: { text?: string }[] }[] }[] };
+        const transcript = result.candidates?.[0]?.content?.parts?.map((part) => part.text ?? "").join("").trim() ?? "";
+        return { text: transcript };
+      } catch (error) {
+        if (error instanceof Error && error.name === "AbortError") throw new Error("Speech recognition timed out. Please try again.");
+        throw error;
+      } finally {
+        clearTimeout(timeout);
+      }
+    }
+    throw new Error(quota ? "Speech recognition quota is currently unavailable." : "Gemini rejected the configured speech credentials.");
+  });
