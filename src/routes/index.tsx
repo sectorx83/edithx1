@@ -4,7 +4,7 @@ import { Mic, Square, Loader2, MessageSquare, AudioLines, Settings, Activity, La
 import ReactMarkdown from "react-markdown";
 import { useServerFn } from "@tanstack/react-start";
 import { askJarvis, type NetworkPayload } from "@/lib/jarvis.functions";
-import { synthesizeSpeech } from "@/lib/voice.functions";
+import { synthesizeSpeech, transcribeSpeech } from "@/lib/voice.functions";
 import { TaskPanel } from "@/components/TaskPanel";
 import { getNetworkStatus, reportBrowserAction } from "@/lib/styx-network.functions";
 import { transcribeLocal, speakLocal, cancelLocalTranscription } from "@/lib/local-voice";
@@ -36,6 +36,26 @@ export const Route = createFileRoute("/")({
 });
 
 type Msg = { role: "user" | "assistant"; content: string; network?: NetworkPayload | undefined };
+
+async function recognizeSpeech(file: File): Promise<{ text: string; error: string }> {
+  try {
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    let binary = "";
+    const chunkSize = 0x8000;
+    for (let i = 0; i < bytes.length; i += chunkSize) {
+      binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+    }
+    const result = await transcribe({ data: { audio: btoa(binary), mimeType: "audio/wav" } });
+    return { text: result.text, error: "" };
+  } catch (remoteError) {
+    // Keep the on-device Whisper model as a backup if the network recognizer is unavailable.
+    try {
+      return await transcribeLocal(file);
+    } catch (localError) {
+      return { text: "", error: localError instanceof Error ? localError.message : remoteError instanceof Error ? remoteError.message : "Speech recognition failed." };
+    }
+  }
+}
 
 function formatAudioTime(value: number) { if (!Number.isFinite(value)) return "0:00"; const mins = Math.floor(value / 60); const secs = Math.floor(value % 60); return `${mins}:${String(secs).padStart(2, "0")}`; }
 
@@ -215,6 +235,7 @@ function Index() {
   const [loading, setLoading] = useState(false);
   const ask = useServerFn(askJarvis);
   const synthesize = useServerFn(synthesizeSpeech);
+  const transcribe = useServerFn(transcribeSpeech);
   const recRef = useRef<{ stop: () => Promise<File> } | null>(null);
   const emptyStreak = useRef(0);
   const [recording, setRecording] = useState(false);
@@ -377,7 +398,7 @@ function Index() {
     try {
       const file = await rec.stop();
       if (!convoRef.current) return;
-      const r = await transcribeLocal(file);
+      const r = await recognizeSpeech(file);
       if (!convoRef.current) return;
       if (r.error || !r.text?.trim()) {
         if (r.error) setVoiceError(r.error);
@@ -479,7 +500,7 @@ function Index() {
       const rec = recRef.current;
       recRef.current = null;
       const file = await rec.stop();
-      const result = await transcribeLocal(file);
+      const result = await recognizeSpeech(file);
       if (result.error) setVoiceError(result.error);
       else if (result.text?.trim()) await sendText(result.text);
       else setVoiceError("I couldn't make out the recording. Try speaking a little closer to the microphone.");
