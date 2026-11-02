@@ -58,31 +58,18 @@ function Core({ size = 220, active = false, reactive = false }: { size?: number;
       uniform vec2 resolution;
       uniform float time;
       uniform float energy;
-      float smoothUnion(float a, float b, float k) {
-        float h = clamp(0.5 + 0.5 * (b - a) / k, 0.0, 1.0);
-        return mix(b, a, h) - k * h * (1.0 - h);
-      }
-      float blob(vec3 p, vec3 center, vec3 radius) {
-        vec3 q = (p - center) / radius;
-        return (length(q) - 1.0) * min(radius.x, min(radius.y, radius.z));
-      }
       float scene(vec3 p) {
         float t = time;
-        float speed = 0.48 + energy * 2.9;
-        vec3 warp = vec3(
-          sin(p.y * 4.4 + t * speed) * 0.055,
-          cos(p.z * 4.0 - t * speed * 0.8) * 0.06,
-          sin(p.x * 4.8 + t * speed * 0.65) * 0.05
-        ) * (0.45 + energy * 1.6);
-        vec3 q = p + warp;
-        float a = blob(q, vec3(sin(t*.73)*.15, cos(t*.61)*.13, sin(t*.49)*.08), vec3(.72,.69,.68));
-        float b = blob(q, vec3(sin(t*.52+2.0)*.43, sin(t*.81+1.2)*.36, cos(t*.57)*.24), vec3(.51,.53,.56));
-        float c = blob(q, vec3(cos(t*.64+3.1)*.44, sin(t*.55+3.0)*.42, sin(t*.72+2.0)*.2), vec3(.47,.5,.51));
-        float d = blob(q, vec3(sin(t*.9+1.0)*.3, cos(t*.7+4.0)*.51, cos(t*.6+2.0)*.28), vec3(.38,.43,.4));
-        float fluid = smoothUnion(a,b,.34 + energy*.1);
-        fluid = smoothUnion(fluid,c,.32 + energy*.11);
-        fluid = smoothUnion(fluid,d,.29 + energy*.1);
-        return fluid - (0.012 + energy*.025) * sin(p.x*8.0+t*speed) * sin(p.y*7.0-t*speed*.8) * sin(p.z*8.0+t*speed*.7);
+        float speed = .28 + energy * 1.15;
+        // A single, almost perfectly spherical pearl with gentle liquid breathing.
+        vec3 q = p;
+        q.x += .012*sin(p.y*3.2+t*speed);
+        q.y += .014*sin(p.z*3.0-t*speed*.82);
+        q.z += .010*sin(p.x*3.4+t*speed*.7);
+        float slowBreath = 1.0 + .012*sin(t*.55);
+        float organic = .006*sin(p.x*5.0+p.y*3.0-t*speed)
+                      * sin(p.z*4.0-p.y*2.5+t*speed*.8);
+        return length(q) - (.835*slowBreath + organic);
       }
       vec3 normalAt(vec3 p) {
         vec2 e = vec2(.0025,0.0);
@@ -110,37 +97,38 @@ function Core({ size = 220, active = false, reactive = false }: { size?: number;
         vec3 color = vec3(0.0);
         if (hit) {
           vec3 n = normalAt(p);
-          vec3 lightA = normalize(vec3(-.62,.78,1.05));
-          vec3 lightB = normalize(vec3(.72,-.35,.82));
           vec3 view = normalize(ro-p);
+          vec3 keyLight = normalize(vec3(-.48,.72,1.0));
+          vec3 fillLight = normalize(vec3(.78,-.34,.62));
           float ndv = max(dot(n,view),0.0);
-          float fresnel = pow(1.0-ndv,2.15);
-          float diffuse = max(dot(n,lightA),0.0);
-          float softLight = max(dot(n,lightB),0.0);
-          float spec = pow(max(dot(reflect(-lightA,n),view),0.0),72.0);
-          float broadSpec = pow(max(dot(reflect(-lightB,n),view),0.0),24.0);
-          float flowA = sin(p.x*5.8+p.y*4.4+p.z*3.1-time*(.48+energy*1.8));
-          float flowB = sin(p.y*8.0-p.z*4.8+time*(.32+energy*1.25));
-          float bands = .5+.5*sin(flowA*2.0+flowB*1.25+n.x*2.1);
-          float film = bands*.72+fresnel*.42+ndv*.12;
-          vec3 spectrum = .52+.48*cos(6.28318*(film+vec3(.02,.35,.68)));
-          vec3 deepColor = mix(vec3(.008,.025,.11),vec3(.12,.012,.20),.5+.5*flowA);
-          vec3 pearl = mix(vec3(.28,.68,.78),vec3(.88,.76,.98),.5+.5*flowB);
-          vec3 iridescence = mix(spectrum,pearl,.34);
-          color = mix(deepColor,iridescence,.48+bands*.26);
-          color *= .48+diffuse*.34+softLight*.18;
-          color += spectrum*(.18+fresnel*.92);
-          color += vec3(.34,.82,1.0)*spec*1.35;
-          color += vec3(.92,.58,1.0)*broadSpec*.42;
-          color += vec3(.16,.72,1.0)*pow(fresnel,2.7)*(.35+energy*.38);
-          float innerFlow = .5+.5*sin(p.x*10.0-p.y*8.0+time*(.7+energy*2.0));
-          color += vec3(.12,.22,.9)*innerFlow*.13;
-          color = color/(vec3(1.0)+color*.34);
+          float fresnel = pow(1.0-ndv,3.0);
+          float diffuse = .42 + .58*max(dot(n,keyLight),0.0);
+          float fill = max(dot(n,fillLight),0.0);
+          vec3 reflected = reflect(-keyLight,n);
+          float sharpSpec = pow(max(dot(reflected,view),0.0),105.0);
+          float softSpec = pow(max(dot(reflected,view),0.0),20.0);
+          // Flowing thin-film interference gives the pearl its pastel rainbow sheen.
+          float swirl = sin(p.x*3.6+p.y*2.8+sin(p.z*3.2+time*.24)*1.25-time*.16)
+                      + .55*sin(p.y*5.2-p.z*3.1+time*.19);
+          float film = .5 + .5*sin(swirl*1.15 + n.x*.8 - n.y*.55);
+          vec3 rainbow = .5 + .5*cos(6.28318*(film+vec3(.02,.34,.68)));
+          vec3 pastel = mix(vec3(.66,.91,.96),vec3(.94,.77,.98),rainbow.b*.52);
+          pastel = mix(pastel,vec3(.72,.94,.91),rainbow.g*.28);
+          vec3 pearlWhite = vec3(.82,.91,.96);
+          vec3 body = mix(pearlWhite,pastel,.28+film*.20);
+          float innerRibbon = .5+.5*sin(swirl*2.1 + p.x*2.0 - p.z*1.5);
+          vec3 ribbonTint = mix(vec3(.36,.88,.91),vec3(.78,.55,.96),innerRibbon);
+          body = mix(body,ribbonTint,.12 + fresnel*.14);
+          color = body * diffuse;
+          color += vec3(.22,.36,.43)*fill*.12;
+          color += vec3(.72,.91,1.0)*fresnel*.48;
+          color += vec3(.96,.99,1.0)*softSpec*.46;
+          color += vec3(1.0)*sharpSpec*1.25;
+          // A cool glass rim and soft luminous edge, without a neon outline.
+          color += mix(vec3(.36,.83,.91),vec3(.82,.68,1.0),film)*pow(fresnel,1.55)*.52;
+          color = color/(vec3(1.0)+color*.16);
         }
-        float vignette = smoothstep(1.45,.18,length(uv));
-        color *= vignette;
-        color = max(color,vec3(0.0));
-        gl_FragColor = vec4(color, hit ? .96 : 0.0);
+        gl_FragColor = vec4(color, hit ? .985 : 0.0);
       }
     `;
     const compile = (type: number, source: string) => {
@@ -201,7 +189,7 @@ function Core({ size = 220, active = false, reactive = false }: { size?: number;
       <div className="core-fluid-halo" />
       <div className="core-fluid-edge" />
       <canvas ref={canvas} className="core-fluid-canvas" aria-label="Live flowing liquid core" />
-      {!reactive && <div className="core-fluid-idle" />}
+
     </div>
   );
 }
