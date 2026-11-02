@@ -14,10 +14,11 @@ export function decodePCM(pending: Uint8Array, incoming: Uint8Array) {
 
 let shared: AudioContext | null = null;
 /** Call from a tap/click so mobile browsers allow later playback. */
-export function unlockAudio() {
+export function unlockAudio(): AudioContext {
   if (!shared || shared.state === "closed") shared = new AudioContext({ sampleRate: 24000 });
   void shared.resume().catch(() => {});
   const b = shared.createBuffer(1, 1, 24000); const s = shared.createBufferSource(); s.buffer = b; s.connect(shared.destination); s.start();
+  return shared;
 }
 
 export async function streamSpeech(endpoint: string, body: Record<string, unknown>, headers: Record<string, string>, signal?: AbortSignal): Promise<void> {
@@ -109,4 +110,64 @@ export async function streamSpeech(endpoint: string, body: Record<string, unknow
     for (const source of sources) source.stop();
     analyser.disconnect();
   }
+}
+
+
+/** Play Gemini's 24 kHz mono PCM/WAV response through the unlocked device audio context. */
+export async function playSpeechAudio(base64: string, mimeType: string, signal?: AbortSignal): Promise<void> {
+  signal?.throwIfAborted();
+  const context = unlockAudio();
+  if (context.state !== "running") await context.resume();
+  signal?.throwIfAborted();
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  let buffer: AudioBuffer;
+  if (mimeType.toLowerCase().includes("wav")) {
+    buffer = await context.decodeAudioData(bytes.buffer.slice(0));
+  } else {
+    const pcm = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+    const count = Math.floor(bytes.byteLength / 2);
+    const samples = new Float32Array(count);
+    for (let i = 0; i < count; i++) samples[i] = pcm.getInt16(i * 2, true) / 32768;
+    if (!samples.length) throw new Error("Speech engine returned empty audio.");
+    buffer = context.createBuffer(1, samples.length, 24000);
+    buffer.copyToChannel(samples, 0);
+  }
+  signal?.throwIfAborted();
+  const source = context.createBufferSource();
+  const analyser = context.createAnalyser();
+  analyser.fftSize = 512;
+  source.buffer = buffer;
+  source.connect(analyser);
+  analyser.connect(context.destination);
+  const levelBuffer = new Uint8Array(analyser.fftSize);
+  let raf = 0;
+  return new Promise<void>((resolve, reject) => {
+    let settled = false;
+    const cleanup = () => {
+      cancelAnimationFrame(raf);
+      signal?.removeEventListener("abort", abort);
+      audioLevel.value = 0;
+      audioLevel.source = "idle";
+      try { source.disconnect(); analyser.disconnect(); } catch {}
+    };
+    const finish = (error?: Error) => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      if (error) reject(error); else resolve();
+    };
+    const abort = () => { try { source.stop(); } catch {} finish(new DOMException("Cancelled", "AbortError")); };
+    const tick = () => {
+      audioLevel.value = readLevel(analyser, levelBuffer);
+      audioLevel.source = "ai";
+      raf = requestAnimationFrame(tick);
+    };
+    source.onended = () => finish();
+    signal?.addEventListener("abort", abort, { once: true });
+    tick();
+    try { source.start(context.currentTime + 0.04); }
+    catch (error) { finish(error instanceof Error ? error : new Error("Audio playback failed.")); }
+  });
 }
