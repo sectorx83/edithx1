@@ -252,7 +252,7 @@ function Index() {
   }
   function addMusicUrl() {
     const value = musicUrl.trim();
-    if (!/^https:\\/\\//i.test(value)) { setMusicError("Use a direct HTTPS link to an audio file."); return; }
+    if (!value.startsWith("https://")) { setMusicError("Use a direct HTTPS link to an audio file."); return; }
     const title = value.split("/").pop()?.split("?")[0] || "Audio stream";
     setMusicTracks((current) => [...current, { id: crypto.randomUUID(), title: decodeURIComponent(title), artist: "Online audio", src: value }]);
     setMusicUrl("");
