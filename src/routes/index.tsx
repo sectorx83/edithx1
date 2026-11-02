@@ -229,7 +229,7 @@ function Index() {
   type NetStatus = { status: "connecting" | "connected" | "disconnected"; error?: string | undefined; tools: { name: string; description: string }[]; misconfigured: { name: string; reason: string; setup: string }[]; unavailable: { name: string; reason: string }[] };
   const [net, setNet] = useState<NetStatus>({ status: "connecting", tools: [], misconfigured: [], unavailable: [] });
   const [showNet, setShowNet] = useState(false);
-  type MusicTrack = { id: string; title: string; artist: string; src: string; file?: File };
+  type MusicTrack = { id: string; title: string; artist: string; src: string; youtubeId?: string; file?: File };
   const [musicTracks, setMusicTracks] = useState<MusicTrack[]>([]);
   const [musicIndex, setMusicIndex] = useState(0);
   const [musicPlaying, setMusicPlaying] = useState(false);
@@ -239,6 +239,8 @@ function Index() {
   const [musicUrl, setMusicUrl] = useState("");
   const [musicError, setMusicError] = useState("");
   const musicAudio = useRef<HTMLAudioElement | null>(null);
+  const youtubePlayer = useRef<any>(null);
+  const youtubeHost = useRef<HTMLDivElement | null>(null);
   const activeTrack = musicTracks[musicIndex];
 
   function addMusicFiles(files: FileList | null) {
@@ -250,17 +252,49 @@ function Index() {
     setMusicError("");
     if (!musicTracks.length) setMusicIndex(0);
   }
-  function addMusicUrl() {
+  function extractYouTubeId(value: string) {
+    try {
+      const url = new URL(value);
+      if (url.hostname === "youtu.be") return url.pathname.slice(1).split("/")[0] || null;
+      if (url.hostname.endsWith("youtube.com") || url.hostname.endsWith("youtube-nocookie.com")) {
+        if (url.pathname === "/watch") return url.searchParams.get("v");
+        const parts = url.pathname.split("/").filter(Boolean);
+        if (["embed", "shorts", "live"].includes(parts[0])) return parts[1] || null;
+      }
+    } catch { /* not a URL */ }
+    return null;
+  }
+  async function addMusicUrl() {
     const value = musicUrl.trim();
-    if (!value.startsWith("https://")) { setMusicError("Use a direct HTTPS link to an audio file."); return; }
+    const youtubeId = extractYouTubeId(value);
+    if (youtubeId) {
+      const track: MusicTrack = { id: crypto.randomUUID(), title: "YouTube video", artist: "YouTube", src: "", youtubeId };
+      try {
+        const response = await fetch("https://www.youtube.com/oembed?url=" + encodeURIComponent("https://www.youtube.com/watch?v=" + youtubeId) + "&format=json");
+        if (response.ok) { const meta = await response.json(); track.title = meta.title || track.title; track.artist = meta.author_name || "YouTube"; }
+      } catch { /* The player still works if metadata lookup is blocked. */ }
+      setMusicTracks((current) => [...current, track]);
+      setMusicUrl("");
+      setMusicError("");
+      if (musicTracks.length === 0) setMusicIndex(0);
+      return;
+    }
+    if (!value.startsWith("https://")) { setMusicError("Paste a YouTube video link or a direct HTTPS audio URL."); return; }
     const title = value.split("/").pop()?.split("?")[0] || "Audio stream";
     setMusicTracks((current) => [...current, { id: crypto.randomUUID(), title: decodeURIComponent(title), artist: "Online audio", src: value }]);
     setMusicUrl("");
     setMusicError("");
   }
   async function toggleMusic() {
+    if (!activeTrack) return;
+    if (activeTrack.youtubeId) {
+      if (!youtubePlayer.current) { setMusicError("YouTube player is loading. Try again in a moment."); return; }
+      if (musicPlaying) youtubePlayer.current.pauseVideo(); else youtubePlayer.current.playVideo();
+      setMusicPlaying(!musicPlaying);
+      return;
+    }
     const audio = musicAudio.current;
-    if (!audio || !activeTrack) return;
+    if (!audio) return;
     try {
       if (musicPlaying) { audio.pause(); setMusicPlaying(false); }
       else { await audio.play(); setMusicPlaying(true); setMusicError(""); }
@@ -274,11 +308,42 @@ function Index() {
   }
   useEffect(() => {
     const audio = musicAudio.current;
-    if (!audio) return;
+    if (!audio || activeTrack?.youtubeId) return;
     audio.volume = musicVolume;
     if (musicPlaying) void audio.play().catch(() => { setMusicPlaying(false); setMusicError("Playback failed for this track."); });
-  }, [musicIndex, musicTracks, musicVolume]);
-  useEffect(() => () => { musicTracks.forEach((track) => { if (track.file) URL.revokeObjectURL(track.src); }); }, [musicTracks]);
+  }, [musicIndex, musicTracks, musicVolume, musicPlaying, activeTrack?.youtubeId]);
+  useEffect(() => {
+    if (!activeTrack?.youtubeId || !youtubeHost.current) return;
+    let cancelled = false;
+    const mount = () => {
+      if (cancelled || !youtubeHost.current || !(window as any).YT?.Player) return;
+      youtubePlayer.current?.destroy?.();
+      youtubePlayer.current = new (window as any).YT.Player(youtubeHost.current, {
+        width: "100%", height: "180", videoId: activeTrack.youtubeId,
+        playerVars: { playsinline: 1, rel: 0, modestbranding: 1, origin: window.location.origin },
+        events: {
+          onReady: (event: any) => { event.target.setVolume(Math.round(musicVolume * 100)); if (musicPlaying) event.target.playVideo(); },
+          onStateChange: (event: any) => {
+            const YT = (window as any).YT;
+            if (event.data === YT.PlayerState.PLAYING) setMusicPlaying(true);
+            if (event.data === YT.PlayerState.PAUSED) setMusicPlaying(false);
+            if (event.data === YT.PlayerState.ENDED) { setMusicPlaying(false); setMusicProgress(0); changeMusic(musicIndex + 1); }
+          },
+          onError: () => { setMusicPlaying(false); setMusicError("YouTube could not play this video. It may be private, restricted, or unavailable for embedding."); }
+        }
+      });
+    };
+    if ((window as any).YT?.Player) mount();
+    else {
+      const existing = document.querySelector<HTMLScriptElement>('script[src="https://www.youtube.com/iframe_api"]');
+      if (!existing) { const script = document.createElement("script"); script.src = "https://www.youtube.com/iframe_api"; document.head.appendChild(script); }
+      const previous = (window as any).onYouTubeIframeAPIReady;
+      (window as any).onYouTubeIframeAPIReady = () => { previous?.(); mount(); };
+    }
+    return () => { cancelled = true; youtubePlayer.current?.destroy?.(); youtubePlayer.current = null; };
+  }, [activeTrack?.youtubeId]);
+  useEffect(() => { if (youtubePlayer.current && activeTrack?.youtubeId) youtubePlayer.current.setVolume(Math.round(musicVolume * 100)); }, [musicVolume, activeTrack?.youtubeId]);
+  useEffect(() => () => { musicTracks.forEach((track) => { if (track.file) URL.revokeObjectURL(track.src); }); }, []);
 
   async function listen() {
     if (!convoRef.current) return;
@@ -664,15 +729,6 @@ function Index() {
                 <div className={phase !== "idle" || recording || transcribing ? "mission-step is-current" : "mission-step"}><i/><span><b>VOICE INTERFACE</b><small>{phase === "listening" || recording ? "Listening for input" : phase === "thinking" || transcribing ? "Processing audio" : phase === "speaking" ? "Speaking response" : "Voice interface standing by"}</small></span><em>{phase === "idle" && !recording && !transcribing ? "IDLE" : phase.toUpperCase()}</em></div>
               </div>
             </article>
-            <article className="dashboard-card dashboard-provider-card">
-              <div className="dashboard-card-top"><span><Radio size={15}/> CONNECTED SERVICES</span><span>{net.tools.length} AVAILABLE</span></div>
-              {net.tools.length || net.misconfigured.length || net.unavailable.length ? <div className="provider-list">
-                {net.tools.map((tool)=><div className="provider-row" key={tool.name}><span className="provider-state good"><ShieldCheck size={14}/></span><span><b>{tool.name}</b><small>{tool.description || "Connected service"}</small></span><em>AVAILABLE</em></div>)}
-                {net.misconfigured.map((tool)=><div className="provider-row" key={tool.name}><span className="provider-state warn"><Settings size={14}/></span><span><b>{tool.name}</b><small>{tool.reason}</small></span><em>SETUP</em></div>)}
-                {net.unavailable.map((tool)=><div className="provider-row" key={tool.name}><span className="provider-state off"><Server size={14}/></span><span><b>{tool.name}</b><small>{tool.reason}</small></span><em>OFFLINE</em></div>)}
-              </div> : <div className="provider-empty"><Sparkles size={17}/><span>{net.status === "connecting" ? "Discovering connected services…" : "No external services reported by the network."}</span></div>}
-              <button className="dashboard-text-link" onClick={()=>setShowNet(true)}>OPEN SERVICE DIAGNOSTICS <ArrowUpRight size={14}/></button>
-            </article>
             <article className="dashboard-card dashboard-memory-card">
               <div className="dashboard-card-top"><span><BrainCircuit size={15}/> CONTEXT SNAPSHOT</span><span>SESSION HISTORY</span></div>
               {messages.length ? <><div className="context-count"><strong>{messages.length}</strong><span>conversation entries<br/>in your session history</span></div><div className="context-latest"><small>LATEST USER COMMAND</small><p>{[...messages].reverse().find(m=>m.role==="user")?.content || "No command recorded yet."}</p></div><button className="dashboard-text-link" onClick={()=>{setDashboard(false);switchMode("text")}}>OPEN CONVERSATION <ArrowUpRight size={14}/></button></> : <div className="provider-empty"><BrainCircuit size={17}/><span>Your conversation context will appear here after your first command.</span></div>}
@@ -688,22 +744,13 @@ function Index() {
               <input className="music-seek" type="range" min="0" max={musicDuration || 1} value={Math.min(musicProgress,musicDuration || 1)} onChange={e=>{const v=Number(e.target.value);setMusicProgress(v);if(musicAudio.current)musicAudio.current.currentTime=v;}} aria-label="Music position"/>
               <div className="music-time-row"><span>{formatAudioTime(musicProgress)}</span><span>{formatAudioTime(musicDuration)}</span></div>
               <div className="music-controls"><button onClick={()=>changeMusic(musicIndex-1)} disabled={!musicTracks.length} aria-label="Previous track"><SkipBack/></button><button onClick={toggleMusic} disabled={!activeTrack} aria-label={musicPlaying ? "Pause" : "Play"}>{musicPlaying ? <Pause/> : <Play/>}</button><button onClick={()=>changeMusic(musicIndex+1)} disabled={!musicTracks.length} aria-label="Next track"><SkipForward/></button><Volume2 size={16}/><input type="range" min="0" max="1" step=".01" value={musicVolume} onChange={e=>setMusicVolume(Number(e.target.value))} aria-label="Volume"/></div>
-              <audio ref={musicAudio} src={activeTrack?.src} onTimeUpdate={e=>setMusicProgress(e.currentTarget.currentTime)} onLoadedMetadata={e=>setMusicDuration(e.currentTarget.duration || 0)} onEnded={()=>changeMusic(musicIndex+1)} onError={()=>{setMusicPlaying(false);setMusicError("Unable to load this audio source.");}}/>
-              <div className="music-add-row"><label className="music-upload"><Upload size={14}/> Add files<input type="file" accept="audio/*" multiple onChange={e=>addMusicFiles(e.target.files)}/></label><form onSubmit={e=>{e.preventDefault();addMusicUrl();}}><input value={musicUrl} onChange={e=>setMusicUrl(e.target.value)} placeholder="Direct audio URL"/><button type="submit" aria-label="Add audio URL"><Plus size={15}/></button></form></div>
+              {activeTrack?.youtubeId ? <div className="youtube-player-frame"><div ref={youtubeHost} /></div> : <audio ref={musicAudio} src={activeTrack?.src} onTimeUpdate={e=>setMusicProgress(e.currentTarget.currentTime)} onLoadedMetadata={e=>setMusicDuration(e.currentTarget.duration || 0)} onEnded={()=>changeMusic(musicIndex+1)} onError={()=>{setMusicPlaying(false);setMusicError("Unable to load this audio source.");}}/>}
+              <div className="music-add-row"><label className="music-upload"><Upload size={14}/> Add files<input type="file" accept="audio/*" multiple onChange={e=>addMusicFiles(e.target.files)}/></label><form onSubmit={e=>{e.preventDefault();addMusicUrl();}}><input value={musicUrl} onChange={e=>setMusicUrl(e.target.value)} placeholder="Paste YouTube link or audio URL"/><button type="submit" aria-label="Add audio URL"><Plus size={15}/></button></form></div>
               {musicTracks.length>0 && <div className="music-queue">{musicTracks.map((track,index)=><button key={track.id} className={index===musicIndex ? "is-current" : ""} onClick={()=>changeMusic(index)}><span>{index+1}</span><b>{track.title}</b><small>{index===musicIndex && musicPlaying ? "PLAYING" : track.artist}</small></button>)}</div>}
               {musicError && <p className="music-error">{musicError}</p>}
-              <p className="music-note">Plays your uploaded audio files or direct audio links. No STYX music endpoint required.</p>
+              <p className="music-note">YouTube videos play in the official embedded player. Tracks advance in queue order; some videos may block embedding.</p>
             </article>
-            <article className="dashboard-card dashboard-google-card">
-              <div className="dashboard-card-top"><span><Sparkles size={15}/> GOOGLE WORKSPACE</span><span>QUICK ACCESS</span></div>
-              <p className="google-intro">Open your Google tools from EDITH. Full in-app account sync requires Google OAuth credentials and a configured callback.</p>
-              <div className="google-service-grid">
-                <a href="https://mail.google.com/" target="_blank" rel="noopener noreferrer"><Mail/><b>Gmail</b><small>Inbox & compose</small><ArrowUpRight/></a>
-                <a href="https://calendar.google.com/" target="_blank" rel="noopener noreferrer"><CalendarDays/><b>Calendar</b><small>Events & schedule</small><ArrowUpRight/></a>
-                <a href="https://drive.google.com/" target="_blank" rel="noopener noreferrer"><HardDrive/><b>Drive</b><small>Files & documents</small><ArrowUpRight/></a>
-              </div>
-              <div className="google-connector-status"><span/> OAuth connector setup required for direct EDITH actions</div>
-            </article>
+
           <div className="dashboard-footer"><span>EDITH X1 <i/> PRIVATE SYSTEM</span><span>ALL SYSTEMS ARE MONITORED LOCALLY</span></div>
         </section>
       ) : mode === "voice" ? (
@@ -770,7 +817,7 @@ function Index() {
           {!net.error && net.tools.length === 0 && net.misconfigured.length === 0 && net.unavailable.length === 0 && <p className="network-detail">Checking connected services…</p>}
         </aside>
       )}
-      {!showSettings && <nav ref={navRef} className="floating-nav fixed" aria-label="Main navigation"
+      {!showSettings && <nav className="floating-nav fixed" aria-label="Main navigation"
         onPointerDown={(e) => { if (e.pointerType === "mouse" && e.button !== 0) return; navTouch.current = { x: e.clientX, y: e.clientY, left: navRef.current?.scrollLeft ?? 0, horizontal: false, pointerId: e.pointerId }; }}
         onPointerMove={(e) => { if (navTouch.current.pointerId !== e.pointerId) return; const dx = e.clientX - navTouch.current.x; const dy = e.clientY - navTouch.current.y; if (!navTouch.current.horizontal && Math.abs(dx) > 5 && Math.abs(dx) > Math.abs(dy) * 1.1) { navTouch.current.horizontal = true; navRef.current?.setPointerCapture(e.pointerId); } if (navTouch.current.horizontal && navRef.current) { e.preventDefault(); navRef.current.scrollLeft = navTouch.current.left - dx; } }}
         onPointerUp={(e) => { if (navTouch.current.pointerId === e.pointerId) { if (navRef.current?.hasPointerCapture(e.pointerId)) navRef.current.releasePointerCapture(e.pointerId); navTouch.current.pointerId = -1; navTouch.current.horizontal = false; } }}
