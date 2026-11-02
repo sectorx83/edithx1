@@ -226,7 +226,8 @@ function Index() {
         binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
       }
       const result = await transcribe({ data: { audio: btoa(binary), mimeType: "audio/wav" } });
-      return { text: result.text, error: "" };
+      if (result.text.trim()) return { text: result.text, error: "" };
+      return await transcribeLocal(file);
     } catch (remoteError) {
       // Keep the on-device Whisper model as a backup if the network recognizer is unavailable.
       try {
