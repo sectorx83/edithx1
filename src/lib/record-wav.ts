@@ -41,6 +41,8 @@ export async function recordWav(onSilence?: () => void): Promise<{ stop: () => P
     const audioContext = context;
     const source = audioContext.createMediaStreamSource(stream);
     const node = audioContext.createScriptProcessor(4096, 1, 1);
+    const silentOutput = audioContext.createGain();
+    silentOutput.gain.value = 0;
     const chunks: Float32Array[] = [];
     let heard = false, quietMs = 0, fired = false, speechMs = 0;
     node.onaudioprocess = (event) => {
@@ -57,7 +59,8 @@ export async function recordWav(onSilence?: () => void): Promise<{ stop: () => P
       if (heard && speechMs >= 350 && quietMs > 1100 && !fired) { fired = true; onSilence?.(); }
     };
     source.connect(node);
-    node.connect(audioContext.destination);
+    node.connect(silentOutput);
+    silentOutput.connect(audioContext.destination);
     let stopped = false;
     return {
       async stop() {
@@ -65,6 +68,7 @@ export async function recordWav(onSilence?: () => void): Promise<{ stop: () => P
         stopped = true;
         stream.getTracks().forEach((track) => track.stop());
         node.disconnect();
+        silentOutput.disconnect();
         source.disconnect();
         node.onaudioprocess = null;
         audioLevel.value = 0; audioLevel.source = "idle";
