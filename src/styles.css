@@ -1836,3 +1836,96 @@ html, body, #root, body { background: #000 !important; }
 .google-connector-status span{width:6px;height:6px;flex:0 0 6px;border-radius:50%;background:#d6a85c;box-shadow:0 0 9px rgba(214,168,92,.45)}
 .dashboard-music-card audio{display:none}
 @media(max-width:560px){.google-service-grid{gap:6px}.google-service-grid a{padding:10px;min-height:100px}.music-add-row{flex-wrap:wrap}.music-upload{flex:0 0 auto}.music-add-row form{min-width:160px}}
+
+
+/* Unified optical liquid-glass material across EDITH X1 surfaces. */
+:root {
+  --edith-glass-edge: rgba(255,255,255,.26);
+  --edith-glass-top: rgba(255,255,255,.17);
+  --edith-glass-fill: rgba(255,255,255,.035);
+}
+.dashboard-card,.settings-card,.settings-window,.network-panel,.music-art,
+.music-upload,.music-add-row form,.music-controls button,.agent-state-strip,
+.agent-result-step,.dashboard-module-grid button,.dashboard-quick-actions button {
+  position:relative;
+  isolation:isolate;
+  border:1px solid var(--edith-glass-edge) !important;
+  background:
+    radial-gradient(130% 95% at 12% -18%,rgba(255,255,255,.19),transparent 55%),
+    radial-gradient(90% 100% at 100% 110%,rgba(180,195,220,.075),transparent 62%),
+    linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.018) 48%,rgba(255,255,255,.045)) !important;
+  -webkit-backdrop-filter:blur(30px) saturate(185%) contrast(112%);
+  backdrop-filter:blur(30px) saturate(185%) contrast(112%);
+  box-shadow:
+    0 20px 55px rgba(0,0,0,.32),
+    inset 0 1px 0 rgba(255,255,255,.28),
+    inset 0 -1px 0 rgba(255,255,255,.055),
+    inset 1px 0 0 rgba(255,255,255,.07),
+    inset -1px 0 0 rgba(255,255,255,.05);
+}
+.dashboard-card::before,.settings-card::before,.settings-window::before {
+  content:"";
+  position:absolute;
+  inset:1px;
+  border-radius:inherit;
+  pointer-events:none;
+  z-index:0;
+  background:
+    linear-gradient(118deg,transparent 8%,rgba(255,255,255,.105) 23%,transparent 39%),
+    radial-gradient(100% 55% at 50% 0%,rgba(255,255,255,.105),transparent 78%);
+  opacity:.72;
+}
+.dashboard-card>* ,.settings-card>* {position:relative;z-index:1}
+.dashboard-card,.settings-card,.settings-window {overflow:hidden}
+.floating-nav {
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-evenly !important;
+  flex-wrap:nowrap !important;
+  width:max-content !important;
+  max-width:calc(100vw - 20px) !important;
+  min-width:0 !important;
+  overflow:visible !important;
+  white-space:normal !important;
+  gap:clamp(2px,1.2vw,9px) !important;
+  padding:7px 10px !important;
+  touch-action:manipulation !important;
+  scroll-snap-type:none !important;
+  -webkit-overflow-scrolling:auto !important;
+  overscroll-behavior:auto !important;
+  background:
+    radial-gradient(120% 150% at 18% -28%,rgba(255,255,255,.24),transparent 58%),
+    linear-gradient(145deg,rgba(35,38,45,.42),rgba(9,11,15,.27) 55%,rgba(255,255,255,.045)) !important;
+  border:1px solid rgba(255,255,255,.3) !important;
+  border-radius:999px !important;
+  box-shadow:0 22px 60px rgba(0,0,0,.48),inset 0 1px 0 rgba(255,255,255,.42),inset 0 -1px 0 rgba(255,255,255,.09),inset 1px 0 0 rgba(255,255,255,.12) !important;
+  -webkit-backdrop-filter:blur(34px) saturate(210%) contrast(120%) !important;
+  backdrop-filter:blur(34px) saturate(210%) contrast(120%) !important;
+}
+.floating-nav::-webkit-scrollbar{display:none !important}
+.floating-nav-item {
+  flex:0 1 auto !important;
+  width:auto !important;
+  min-width:0 !important;
+  max-width:none !important;
+  padding:9px clamp(8px,1.5vw,15px) !important;
+  touch-action:manipulation !important;
+}
+.youtube-player-frame {
+  width:100%;
+  overflow:hidden;
+  margin:12px 0;
+  border:1px solid rgba(255,255,255,.2);
+  border-radius:16px;
+  background:rgba(0,0,0,.55);
+  box-shadow:0 14px 38px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.18);
+}
+.youtube-player-frame iframe {display:block;width:100%;max-width:100%;aspect-ratio:16/9;border:0}
+@media(max-width:480px) {
+  .floating-nav {gap:1px !important;padding:6px 6px !important}
+  .floating-nav-item {padding:8px 7px !important;gap:4px !important}
+  .floating-nav-item span {font-size:9px}
+}
+@media(prefers-reduced-transparency:reduce) {
+  .dashboard-card,.settings-card,.settings-window,.network-panel,.floating-nav {background:rgba(14,16,20,.92) !important}
+}
