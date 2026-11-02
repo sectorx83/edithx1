@@ -816,10 +816,7 @@ function Index() {
         </aside>
       )}
       {!showSettings && <nav className="floating-nav fixed" aria-label="Main navigation"
-        onPointerDown={(e) => { if (e.pointerType === "mouse" && e.button !== 0) return; navTouch.current = { x: e.clientX, y: e.clientY, left: navRef.current?.scrollLeft ?? 0, horizontal: false, pointerId: e.pointerId }; }}
-        onPointerMove={(e) => { if (navTouch.current.pointerId !== e.pointerId) return; const dx = e.clientX - navTouch.current.x; const dy = e.clientY - navTouch.current.y; if (!navTouch.current.horizontal && Math.abs(dx) > 5 && Math.abs(dx) > Math.abs(dy) * 1.1) { navTouch.current.horizontal = true; navRef.current?.setPointerCapture(e.pointerId); } if (navTouch.current.horizontal && navRef.current) { e.preventDefault(); navRef.current.scrollLeft = navTouch.current.left - dx; } }}
-        onPointerUp={(e) => { if (navTouch.current.pointerId === e.pointerId) { if (navRef.current?.hasPointerCapture(e.pointerId)) navRef.current.releasePointerCapture(e.pointerId); navTouch.current.pointerId = -1; navTouch.current.horizontal = false; } }}
-        onPointerCancel={() => { navTouch.current.pointerId = -1; navTouch.current.horizontal = false; }}
+
       >
         <button type="button" onClick={() => setDashboard(true)} className="floating-nav-item" aria-label="Dashboard"><LayoutDashboard className="h-5 w-5" /><span>Home</span></button>
         <button type="button" onClick={() => { setDashboard(false); switchMode("voice"); }} className={!dashboard && mode === "voice" ? "floating-nav-item is-active" : "floating-nav-item"} aria-label="Voice mode">
