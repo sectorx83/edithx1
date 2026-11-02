@@ -34,7 +34,9 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-type Msg = { role: "user" | "assistant"; content: string; network?: NetworkPayload | undefined };\n\nfunction formatAudioTime(value: number) { if (!Number.isFinite(value)) return "0:00"; const mins = Math.floor(value / 60); const secs = Math.floor(value % 60); return `${mins}:${String(secs).padStart(2, "0")}`; }
+type Msg = { role: "user" | "assistant"; content: string; network?: NetworkPayload | undefined };
+
+function formatAudioTime(value: number) { if (!Number.isFinite(value)) return "0:00"; const mins = Math.floor(value / 60); const secs = Math.floor(value % 60); return `${mins}:${String(secs).padStart(2, "0")}`; }
 
 function Core({ size = 220, active = false, reactive = false }: { size?: number; active?: boolean; reactive?: boolean }) {
   const canvas = useRef<HTMLCanvasElement>(null);
