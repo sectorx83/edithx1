@@ -4,11 +4,12 @@ import { Mic, Square, Loader2, MessageSquare, AudioLines, Settings, Activity, La
 import ReactMarkdown from "react-markdown";
 import { useServerFn } from "@tanstack/react-start";
 import { askJarvis, type NetworkPayload } from "@/lib/jarvis.functions";
+import { synthesizeSpeech } from "@/lib/voice.functions";
 import { TaskPanel } from "@/components/TaskPanel";
 import { getNetworkStatus, reportBrowserAction } from "@/lib/styx-network.functions";
 import { transcribeLocal, speakLocal, cancelLocalTranscription } from "@/lib/local-voice";
 import { recordWav } from "@/lib/record-wav";
-import { unlockAudio } from "@/lib/stream-speech";
+import { unlockAudio, playSpeechAudio } from "@/lib/stream-speech";
 import { audioLevel } from "@/lib/audio-level";
 import { SettingsPanel } from "@/components/SettingsPanel";
 import { DEFAULT_SETTINGS, type StyxSettings } from "@/lib/styx-settings";
@@ -213,6 +214,7 @@ function Index() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const ask = useServerFn(askJarvis);
+  const synthesize = useServerFn(synthesizeSpeech);
   const recRef = useRef<{ stop: () => Promise<File> } | null>(null);
   const emptyStreak = useRef(0);
   const [recording, setRecording] = useState(false);
@@ -451,32 +453,57 @@ function Index() {
     speechAbort.current = ac;
     text = text.replace(/[*_#`>|]/g, "").replace(/\[(.*?)\]\(.*?\)/g, "$1");
     try {
-      await speakLocal(text, voice, ac.signal);
-    } catch (e) {
-      if (!ac.signal.aborted) setVoiceError(e instanceof Error ? e.message : "Couldn't play the device voice, sir.");
+      const result = await synthesize({ data: { text, voice } });
+      if (ac.signal.aborted) return;
+      await playSpeechAudio(result.audio, result.mimeType, ac.signal);
+    } catch (remoteError) {
+      if (ac.signal.aborted) return;
+      // Browser speech is a resilient fallback if the neural TTS provider is unavailable.
+      try {
+        await speakLocal(text, voice, ac.signal);
+      } catch (fallbackError) {
+        if (!ac.signal.aborted) setVoiceError(
+          fallbackError instanceof Error
+            ? `Speech unavailable: ${fallbackError.message}`
+            : remoteError instanceof Error ? remoteError.message : "Speech playback failed."
+        );
+      }
+    }
+  }
+
+  async function finishManualRecording() {
+    if (!recRef.current || transcribing) return;
+    setRecording(false);
+    setTranscribing(true);
+    try {
+      const rec = recRef.current;
+      recRef.current = null;
+      const file = await rec.stop();
+      const result = await transcribeLocal(file);
+      if (result.error) setVoiceError(result.error);
+      else if (result.text?.trim()) await sendText(result.text);
+      else setVoiceError("I couldn't make out the recording. Try speaking a little closer to the microphone.");
+    } catch (error) {
+      setVoiceError(error instanceof Error ? error.message : "Recording failed.");
+    } finally {
+      setTranscribing(false);
     }
   }
 
   async function toggleMic() {
     unlockAudio();
     setVoiceError("");
-    if (!recording) {
-      try { recRef.current = await recordWav(() => void toggleMic()); setRecording(true); }
-      catch { setVoiceError("Microphone access was blocked."); }
+    if (recording) {
+      await finishManualRecording();
       return;
     }
-    setRecording(false);
-    setTranscribing(true);
+    if (recRef.current) return;
     try {
-      const rec = recRef.current; recRef.current = null;
-      if (!rec) return;
-      const file = await rec.stop();
-      const r = await transcribeLocal(file);
-      if (r.error) setVoiceError(r.error);
-      else if (r.text) await sendText(r.text);
-    } catch (e) {
-      setVoiceError(e instanceof Error ? e.message : "Recording failed.");
-    } finally { setTranscribing(false); }
+      recRef.current = await recordWav(() => void finishManualRecording());
+      setRecording(true);
+    } catch (error) {
+      setVoiceError(error instanceof Error ? error.message : "Microphone access was blocked.");
+    }
   }
   const endRef = useRef<HTMLDivElement>(null);
 
