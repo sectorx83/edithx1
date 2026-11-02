@@ -1,6 +1,6 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Mic, Square, Loader2, MessageSquare, AudioLines, Settings, Activity, LayoutDashboard, BrainCircuit, Wrench, Clock3, ArrowUpRight, Zap, ShieldCheck, Radio, Server, Sparkles, Music, Play, Pause, SkipBack, SkipForward, Volume2, Upload, Plus, Mail, CalendarDays, HardDrive } from "lucide-react";
+import { Mic, Square, Loader2, MessageSquare, AudioLines, Settings, Activity, LayoutDashboard, BrainCircuit, Wrench, Clock3, ArrowUpRight, Zap, ShieldCheck, Radio, Server, Sparkles, Music, Play, Pause, SkipBack, SkipForward, Volume2, Upload, Plus } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { useServerFn } from "@tanstack/react-start";
 import { askJarvis, type NetworkPayload } from "@/lib/jarvis.functions";
@@ -219,8 +219,6 @@ function Index() {
   const [missionDuration, setMissionDuration] = useState<number | null>(null);
   const lastNetworkResult = useRef<NetworkPayload | undefined>(undefined);
   const [localNow, setLocalNow] = useState(() => new Date());
-  const navRef = useRef<HTMLElement | null>(null);
-  const navTouch = useRef({ x: 0, y: 0, left: 0, horizontal: false, pointerId: -1 });
   const [convo, setConvo] = useState(false);
   const convoRef = useRef(false);
   const [phase, setPhase] = useState<"idle" | "listening" | "thinking" | "speaking">("idle");
