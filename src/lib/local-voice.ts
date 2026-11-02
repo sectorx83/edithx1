@@ -112,3 +112,96 @@ export async function speakLocal(text: string, voiceId: string, signal: AbortSig
     window.setTimeout(() => { if (!settled && synth.paused) synth.resume(); }, 250);
   });
 }
+
+
+let kokoroWorker: Worker | undefined;
+let kokoroSequence = 0;
+const kokoroPending = new Map<number, { resolve: (audio: Float32Array) => void; reject: (error: Error) => void }>();
+
+function getKokoroWorker(): Worker {
+  if (kokoroWorker) return kokoroWorker;
+  const worker = new Worker(new URL("./kokoro-voice.worker.ts", import.meta.url), { type: "module" });
+  worker.onmessage = (event: MessageEvent<{ id: number; audio?: ArrayBuffer; sampleRate?: number; error?: string }>) => {
+    const pending = kokoroPending.get(event.data.id);
+    if (!pending) return;
+    kokoroPending.delete(event.data.id);
+    if (event.data.error || !event.data.audio) pending.reject(new Error(event.data.error || "Kokoro returned no audio."));
+    else {
+      const samples = new Float32Array(event.data.audio);
+      // Attach metadata without changing the model's samples.
+      Object.defineProperty(samples, "sampleRate", { value: event.data.sampleRate || 24000 });
+      pending.resolve(samples);
+    }
+  };
+  worker.onerror = () => {
+    for (const pending of kokoroPending.values()) pending.reject(new Error("Kokoro voice worker failed to load."));
+    kokoroPending.clear();
+    worker.terminate();
+    kokoroWorker = undefined;
+  };
+  kokoroWorker = worker;
+  return worker;
+}
+
+/** Generate and play speech with the local Kokoro ONNX voice model. */
+export async function speakKokoro(text: string, signal: AbortSignal): Promise<void> {
+  signal.throwIfAborted();
+  const id = ++kokoroSequence;
+  const worker = getKokoroWorker();
+  const samples = await new Promise<Float32Array>((resolve, reject) => {
+    const abort = () => {
+      kokoroPending.delete(id);
+      reject(new DOMException("Cancelled", "AbortError"));
+    };
+    signal.addEventListener("abort", abort, { once: true });
+    kokoroPending.set(id, {
+      resolve: (audio) => { signal.removeEventListener("abort", abort); resolve(audio); },
+      reject: (error) => { signal.removeEventListener("abort", abort); reject(error); },
+    });
+    worker.postMessage({ id, text: text.slice(0, 1800), voice: "am_michael" });
+  });
+  signal.throwIfAborted();
+  const sampleRate = (samples as Float32Array & { sampleRate?: number }).sampleRate || 24000;
+  const context = new AudioContext({ sampleRate });
+  await context.resume();
+  const buffer = context.createBuffer(1, samples.length, sampleRate);
+  buffer.copyToChannel(samples, 0);
+  const source = context.createBufferSource();
+  const analyser = context.createAnalyser();
+  analyser.fftSize = 512;
+  source.buffer = buffer;
+  source.connect(analyser);
+  analyser.connect(context.destination);
+  const levels = new Uint8Array(analyser.fftSize);
+  let raf = 0;
+  await new Promise<void>((resolve, reject) => {
+    let settled = false;
+    const cleanup = () => {
+      cancelAnimationFrame(raf);
+      signal.removeEventListener("abort", abort);
+      audioLevel.value = 0;
+      audioLevel.source = "idle";
+      try { source.disconnect(); analyser.disconnect(); } catch {}
+      void context.close();
+    };
+    const finish = (error?: Error) => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      if (error) reject(error); else resolve();
+    };
+    const abort = () => { try { source.stop(); } catch {} finish(new DOMException("Cancelled", "AbortError")); };
+    const tick = () => {
+      analyser.getByteTimeDomainData(levels);
+      let sum = 0;
+      for (const value of levels) { const sample = (value - 128) / 128; sum += sample * sample; }
+      audioLevel.value = Math.min(1, Math.sqrt(sum / levels.length) * 5);
+      audioLevel.source = "ai";
+      raf = requestAnimationFrame(tick);
+    };
+    source.onended = () => finish();
+    signal.addEventListener("abort", abort, { once: true });
+    tick();
+    source.start();
+  });
+}
