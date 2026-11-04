@@ -29,7 +29,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/unlock': typeof UnlockRoute
   '/api/speak': typeof ApiSpeakRoute
 }
 export interface FileRoutesById {
