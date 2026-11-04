@@ -58,16 +58,16 @@ export const askJarvis = createServerFn({ method: "POST" })
       const code = error instanceof Error ? error.message : "AI_PROVIDER_ERROR";
       console.error("[EDITH AI] Chat generation failed", { code });
       const safeMessages: Record<string, string> = {
-        AI_NOT_CONFIGURED: "AI is not configured on the server. Add GEMINI_API_KEY_1 in Vercel → Settings → Environment Variables, then redeploy.",
-        AI_BAD_API_KEY: "The Gemini API key configured on the server was rejected. Replace it with a valid Gemini API key in Vercel, then redeploy.",
-        AI_RATE_LIMITED: "Gemini is currently rate-limiting this app or its API quota is exhausted. Check the Gemini API quota and billing, then try again.",
-        AI_TIMEOUT: "Gemini took too long to respond. Please try again.",
-        AI_PROVIDER_ERROR: "The Gemini service could not be reached. Check the server logs and try again.",
+        AI_NOT_CONFIGURED: "AI is not configured on the server. Add GROQ_API_KEY_1 in Vercel → Settings → Environment Variables, then redeploy.",
+        AI_BAD_API_KEY: "The Groq API key configured on the server was rejected. Replace it with a valid Groq API key in Vercel, then redeploy.",
+        AI_RATE_LIMITED: "Groq is currently rate-limiting this app or its API quota is exhausted. Check the Groq API limits and billing, then try again.",
+        AI_TIMEOUT: "Groq took too long to respond. Please try again.",
+        AI_PROVIDER_ERROR: "The Groq service could not be reached. Check the server logs and try again.",
       };
       return { reply: safeMessages[code] ?? "The AI service failed unexpectedly. Check the Vercel runtime logs for the safe error category." };
     }
 
-    // Execute a EDITH NETWORK directive if the AI emitted one.
+    // Execute an EDITH NETWORK directive if the AI emitted one.
     const match = out.match(CMD_RE);
     let network: NetworkPayload | undefined;
     let reply = out;
