@@ -33,6 +33,10 @@ The AI client removes blank and duplicate keys. Keep all Groq keys server-side. 
 
 `SUPABASE_PROJECT_ID` and `VITE_SUPABASE_PROJECT_ID` are included in the example template for tools or client integrations that require the project identifier. They are not required by the core chat server path.
 
+## Authentication
+
+EDITH does not use a site password or password-based login. Enable **Anonymous Sign-Ins** in Supabase Authentication so the app can create a per-browser session automatically. Anonymous sessions are not verified personal accounts; use strict Row Level Security policies for user-owned data.
+
 ## Vercel deployment
 
 1. Open the Vercel project and navigate to **Settings → Environment Variables**.
