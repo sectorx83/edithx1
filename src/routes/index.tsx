@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { Mic, Square, Loader2, MessageSquare, AudioLines, Settings, Activity, LayoutDashboard, BrainCircuit, Wrench, Clock3, ArrowUpRight, Zap, ShieldCheck, Radio, Server, Sparkles, Music, Play, Pause, SkipBack, SkipForward, Volume2, Upload, Plus } from "lucide-react";
 import ReactMarkdown from "react-markdown";
@@ -17,11 +17,6 @@ import { supabase } from "@/integrations/supabase/client";
 import type { Session } from "@supabase/supabase-js";
 
 export const Route = createFileRoute("/")({
-  beforeLoad: async () => {
-    const { isUnlocked } = await import("@/lib/gate.functions");
-    const { unlocked } = await isUnlocked();
-    if (!unlocked) throw redirect({ to: "/unlock" });
-  },
   head: () => ({
     meta: [
       { title: "EDITH X1" },
