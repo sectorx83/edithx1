@@ -9,5 +9,8 @@
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
 
-- Chat uses a server-only Gemini key pool with quota/credential failover and generic public failures; no other AI provider is permitted.
-- Voice recognition runs Whisper in a browser worker and playback selects only local speech-synthesis voices, so voice never calls a paid AI service.
+- Chat uses the server-only Groq client in `src/lib/ai.server.ts`. Keep all provider credentials server-side.
+- Configure Groq with `GROQ_API_KEY_1` through `GROQ_API_KEY_4`, or the single-key fallback `GROQ_API_KEY`. `GROQ_MODEL` optionally overrides the default model.
+- The chat server function in `src/lib/jarvis.functions.ts` owns safe, user-facing AI error messages and the EDITH NETWORK directive execution.
+- Voice recognition runs Whisper in a browser worker and playback selects only local speech-synthesis voices. Voice capture/playback does not call a paid AI voice service.
+- Never commit real environment files, API keys, service-role credentials, access tokens, or user data.
