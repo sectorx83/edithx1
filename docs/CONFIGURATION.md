@@ -9,6 +9,7 @@ Copy `.env.example` to `.env` for local development. Set the same variables in y
 | `SUPABASE_URL` | Supabase project URL used by server-side code. |
 | `SUPABASE_PUBLISHABLE_KEY` | Supabase publishable key. A legacy anon/public key is also supported. |
 | `GROQ_API_KEY_1` or `GROQ_API_KEY` | At least one Groq key is required for AI chat. |
+| `STYX_NETWORK_API_KEY` | Shared server-side credential used by EDITH NETWORK tools. |
 
 ## Browser-visible Supabase variables
 
@@ -29,6 +30,10 @@ These are public project values, not secrets. They should refer to the same Supa
 
 The AI client removes blank and duplicate keys. Keep all Groq keys server-side. Never prefix provider credentials with `VITE_`.
 
+## Edith Network
+
+EDITH uses the Edith Network execution service for web search, page fetching, world-news dashboard actions, and multi-step network tasks. Configure `STYX_NETWORK_API_KEY` on the server. The application sends it as a bearer token from server-only code; it is never sent to the browser. The shared deployment credential enables these network tools for app users, subject to the network service's own limits and policies.
+
 ## Optional project identifiers
 
 `SUPABASE_PROJECT_ID` and `VITE_SUPABASE_PROJECT_ID` are included in the example template for tools or client integrations that require the project identifier. They are not required by the core chat server path.
@@ -40,7 +45,7 @@ EDITH does not use a site password or password-based login. Enable **Anonymous S
 ## Vercel deployment
 
 1. Open the Vercel project and navigate to **Settings → Environment Variables**.
-2. Add the required Supabase and Groq values.
+2. Add the required Supabase, Groq, and Edith Network values.
 3. Select the environments that need each value (Production, Preview, and/or Development).
 4. Save and trigger a new deployment.
 
