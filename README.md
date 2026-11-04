@@ -1,6 +1,6 @@
 # EDITH X1
 
-**EDITH X1** is a multi-user AI assistant web application built with React, TypeScript, TanStack Start, Vite, and Supabase. It provides authenticated AI chat, voice input and local speech playback, configurable assistant behavior, and an EDITH NETWORK execution layer.
+**EDITH X1** is a multi-user AI assistant web application built with React, TypeScript, TanStack Start, Vite, and Supabase. It provides AI chat with automatic anonymous sessions, voice input and local speech playback, configurable assistant behavior, and an EDITH NETWORK execution layer.
 
 **Live application:** https://www.edithx1.vercel.app
 
