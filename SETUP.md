@@ -24,7 +24,7 @@ If you use npm instead, run `npm install` and use npm for the remaining commands
 
 Create a project at https://supabase.com/dashboard. From its API settings, obtain the project URL and publishable key (or legacy anon/public key).
 
-Provision the database schema and authentication configuration required by the application. Apply the database migrations included in this repository if applicable. Enable the authentication providers you intend to support and allow both local development and production URLs in Supabase's authentication redirect settings.
+Provision the database schema and authentication configuration required by the application. Apply the database migrations included in this repository if applicable. Enable Anonymous Sign-Ins in Supabase Auth, since EDITH creates a per-browser Supabase session without asking users for a password.
 
 ## 3. Configure environment variables
 
@@ -101,12 +101,13 @@ To preview a production build locally, run `bun run build` and then `bun run pre
 
 **Public application:** https://www.edithx1.vercel.app
 
-Redeploy after changing environment variables so the new values are available to both the client build and server runtime. A successful build alone does not confirm that authentication or AI chat works. Test sign-in and an authenticated chat request after deployment.
+Redeploy after changing environment variables so the new values are available to both the client build and server runtime. A successful build alone does not confirm that authentication or AI chat works. Test that a fresh browser can open EDITH and send an authenticated chat request after deployment.
 
 ## 7. Multi-user deployment considerations
 
 - Each deployment uses its own Supabase project and provider credentials.
-- Users authenticate through the Supabase providers enabled by the deployment operator.
+- Users receive a Supabase anonymous session automatically. No EDITH site password or password-based login is required.
+- Anonymous sessions provide per-browser identity; they are not verified personal accounts. Configure Row Level Security to prevent cross-user data access.
 - Review Supabase Row Level Security policies before enabling public registration. User-owned records must be isolated by authenticated user ID.
 - Configure provider usage limits and monitor Groq quotas. Multiple API keys are failover configuration, not a way to bypass provider limits or terms.
 - Never expose server credentials in client-side code or public logs.
