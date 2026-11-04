@@ -10,17 +10,11 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as UnlockRouteImport } from './routes/unlock'
 import { Route as ApiSpeakRouteImport } from './routes/api/speak'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const UnlockRoute = UnlockRouteImport.update({
-  id: '/unlock',
-  path: '/unlock',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiSpeakRoute = ApiSpeakRouteImport.update({
@@ -31,7 +25,6 @@ const ApiSpeakRoute = ApiSpeakRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/unlock': typeof UnlockRoute
   '/api/speak': typeof ApiSpeakRoute
 }
 export interface FileRoutesByTo {
@@ -47,15 +40,14 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/unlock' | '/api/speak'
+  fullPaths: '/' | '/api/speak'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/unlock' | '/api/speak'
-  id: '__root__' | '/' | '/unlock' | '/api/speak'
+  to: '/' | '/api/speak'
+  id: '__root__' | '/' | '/api/speak'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  UnlockRoute: typeof UnlockRoute
   ApiSpeakRoute: typeof ApiSpeakRoute
 }
 
@@ -66,13 +58,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/unlock': {
-      id: '/unlock'
-      path: '/unlock'
-      fullPath: '/unlock'
-      preLoaderRoute: typeof UnlockRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/speak': {
@@ -87,7 +72,6 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  UnlockRoute: UnlockRoute,
   ApiSpeakRoute: ApiSpeakRoute,
 }
 export const routeTree = rootRouteImport
