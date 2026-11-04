@@ -1,122 +1,133 @@
-# Setup and deployment
+# EDITH X1 Setup Guide
 
-This guide covers a clean local installation and the environment required to run EDITH X1.
+This guide explains how to install, configure, run, test, and deploy EDITH X1. The project is designed as a multi-user application. Each deployment operator configures their own Supabase project and AI provider credentials.
 
-## 1. Prerequisites
+## Requirements
 
 - Git
-- [Bun](https://bun.sh/) (the repository includes `bun.lock`)
+- Node.js 22 or later
+- Bun (recommended; this repository includes `bun.lock`)
 - A Supabase project
-- A Groq API key
+- A Groq API key for AI chat
 
-Use a current stable Bun release and a supported Node.js LTS release for your operating system.
-
-## 2. Clone the repository
+## 1. Clone and install
 
 ```sh
 git clone https://github.com/sectorx83/edithx1.git
 cd edithx1
+bun install
 ```
 
-## 3. Install dependencies
+If you use npm instead, run `npm install` and use npm for the remaining commands. Do not mix package managers within one working copy.
 
-```sh
-bun install --frozen-lockfile
-```
+## 2. Configure Supabase
 
-If Bun reports that the lockfile needs to be updated after dependency changes, run `bun install` and commit the resulting `bun.lock` update.
+Create a project at https://supabase.com/dashboard. From its API settings, obtain the project URL and publishable key (or legacy anon/public key).
 
-## 4. Configure environment variables
+Provision the database schema and authentication configuration required by the application. Apply the database migrations included in this repository if applicable. Enable the authentication providers you intend to support and allow both local development and production URLs in Supabase's authentication redirect settings.
 
-Create your local environment file:
+## 3. Configure environment variables
+
+Create a local environment file:
 
 ```sh
 cp .env.example .env
 ```
 
-Set the following values in `.env`:
+Required server variables:
 
-| Variable | Required | Description |
-| --- | --- | --- |
-| `SUPABASE_URL` | Yes | Supabase project URL used by server-side requests. |
-| `SUPABASE_PUBLISHABLE_KEY` | Yes | Supabase publishable key used by the server. |
-| `VITE_SUPABASE_URL` | Yes | Supabase project URL exposed to the browser build. |
-| `VITE_SUPABASE_PUBLISHABLE_KEY` | Yes | Supabase publishable key exposed to the browser build. |
-| `GROQ_API_KEY_1` | Yes | Primary Groq API key for chat. |
-| `GROQ_API_KEY_2` to `GROQ_API_KEY_4` | No | Additional keys used for quota and credential failover. |
-| `GROQ_API_KEY` | No | Single-key fallback or an additional key in the pool. |
-| `GROQ_MODEL` | No | Groq model ID; defaults to `openai/gpt-oss-120b`. |
-| `SUPABASE_PROJECT_ID` | No | Project identifier for local tooling that needs it. |
-| `VITE_SUPABASE_PROJECT_ID` | No | Public project identifier for client-side tooling that needs it. |
+| Variable | Purpose |
+| --- | --- |
+| `SUPABASE_URL` | Supabase project URL used by server-side code. |
+| `SUPABASE_PUBLISHABLE_KEY` | Supabase publishable key (legacy anon/public key is accepted). |
+| `GROQ_API_KEY_1` | Primary Groq API key for AI chat. |
 
-At least one Groq key is required. You can set `GROQ_API_KEY` instead of `GROQ_API_KEY_1`.
+Client builds also require the corresponding public Supabase values:
 
-**Security:** values with a `VITE_` prefix are embedded in the browser bundle. Only Supabase URL, publishable key, and other genuinely public values belong there. Never put Groq keys, service-role keys, database passwords, or other secrets in `VITE_*` variables.
+| Variable | Purpose |
+| --- | --- |
+| `VITE_SUPABASE_URL` | Supabase URL exposed to the browser build. |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | Supabase publishable/anon key exposed to the browser build. |
 
-Keep `.env` private. It is ignored by Git. Do not paste production credentials into issues, pull requests, screenshots, or source files.
+Optional Groq variables:
 
-## 5. Start the development server
+| Variable | Purpose |
+| --- | --- |
+| `GROQ_API_KEY_2`-`GROQ_API_KEY_4` | Additional keys for quota/credential failover. |
+| `GROQ_API_KEY` | Single-key fallback or an additional key in the pool. |
+| `GROQ_MODEL` | Model ID; defaults to `openai/gpt-oss-120b`. |
+
+Create a Groq key at https://console.groq.com/keys. At least one of `GROQ_API_KEY_1` or `GROQ_API_KEY` is required for AI chat.
+
+**Security:** variables prefixed with `VITE_` are exposed in the browser bundle. Only public Supabase configuration belongs there. Never put Groq keys, Supabase secret/service-role keys, database passwords, or other private credentials in `VITE_*` variables. Keep `.env` private; it is ignored by Git.
+
+## 4. Start locally
 
 ```sh
 bun run dev
 ```
 
-Open the local URL printed by Vite in the terminal.
+Or, if using npm:
 
-## 6. Quality checks
+```sh
+npm run dev
+```
 
-Run these before pushing changes:
+Open the local URL printed by Vite.
+
+## 5. Run quality checks
+
+Run these before submitting changes or deploying:
 
 ```sh
 bun run lint
-bun test
+bun run test
 bun run build
 ```
 
-For a production-like local preview after building:
+The equivalent npm commands are `npm run lint`, `npm test`, and `npm run build`.
 
-```sh
-bun run preview
-```
+To preview a production build locally, run `bun run build` and then `bun run preview`.
 
-## 7. Deploy
+## 6. Deploy to Vercel
 
-The application can be deployed to a host that supports TanStack Start and the configured Nitro runtime.
+1. Import this GitHub repository into your Vercel account.
+2. Set the project root to the repository root.
+3. Use the detected TanStack Start/Vite settings or set the build command to `bun run build`.
+4. Add the required environment variables from section 3 in Project Settings → Environment Variables.
+5. Apply them to Production, Preview, and Development as appropriate.
+6. Deploy the application.
+7. Add the production URL to Supabase's Site URL and allowed redirect URLs.
 
-1. Import the Git repository into your hosting provider.
-2. Configure the six required variables: `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, and at least one Groq key (`GROQ_API_KEY_1` or `GROQ_API_KEY`).
-3. Add optional Groq failover keys and `GROQ_MODEL` if needed.
-4. Build using `bun run build`.
-5. Deploy and inspect the build/runtime logs.
-6. Redeploy whenever environment variables change.
+**Public application:** https://www.edithx1.vercel.app
 
-Do not assume a deployment is healthy just because the build completed. Confirm that sign-in works and that an authenticated chat request receives a Groq response.
+Redeploy after changing environment variables so the new values are available to both the client build and server runtime. A successful build alone does not confirm that authentication or AI chat works. Test sign-in and an authenticated chat request after deployment.
 
-## 8. Troubleshooting
+## 7. Multi-user deployment considerations
 
-### Missing Supabase environment variables
+- Each deployment uses its own Supabase project and provider credentials.
+- Users authenticate through the Supabase providers enabled by the deployment operator.
+- Review Supabase Row Level Security policies before enabling public registration. User-owned records must be isolated by authenticated user ID.
+- Configure provider usage limits and monitor Groq quotas. Multiple API keys are failover configuration, not a way to bypass provider limits or terms.
+- Never expose server credentials in client-side code or public logs.
 
-Check that the server variables and the `VITE_` browser variables are all present. Restart the dev server after editing `.env`.
+## Troubleshooting
 
-### AI is not configured
+**Missing Supabase environment variables:** verify the spelling of server variables and the matching `VITE_` variables. Restart the development server after editing `.env`.
 
-Set `GROQ_API_KEY_1` or `GROQ_API_KEY` in the server environment and restart or redeploy.
+**AI is not configured:** add `GROQ_API_KEY_1` or `GROQ_API_KEY` to the server environment and restart or redeploy.
 
-### Invalid Groq API key
+**Invalid Groq key:** replace it with a valid key from Groq Console, then redeploy. Do not paste the key into issue reports or screenshots.
 
-Create or rotate the key in [Groq Console](https://console.groq.com/keys), update the server environment, and redeploy. Never expose the key in browser code.
+**Authentication or redirect errors:** check that the Supabase URL and publishable key belong to the same project, the desired auth provider is enabled, and the local/production URLs are allowed.
 
-### Chat is rate-limited
+**Dependency or build errors:** use the package manager matching the lockfile, reinstall dependencies if needed, and rerun lint, tests, and build.
 
-Check Groq account limits and billing. Configure additional keys only when they belong to accounts you are authorized to use.
-
-### Authentication fails
-
-Verify the Supabase URL and publishable key belong to the same Supabase project. Check the Supabase authentication configuration and server logs without sharing access tokens.
-
-## Related documentation
+## More documentation
 
 - [AI engine](docs/AI_ENGINE.md)
 - [Environment configuration](docs/CONFIGURATION.md)
 - [Architecture](docs/ARCHITECTURE.md)
 - [Security](docs/SECURITY.md)
+- [Contributing](CONTRIBUTING.md)
+- [License](LICENSE)
