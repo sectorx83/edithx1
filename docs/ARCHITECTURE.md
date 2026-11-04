@@ -2,14 +2,14 @@
 
 ## Application
 
-The project is a React and TypeScript web application built with TanStack Start and Vite. Supabase provides authentication and application data. Lovable is connected to the Git repository for the hosted editing workflow.
+EDITH X1 is a React and TypeScript web application built with TanStack Start and Vite. Supabase provides authentication and application data. Groq provides server-side text generation.
 
 ## Chat request path
 
 ```text
 Browser chat
   -> authenticated askJarvis server function
-  -> buildSystemPrompt + EDITH NETWORK instructions
+  -> assistant system prompt + EDITH NETWORK instructions
   -> server-only callChat
   -> Groq Chat Completions API
   -> assistant response
@@ -17,11 +17,15 @@ Browser chat
   -> browser
 ```
 
-The authenticated server function limits the submitted history to the latest 20 messages and each message to 4,000 characters before calling the provider.
+The authenticated server function limits submitted history to the latest 20 messages and each message to 4,000 characters before calling the provider.
 
 ## AI provider boundary
 
 `src/lib/ai.server.ts` owns provider communication, key selection, timeout handling, failover, and normalized errors. It must remain server-only. UI components should call the existing server function rather than importing provider code or reading API credentials.
+
+## Authentication and data
+
+Supabase authentication is validated in the server middleware. Browser sessions persist in the browser's local storage; server-side requests validate bearer tokens and use the configured Supabase URL and publishable key.
 
 ## Voice
 
