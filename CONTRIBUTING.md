@@ -1,23 +1,20 @@
 # Contributing
 
-## Setup
+## Development setup
 
-1. Install a supported Node.js version and npm.
-2. Clone the repository and run `npm install`.
-3. Copy `.env.example` to `.env` and fill in the required local values.
-4. Start the development server with `npm run dev`.
+Follow [SETUP.md](SETUP.md) to install dependencies, configure environment variables, and run the application locally.
 
 ## Before submitting changes
 
 Run the relevant checks:
 
 ```sh
-npm run lint
-npm test
-npm run build
+bun run lint
+bun test
+bun run build
 ```
 
-Keep changes focused, preserve the Lovable-connected Git history, and do not commit generated secrets or real environment files.
+Keep changes focused, preserve published Git history, and do not commit generated secrets or real environment files.
 
 ## AI changes
 
