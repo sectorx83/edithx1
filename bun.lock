@@ -326,7 +326,7 @@
     ],
     "@drizzle-team/brocli": [
       "@drizzle-team/brocli@0.10.2",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@drizzle-team/brocli/-/brocli-0.10.2.tgz",
+      "https://registry.npmjs.org/@drizzle-team/brocli/-/brocli-0.10.2.tgz",
       {},
       "sha512-z33Il7l5dKjUgGULTqBsQBQwckHh5AbIuxhdsIxDDiZAzBOrZO6q9ogcWC65kU382AfynTfgNumVcNIjuIua6w=="
     ],
@@ -363,7 +363,7 @@
     ],
     "@esbuild-kit/core-utils": [
       "@esbuild-kit/core-utils@3.3.2",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild-kit/core-utils/-/core-utils-3.3.2.tgz",
+      "https://registry.npmjs.org/@esbuild-kit/core-utils/-/core-utils-3.3.2.tgz",
       {
         "dependencies": {
           "esbuild": "~0.18.20",
@@ -374,7 +374,7 @@
     ],
     "@esbuild-kit/esm-loader": [
       "@esbuild-kit/esm-loader@2.6.5",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild-kit/esm-loader/-/esm-loader-2.6.5.tgz",
+      "https://registry.npmjs.org/@esbuild-kit/esm-loader/-/esm-loader-2.6.5.tgz",
       {
         "dependencies": {
           "@esbuild-kit/core-utils": "^3.3.2",
@@ -385,7 +385,7 @@
     ],
     "@esbuild/aix-ppc64": [
       "@esbuild/aix-ppc64@0.25.12",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/aix-ppc64/-/aix-ppc64-0.25.12.tgz",
+      "https://registry.npmjs.org/@esbuild/aix-ppc64/-/aix-ppc64-0.25.12.tgz",
       {
         "os": "aix",
         "cpu": "ppc64"
@@ -394,7 +394,7 @@
     ],
     "@esbuild/android-arm": [
       "@esbuild/android-arm@0.25.12",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/android-arm/-/android-arm-0.25.12.tgz",
+      "https://registry.npmjs.org/@esbuild/android-arm/-/android-arm-0.25.12.tgz",
       {
         "os": "android",
         "cpu": "arm"
@@ -403,7 +403,7 @@
     ],
     "@esbuild/android-arm64": [
       "@esbuild/android-arm64@0.25.12",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/android-arm64/-/android-arm64-0.25.12.tgz",
+      "https://registry.npmjs.org/@esbuild/android-arm64/-/android-arm64-0.25.12.tgz",
       {
         "os": "android",
         "cpu": "arm64"
@@ -412,7 +412,7 @@
     ],
     "@esbuild/android-x64": [
       "@esbuild/android-x64@0.25.12",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/android-x64/-/android-x64-0.25.12.tgz",
+      "https://registry.npmjs.org/@esbuild/android-x64/-/android-x64-0.25.12.tgz",
       {
         "os": "android",
         "cpu": "x64"
@@ -421,7 +421,7 @@
     ],
     "@esbuild/darwin-arm64": [
       "@esbuild/darwin-arm64@0.25.12",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/darwin-arm64/-/darwin-arm64-0.25.12.tgz",
+      "https://registry.npmjs.org/@esbuild/darwin-arm64/-/darwin-arm64-0.25.12.tgz",
       {
         "os": "darwin",
         "cpu": "arm64"
@@ -430,7 +430,7 @@
     ],
     "@esbuild/darwin-x64": [
       "@esbuild/darwin-x64@0.25.12",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/darwin-x64/-/darwin-x64-0.25.12.tgz",
+      "https://registry.npmjs.org/@esbuild/darwin-x64/-/darwin-x64-0.25.12.tgz",
       {
         "os": "darwin",
         "cpu": "x64"
@@ -439,7 +439,7 @@
     ],
     "@esbuild/freebsd-arm64": [
       "@esbuild/freebsd-arm64@0.25.12",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/freebsd-arm64/-/freebsd-arm64-0.25.12.tgz",
+      "https://registry.npmjs.org/@esbuild/freebsd-arm64/-/freebsd-arm64-0.25.12.tgz",
       {
         "os": "freebsd",
         "cpu": "arm64"
@@ -448,7 +448,7 @@
     ],
     "@esbuild/freebsd-x64": [
       "@esbuild/freebsd-x64@0.25.12",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/freebsd-x64/-/freebsd-x64-0.25.12.tgz",
+      "https://registry.npmjs.org/@esbuild/freebsd-x64/-/freebsd-x64-0.25.12.tgz",
       {
         "os": "freebsd",
         "cpu": "x64"
@@ -457,7 +457,7 @@
     ],
     "@esbuild/linux-arm": [
       "@esbuild/linux-arm@0.25.12",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/linux-arm/-/linux-arm-0.25.12.tgz",
+      "https://registry.npmjs.org/@esbuild/linux-arm/-/linux-arm-0.25.12.tgz",
       {
         "os": "linux",
         "cpu": "arm"
@@ -466,7 +466,7 @@
     ],
     "@esbuild/linux-arm64": [
       "@esbuild/linux-arm64@0.25.12",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/linux-arm64/-/linux-arm64-0.25.12.tgz",
+      "https://registry.npmjs.org/@esbuild/linux-arm64/-/linux-arm64-0.25.12.tgz",
       {
         "os": "linux",
         "cpu": "arm64"
@@ -475,7 +475,7 @@
     ],
     "@esbuild/linux-ia32": [
       "@esbuild/linux-ia32@0.25.12",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/linux-ia32/-/linux-ia32-0.25.12.tgz",
+      "https://registry.npmjs.org/@esbuild/linux-ia32/-/linux-ia32-0.25.12.tgz",
       {
         "os": "linux",
         "cpu": "ia32"
@@ -484,7 +484,7 @@
     ],
     "@esbuild/linux-loong64": [
       "@esbuild/linux-loong64@0.25.12",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/linux-loong64/-/linux-loong64-0.25.12.tgz",
+      "https://registry.npmjs.org/@esbuild/linux-loong64/-/linux-loong64-0.25.12.tgz",
       {
         "os": "linux",
         "cpu": "none"
@@ -493,7 +493,7 @@
     ],
     "@esbuild/linux-mips64el": [
       "@esbuild/linux-mips64el@0.25.12",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/linux-mips64el/-/linux-mips64el-0.25.12.tgz",
+      "https://registry.npmjs.org/@esbuild/linux-mips64el/-/linux-mips64el-0.25.12.tgz",
       {
         "os": "linux",
         "cpu": "none"
@@ -502,7 +502,7 @@
     ],
     "@esbuild/linux-ppc64": [
       "@esbuild/linux-ppc64@0.25.12",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/linux-ppc64/-/linux-ppc64-0.25.12.tgz",
+      "https://registry.npmjs.org/@esbuild/linux-ppc64/-/linux-ppc64-0.25.12.tgz",
       {
         "os": "linux",
         "cpu": "ppc64"
@@ -511,7 +511,7 @@
     ],
     "@esbuild/linux-riscv64": [
       "@esbuild/linux-riscv64@0.25.12",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/linux-riscv64/-/linux-riscv64-0.25.12.tgz",
+      "https://registry.npmjs.org/@esbuild/linux-riscv64/-/linux-riscv64-0.25.12.tgz",
       {
         "os": "linux",
         "cpu": "none"
@@ -520,7 +520,7 @@
     ],
     "@esbuild/linux-s390x": [
       "@esbuild/linux-s390x@0.25.12",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/linux-s390x/-/linux-s390x-0.25.12.tgz",
+      "https://registry.npmjs.org/@esbuild/linux-s390x/-/linux-s390x-0.25.12.tgz",
       {
         "os": "linux",
         "cpu": "s390x"
@@ -529,7 +529,7 @@
     ],
     "@esbuild/linux-x64": [
       "@esbuild/linux-x64@0.25.12",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/linux-x64/-/linux-x64-0.25.12.tgz",
+      "https://registry.npmjs.org/@esbuild/linux-x64/-/linux-x64-0.25.12.tgz",
       {
         "os": "linux",
         "cpu": "x64"
@@ -538,7 +538,7 @@
     ],
     "@esbuild/netbsd-arm64": [
       "@esbuild/netbsd-arm64@0.25.12",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/netbsd-arm64/-/netbsd-arm64-0.25.12.tgz",
+      "https://registry.npmjs.org/@esbuild/netbsd-arm64/-/netbsd-arm64-0.25.12.tgz",
       {
         "os": "none",
         "cpu": "arm64"
@@ -547,7 +547,7 @@
     ],
     "@esbuild/netbsd-x64": [
       "@esbuild/netbsd-x64@0.25.12",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/netbsd-x64/-/netbsd-x64-0.25.12.tgz",
+      "https://registry.npmjs.org/@esbuild/netbsd-x64/-/netbsd-x64-0.25.12.tgz",
       {
         "os": "none",
         "cpu": "x64"
@@ -556,7 +556,7 @@
     ],
     "@esbuild/openbsd-arm64": [
       "@esbuild/openbsd-arm64@0.25.12",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/openbsd-arm64/-/openbsd-arm64-0.25.12.tgz",
+      "https://registry.npmjs.org/@esbuild/openbsd-arm64/-/openbsd-arm64-0.25.12.tgz",
       {
         "os": "openbsd",
         "cpu": "arm64"
@@ -565,7 +565,7 @@
     ],
     "@esbuild/openbsd-x64": [
       "@esbuild/openbsd-x64@0.25.12",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/openbsd-x64/-/openbsd-x64-0.25.12.tgz",
+      "https://registry.npmjs.org/@esbuild/openbsd-x64/-/openbsd-x64-0.25.12.tgz",
       {
         "os": "openbsd",
         "cpu": "x64"
@@ -574,7 +574,7 @@
     ],
     "@esbuild/openharmony-arm64": [
       "@esbuild/openharmony-arm64@0.25.12",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/openharmony-arm64/-/openharmony-arm64-0.25.12.tgz",
+      "https://registry.npmjs.org/@esbuild/openharmony-arm64/-/openharmony-arm64-0.25.12.tgz",
       {
         "os": "none",
         "cpu": "arm64"
@@ -583,7 +583,7 @@
     ],
     "@esbuild/sunos-x64": [
       "@esbuild/sunos-x64@0.25.12",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/sunos-x64/-/sunos-x64-0.25.12.tgz",
+      "https://registry.npmjs.org/@esbuild/sunos-x64/-/sunos-x64-0.25.12.tgz",
       {
         "os": "sunos",
         "cpu": "x64"
@@ -592,7 +592,7 @@
     ],
     "@esbuild/win32-arm64": [
       "@esbuild/win32-arm64@0.25.12",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/win32-arm64/-/win32-arm64-0.25.12.tgz",
+      "https://registry.npmjs.org/@esbuild/win32-arm64/-/win32-arm64-0.25.12.tgz",
       {
         "os": "win32",
         "cpu": "arm64"
@@ -601,7 +601,7 @@
     ],
     "@esbuild/win32-ia32": [
       "@esbuild/win32-ia32@0.25.12",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/win32-ia32/-/win32-ia32-0.25.12.tgz",
+      "https://registry.npmjs.org/@esbuild/win32-ia32/-/win32-ia32-0.25.12.tgz",
       {
         "os": "win32",
         "cpu": "ia32"
@@ -610,7 +610,7 @@
     ],
     "@esbuild/win32-x64": [
       "@esbuild/win32-x64@0.25.12",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/win32-x64/-/win32-x64-0.25.12.tgz",
+      "https://registry.npmjs.org/@esbuild/win32-x64/-/win32-x64-0.25.12.tgz",
       {
         "os": "win32",
         "cpu": "x64"
@@ -2856,7 +2856,7 @@
     ],
     "@supabase/auth-js": [
       "@supabase/auth-js@2.118.0",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@supabase/auth-js/-/auth-js-2.118.0.tgz",
+      "https://registry.npmjs.org/@supabase/auth-js/-/auth-js-2.118.0.tgz",
       {
         "dependencies": {
           "tslib": "2.8.1"
@@ -2866,7 +2866,7 @@
     ],
     "@supabase/functions-js": [
       "@supabase/functions-js@2.118.0",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@supabase/functions-js/-/functions-js-2.118.0.tgz",
+      "https://registry.npmjs.org/@supabase/functions-js/-/functions-js-2.118.0.tgz",
       {
         "dependencies": {
           "tslib": "2.8.1"
@@ -2876,13 +2876,13 @@
     ],
     "@supabase/phoenix": [
       "@supabase/phoenix@0.4.5",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@supabase/phoenix/-/phoenix-0.4.5.tgz",
+      "https://registry.npmjs.org/@supabase/phoenix/-/phoenix-0.4.5.tgz",
       {},
       "sha512-aAn9H9ovVyeApKy11OWOrrOGq8DV68yWeH4ud2lN9fzn4aO8Zb5GLL9m1pUg9nLqIcT+ZDfAcsZe0E/nqdv2lw=="
     ],
     "@supabase/postgrest-js": [
       "@supabase/postgrest-js@2.118.0",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@supabase/postgrest-js/-/postgrest-js-2.118.0.tgz",
+      "https://registry.npmjs.org/@supabase/postgrest-js/-/postgrest-js-2.118.0.tgz",
       {
         "dependencies": {
           "tslib": "2.8.1"
@@ -2892,7 +2892,7 @@
     ],
     "@supabase/realtime-js": [
       "@supabase/realtime-js@2.118.0",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@supabase/realtime-js/-/realtime-js-2.118.0.tgz",
+      "https://registry.npmjs.org/@supabase/realtime-js/-/realtime-js-2.118.0.tgz",
       {
         "dependencies": {
           "@supabase/phoenix": "0.4.5",
@@ -2903,7 +2903,7 @@
     ],
     "@supabase/storage-js": [
       "@supabase/storage-js@2.118.0",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@supabase/storage-js/-/storage-js-2.118.0.tgz",
+      "https://registry.npmjs.org/@supabase/storage-js/-/storage-js-2.118.0.tgz",
       {
         "dependencies": {
           "iceberg-js": "^0.8.1",
@@ -2914,7 +2914,7 @@
     ],
     "@supabase/supabase-js": [
       "@supabase/supabase-js@2.118.0",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@supabase/supabase-js/-/supabase-js-2.118.0.tgz",
+      "https://registry.npmjs.org/@supabase/supabase-js/-/supabase-js-2.118.0.tgz",
       {
         "dependencies": {
           "@supabase/auth-js": "2.118.0",
@@ -3692,7 +3692,7 @@
     ],
     "@types/debug": [
       "@types/debug@4.1.13",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@types/debug/-/debug-4.1.13.tgz",
+      "https://registry.npmjs.org/@types/debug/-/debug-4.1.13.tgz",
       {
         "dependencies": {
           "@types/ms": "*"
@@ -3714,7 +3714,7 @@
     ],
     "@types/estree-jsx": [
       "@types/estree-jsx@1.0.5",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@types/estree-jsx/-/estree-jsx-1.0.5.tgz",
+      "https://registry.npmjs.org/@types/estree-jsx/-/estree-jsx-1.0.5.tgz",
       {
         "dependencies": {
           "@types/estree": "*"
@@ -3724,7 +3724,7 @@
     ],
     "@types/hast": [
       "@types/hast@3.0.5",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@types/hast/-/hast-3.0.5.tgz",
+      "https://registry.npmjs.org/@types/hast/-/hast-3.0.5.tgz",
       {
         "dependencies": {
           "@types/unist": "*"
@@ -3740,7 +3740,7 @@
     ],
     "@types/mdast": [
       "@types/mdast@4.0.4",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@types/mdast/-/mdast-4.0.4.tgz",
+      "https://registry.npmjs.org/@types/mdast/-/mdast-4.0.4.tgz",
       {
         "dependencies": {
           "@types/unist": "*"
@@ -3750,7 +3750,7 @@
     ],
     "@types/ms": [
       "@types/ms@2.1.0",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@types/ms/-/ms-2.1.0.tgz",
+      "https://registry.npmjs.org/@types/ms/-/ms-2.1.0.tgz",
       {},
       "sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA=="
     ],
@@ -3786,7 +3786,7 @@
     ],
     "@types/unist": [
       "@types/unist@3.0.3",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@types/unist/-/unist-3.0.3.tgz",
+      "https://registry.npmjs.org/@types/unist/-/unist-3.0.3.tgz",
       {},
       "sha512-ko/gIFJRv177XgZsZcBwnqJN5x/Gien8qNOn0D5bQU/zAzVf9Zt3BlcUiLqhV9y4ARk0GbT3tnUiPNgnTXzc/Q=="
     ],
@@ -3941,7 +3941,7 @@
     ],
     "@ungap/structured-clone": [
       "@ungap/structured-clone@1.4.0",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@ungap/structured-clone/-/structured-clone-1.4.0.tgz",
+      "https://registry.npmjs.org/@ungap/structured-clone/-/structured-clone-1.4.0.tgz",
       {},
       "sha512-1mEZtMKPM09vDmQt5y7YvmN2+DFTP7Tg0EWXdic8/C6VRnpb33e4ghisCIE3WZjsE2N8mf+QV1Zqh7ZFYLWInQ=="
     ],
@@ -4197,7 +4197,7 @@
     ],
     "bail": [
       "bail@2.0.2",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/bail/-/bail-2.0.2.tgz",
+      "https://registry.npmjs.org/bail/-/bail-2.0.2.tgz",
       {},
       "sha512-0xO6mYd7JB2YesxDKplafRpsiOzPt9V02ddPCLbY1xYGPOX24NTyN50qnUxgCPcSoYMhKpAuBTjQoRZCAkUDRw=="
     ],
@@ -4247,7 +4247,7 @@
     ],
     "buffer-from": [
       "buffer-from@1.1.2",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/buffer-from/-/buffer-from-1.1.2.tgz",
+      "https://registry.npmjs.org/buffer-from/-/buffer-from-1.1.2.tgz",
       {},
       "sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ=="
     ],
@@ -4276,7 +4276,7 @@
     ],
     "ccount": [
       "ccount@2.0.1",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/ccount/-/ccount-2.0.1.tgz",
+      "https://registry.npmjs.org/ccount/-/ccount-2.0.1.tgz",
       {},
       "sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg=="
     ],
@@ -4299,25 +4299,25 @@
     ],
     "character-entities": [
       "character-entities@2.0.2",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/character-entities/-/character-entities-2.0.2.tgz",
+      "https://registry.npmjs.org/character-entities/-/character-entities-2.0.2.tgz",
       {},
       "sha512-shx7oQ0Awen/BRIdkjkvz54PnEEI/EjwXDSIZp86/KKdbafHh1Df/RYGBhn4hbe2+uKC9FnT5UCEdyPz3ai9hQ=="
     ],
     "character-entities-html4": [
       "character-entities-html4@2.1.0",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/character-entities-html4/-/character-entities-html4-2.1.0.tgz",
+      "https://registry.npmjs.org/character-entities-html4/-/character-entities-html4-2.1.0.tgz",
       {},
       "sha512-1v7fgQRj6hnSwFpq1Eu0ynr/CDEw0rXo2B61qXrLNdHZmPKgb7fqS1a2JwF0rISo9q77jDI8VMEHoApn8qDoZA=="
     ],
     "character-entities-legacy": [
       "character-entities-legacy@3.0.0",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/character-entities-legacy/-/character-entities-legacy-3.0.0.tgz",
+      "https://registry.npmjs.org/character-entities-legacy/-/character-entities-legacy-3.0.0.tgz",
       {},
       "sha512-RpPp0asT/6ufRm//AJVwpViZbGM/MkjQFxJccQRHmISF/22NBtsHqAWmL+/pmkPWoIUJdWyeVleTl1wydHATVQ=="
     ],
     "character-reference-invalid": [
       "character-reference-invalid@2.0.1",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/character-reference-invalid/-/character-reference-invalid-2.0.1.tgz",
+      "https://registry.npmjs.org/character-reference-invalid/-/character-reference-invalid-2.0.1.tgz",
       {},
       "sha512-iBZ4F4wRbyORVsu0jPV7gXkOsGYjGHPmAyv+HiHG8gi5PtC9KI2j1+v8/tlibRvjoWX027ypmG/n0HtO5t7unw=="
     ],
@@ -4392,7 +4392,7 @@
     ],
     "comma-separated-tokens": [
       "comma-separated-tokens@2.0.3",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/comma-separated-tokens/-/comma-separated-tokens-2.0.3.tgz",
+      "https://registry.npmjs.org/comma-separated-tokens/-/comma-separated-tokens-2.0.3.tgz",
       {},
       "sha512-Fu4hJdvzeylCfQPp9SGWidpzrMs7tTrlu6Vb8XGaRGck8QSNZJJp538Wrb60Lax4fPwR64ViY468OIUTbRlGZg=="
     ],
@@ -4638,7 +4638,7 @@
     ],
     "decode-named-character-reference": [
       "decode-named-character-reference@1.3.0",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/decode-named-character-reference/-/decode-named-character-reference-1.3.0.tgz",
+      "https://registry.npmjs.org/decode-named-character-reference/-/decode-named-character-reference-1.3.0.tgz",
       {
         "dependencies": {
           "character-entities": "^2.0.0"
@@ -4702,7 +4702,7 @@
     ],
     "devlop": [
       "devlop@1.1.0",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/devlop/-/devlop-1.1.0.tgz",
+      "https://registry.npmjs.org/devlop/-/devlop-1.1.0.tgz",
       {
         "dependencies": {
           "dequal": "^2.0.0"
@@ -4745,7 +4745,7 @@
     ],
     "drizzle-kit": [
       "drizzle-kit@0.31.11",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/drizzle-kit/-/drizzle-kit-0.31.11.tgz",
+      "https://registry.npmjs.org/drizzle-kit/-/drizzle-kit-0.31.11.tgz",
       {
         "dependencies": {
           "@drizzle-team/brocli": "^0.10.2",
@@ -4761,7 +4761,7 @@
     ],
     "drizzle-orm": [
       "drizzle-orm@0.45.4",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/drizzle-orm/-/drizzle-orm-0.45.4.tgz",
+      "https://registry.npmjs.org/drizzle-orm/-/drizzle-orm-0.45.4.tgz",
       {
         "peerDependencies": {
           "@aws-sdk/client-rds-data": ">=3",
@@ -4964,7 +4964,7 @@
     ],
     "esbuild": [
       "esbuild@0.25.12",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/esbuild/-/esbuild-0.25.12.tgz",
+      "https://registry.npmjs.org/esbuild/-/esbuild-0.25.12.tgz",
       {
         "optionalDependencies": {
           "@esbuild/aix-ppc64": "0.25.12",
@@ -5205,7 +5205,7 @@
     ],
     "estree-util-is-identifier-name": [
       "estree-util-is-identifier-name@3.0.0",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/estree-util-is-identifier-name/-/estree-util-is-identifier-name-3.0.0.tgz",
+      "https://registry.npmjs.org/estree-util-is-identifier-name/-/estree-util-is-identifier-name-3.0.0.tgz",
       {},
       "sha512-hFtqIDZTIUZ9BXLb8y4pYGyk6+wekIivNVTcmvk8NoOh+VeRn5y6cEHzbURrWbfp1fIqdVipilzj+lfaadNZmg=="
     ],
@@ -5233,7 +5233,7 @@
     ],
     "eventsource-parser": [
       "eventsource-parser@4.1.2",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/eventsource-parser/-/eventsource-parser-4.1.2.tgz",
+      "https://registry.npmjs.org/eventsource-parser/-/eventsource-parser-4.1.2.tgz",
       {},
       "sha512-N9b0EvATDJfZj+Szg3m8WwqseQhei/mtTd6V0rCciGbI/yG24o3yBk0YVyfOZZsLVMZHWs++Zk3Aqd2y2EztnQ=="
     ],
@@ -5251,7 +5251,7 @@
     ],
     "extend": [
       "extend@3.0.2",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/extend/-/extend-3.0.2.tgz",
+      "https://registry.npmjs.org/extend/-/extend-3.0.2.tgz",
       {},
       "sha512-fjquC59cD7CyW6urNXK0FBufkZcoiGG80wTuPujX590cB5Ttln20E2UB4S/WARVqhXffZl2LNgS+gQdPIIim/g=="
     ],
@@ -5420,7 +5420,7 @@
     ],
     "get-tsconfig": [
       "get-tsconfig@4.14.3",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/get-tsconfig/-/get-tsconfig-4.14.3.tgz",
+      "https://registry.npmjs.org/get-tsconfig/-/get-tsconfig-4.14.3.tgz",
       {
         "dependencies": {
           "resolve-pkg-maps": "^1.0.0"
@@ -5576,7 +5576,7 @@
     ],
     "hast-util-to-jsx-runtime": [
       "hast-util-to-jsx-runtime@2.3.6",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/hast-util-to-jsx-runtime/-/hast-util-to-jsx-runtime-2.3.6.tgz",
+      "https://registry.npmjs.org/hast-util-to-jsx-runtime/-/hast-util-to-jsx-runtime-2.3.6.tgz",
       {
         "dependencies": {
           "@types/estree": "^1.0.0",
@@ -5600,7 +5600,7 @@
     ],
     "hast-util-whitespace": [
       "hast-util-whitespace@3.0.0",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/hast-util-whitespace/-/hast-util-whitespace-3.0.0.tgz",
+      "https://registry.npmjs.org/hast-util-whitespace/-/hast-util-whitespace-3.0.0.tgz",
       {
         "dependencies": {
           "@types/hast": "^3.0.0"
@@ -5626,7 +5626,7 @@
     ],
     "html-url-attributes": [
       "html-url-attributes@3.0.1",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/html-url-attributes/-/html-url-attributes-3.0.1.tgz",
+      "https://registry.npmjs.org/html-url-attributes/-/html-url-attributes-3.0.1.tgz",
       {},
       "sha512-ol6UPyBWqsrO6EJySPz2O7ZSr856WDrEzM5zMqp+FJJLGMW35cLYmmZnl0vztAZxRUoNZJFTCohfjuIJ8I4QBQ=="
     ],
@@ -5661,7 +5661,7 @@
     ],
     "iceberg-js": [
       "iceberg-js@0.8.1",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/iceberg-js/-/iceberg-js-0.8.1.tgz",
+      "https://registry.npmjs.org/iceberg-js/-/iceberg-js-0.8.1.tgz",
       {},
       "sha512-1dhVQZXhcHje7798IVM+xoo/1ZdVfzOMIc8/rgVSijRK38EDqOJoGula9N/8ZI5RD8QTxNQtK/Gozpr+qUqRRA=="
     ],
@@ -5706,7 +5706,7 @@
     ],
     "inline-style-parser": [
       "inline-style-parser@0.2.7",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/inline-style-parser/-/inline-style-parser-0.2.7.tgz",
+      "https://registry.npmjs.org/inline-style-parser/-/inline-style-parser-0.2.7.tgz",
       {},
       "sha512-Nb2ctOyNR8DqQoR0OwRG95uNWIC0C1lCgf5Naz5H6Ji72KZ8OcFZLz2P5sNgwlyoJ8Yif11oMuYs5pBQa86csA=="
     ],
@@ -5729,13 +5729,13 @@
     ],
     "is-alphabetical": [
       "is-alphabetical@2.0.1",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/is-alphabetical/-/is-alphabetical-2.0.1.tgz",
+      "https://registry.npmjs.org/is-alphabetical/-/is-alphabetical-2.0.1.tgz",
       {},
       "sha512-FWyyY60MeTNyeSRpkM2Iry0G9hpr7/9kD40mD/cGQEuilcZYS4okz8SN2Q6rLCJ8gbCt6fN+rC+6tMGS99LaxQ=="
     ],
     "is-alphanumerical": [
       "is-alphanumerical@2.0.1",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/is-alphanumerical/-/is-alphanumerical-2.0.1.tgz",
+      "https://registry.npmjs.org/is-alphanumerical/-/is-alphanumerical-2.0.1.tgz",
       {
         "dependencies": {
           "is-alphabetical": "^2.0.0",
@@ -5746,7 +5746,7 @@
     ],
     "is-decimal": [
       "is-decimal@2.0.1",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/is-decimal/-/is-decimal-2.0.1.tgz",
+      "https://registry.npmjs.org/is-decimal/-/is-decimal-2.0.1.tgz",
       {},
       "sha512-AAB9hiomQs5DXWcRB1rqsxGUstbRroFOPPVAomNk/3XHR5JyEZChOyTWe2oayKnsSsr/kcGqF+z6yuH6HHpN0A=="
     ],
@@ -5768,13 +5768,13 @@
     ],
     "is-hexadecimal": [
       "is-hexadecimal@2.0.1",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/is-hexadecimal/-/is-hexadecimal-2.0.1.tgz",
+      "https://registry.npmjs.org/is-hexadecimal/-/is-hexadecimal-2.0.1.tgz",
       {},
       "sha512-DgZQp241c8oO6cA1SbTEWiXeoxV42vlcJxgH+B3hi1AiqqKruZR3ZGF8In3fj4+/y/7rHvlOZLZtgJ/4ttYGZg=="
     ],
     "is-plain-obj": [
       "is-plain-obj@4.1.0",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/is-plain-obj/-/is-plain-obj-4.1.0.tgz",
+      "https://registry.npmjs.org/is-plain-obj/-/is-plain-obj-4.1.0.tgz",
       {},
       "sha512-+Pgi+vMuUNkJyExiMBt5IlFoMyKnr5zhJ4Uspz58WOhBF5QoIZkFyNHIbBAtHwzVAgk5RtndVNsDRN61/mmDqg=="
     ],
@@ -6088,7 +6088,7 @@
     ],
     "longest-streak": [
       "longest-streak@3.1.0",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/longest-streak/-/longest-streak-3.1.0.tgz",
+      "https://registry.npmjs.org/longest-streak/-/longest-streak-3.1.0.tgz",
       {},
       "sha512-9Ri+o0JYgehTaVBBDoMqIl8GXtbWg711O3srftcHhZ0dqnETqLaoIK0x17fUw9rFSlK/0NlsKe0Ahhyl5pXE2g=="
     ],
@@ -6163,7 +6163,7 @@
     ],
     "mdast-util-from-markdown": [
       "mdast-util-from-markdown@2.1.0",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/mdast-util-from-markdown/-/mdast-util-from-markdown-2.1.0.tgz",
+      "https://registry.npmjs.org/mdast-util-from-markdown/-/mdast-util-from-markdown-2.1.0.tgz",
       {
         "dependencies": {
           "@types/mdast": "^4.0.0",
@@ -6184,7 +6184,7 @@
     ],
     "mdast-util-mdx-expression": [
       "mdast-util-mdx-expression@2.0.1",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/mdast-util-mdx-expression/-/mdast-util-mdx-expression-2.0.1.tgz",
+      "https://registry.npmjs.org/mdast-util-mdx-expression/-/mdast-util-mdx-expression-2.0.1.tgz",
       {
         "dependencies": {
           "@types/estree-jsx": "^1.0.0",
@@ -6199,7 +6199,7 @@
     ],
     "mdast-util-mdx-jsx": [
       "mdast-util-mdx-jsx@3.2.0",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/mdast-util-mdx-jsx/-/mdast-util-mdx-jsx-3.2.0.tgz",
+      "https://registry.npmjs.org/mdast-util-mdx-jsx/-/mdast-util-mdx-jsx-3.2.0.tgz",
       {
         "dependencies": {
           "@types/estree-jsx": "^1.0.0",
@@ -6220,7 +6220,7 @@
     ],
     "mdast-util-mdxjs-esm": [
       "mdast-util-mdxjs-esm@2.0.1",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/mdast-util-mdxjs-esm/-/mdast-util-mdxjs-esm-2.0.1.tgz",
+      "https://registry.npmjs.org/mdast-util-mdxjs-esm/-/mdast-util-mdxjs-esm-2.0.1.tgz",
       {
         "dependencies": {
           "@types/estree-jsx": "^1.0.0",
@@ -6235,7 +6235,7 @@
     ],
     "mdast-util-phrasing": [
       "mdast-util-phrasing@4.1.0",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/mdast-util-phrasing/-/mdast-util-phrasing-4.1.0.tgz",
+      "https://registry.npmjs.org/mdast-util-phrasing/-/mdast-util-phrasing-4.1.0.tgz",
       {
         "dependencies": {
           "@types/mdast": "^4.0.0",
@@ -6246,7 +6246,7 @@
     ],
     "mdast-util-to-hast": [
       "mdast-util-to-hast@13.2.1",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/mdast-util-to-hast/-/mdast-util-to-hast-13.2.1.tgz",
+      "https://registry.npmjs.org/mdast-util-to-hast/-/mdast-util-to-hast-13.2.1.tgz",
       {
         "dependencies": {
           "@types/hast": "^3.0.0",
@@ -6264,7 +6264,7 @@
     ],
     "mdast-util-to-markdown": [
       "mdast-util-to-markdown@2.2.0",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/mdast-util-to-markdown/-/mdast-util-to-markdown-2.2.0.tgz",
+      "https://registry.npmjs.org/mdast-util-to-markdown/-/mdast-util-to-markdown-2.2.0.tgz",
       {
         "dependencies": {
           "@types/mdast": "^4.0.0",
@@ -6284,7 +6284,7 @@
     ],
     "mdast-util-to-string": [
       "mdast-util-to-string@4.0.0",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/mdast-util-to-string/-/mdast-util-to-string-4.0.0.tgz",
+      "https://registry.npmjs.org/mdast-util-to-string/-/mdast-util-to-string-4.0.0.tgz",
       {
         "dependencies": {
           "@types/mdast": "^4.0.0"
@@ -6294,7 +6294,7 @@
     ],
     "micromark": [
       "micromark@4.0.3",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/micromark/-/micromark-4.0.3.tgz",
+      "https://registry.npmjs.org/micromark/-/micromark-4.0.3.tgz",
       {
         "dependencies": {
           "@types/debug": "^4.0.0",
@@ -6321,7 +6321,7 @@
     ],
     "micromark-core-commonmark": [
       "micromark-core-commonmark@2.0.4",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/micromark-core-commonmark/-/micromark-core-commonmark-2.0.4.tgz",
+      "https://registry.npmjs.org/micromark-core-commonmark/-/micromark-core-commonmark-2.0.4.tgz",
       {
         "dependencies": {
           "decode-named-character-reference": "^1.0.0",
@@ -6347,7 +6347,7 @@
     ],
     "micromark-factory-destination": [
       "micromark-factory-destination@2.0.1",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/micromark-factory-destination/-/micromark-factory-destination-2.0.1.tgz",
+      "https://registry.npmjs.org/micromark-factory-destination/-/micromark-factory-destination-2.0.1.tgz",
       {
         "dependencies": {
           "micromark-util-character": "^2.0.0",
@@ -6359,7 +6359,7 @@
     ],
     "micromark-factory-label": [
       "micromark-factory-label@2.0.1",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/micromark-factory-label/-/micromark-factory-label-2.0.1.tgz",
+      "https://registry.npmjs.org/micromark-factory-label/-/micromark-factory-label-2.0.1.tgz",
       {
         "dependencies": {
           "devlop": "^1.0.0",
@@ -6372,7 +6372,7 @@
     ],
     "micromark-factory-space": [
       "micromark-factory-space@2.1.0",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/micromark-factory-space/-/micromark-factory-space-2.1.0.tgz",
+      "https://registry.npmjs.org/micromark-factory-space/-/micromark-factory-space-2.1.0.tgz",
       {
         "dependencies": {
           "micromark-util-character": "^2.0.0",
@@ -6383,7 +6383,7 @@
     ],
     "micromark-factory-title": [
       "micromark-factory-title@2.0.1",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/micromark-factory-title/-/micromark-factory-title-2.0.1.tgz",
+      "https://registry.npmjs.org/micromark-factory-title/-/micromark-factory-title-2.0.1.tgz",
       {
         "dependencies": {
           "micromark-factory-space": "^2.0.0",
@@ -6396,7 +6396,7 @@
     ],
     "micromark-factory-whitespace": [
       "micromark-factory-whitespace@2.0.1",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/micromark-factory-whitespace/-/micromark-factory-whitespace-2.0.1.tgz",
+      "https://registry.npmjs.org/micromark-factory-whitespace/-/micromark-factory-whitespace-2.0.1.tgz",
       {
         "dependencies": {
           "micromark-factory-space": "^2.0.0",
@@ -6409,7 +6409,7 @@
     ],
     "micromark-util-character": [
       "micromark-util-character@2.1.1",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/micromark-util-character/-/micromark-util-character-2.1.1.tgz",
+      "https://registry.npmjs.org/micromark-util-character/-/micromark-util-character-2.1.1.tgz",
       {
         "dependencies": {
           "micromark-util-symbol": "^2.0.0",
@@ -6420,7 +6420,7 @@
     ],
     "micromark-util-chunked": [
       "micromark-util-chunked@2.0.1",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/micromark-util-chunked/-/micromark-util-chunked-2.0.1.tgz",
+      "https://registry.npmjs.org/micromark-util-chunked/-/micromark-util-chunked-2.0.1.tgz",
       {
         "dependencies": {
           "micromark-util-symbol": "^2.0.0"
@@ -6430,7 +6430,7 @@
     ],
     "micromark-util-classify-character": [
       "micromark-util-classify-character@2.0.1",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/micromark-util-classify-character/-/micromark-util-classify-character-2.0.1.tgz",
+      "https://registry.npmjs.org/micromark-util-classify-character/-/micromark-util-classify-character-2.0.1.tgz",
       {
         "dependencies": {
           "micromark-util-character": "^2.0.0",
@@ -6442,7 +6442,7 @@
     ],
     "micromark-util-combine-extensions": [
       "micromark-util-combine-extensions@2.0.1",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/micromark-util-combine-extensions/-/micromark-util-combine-extensions-2.0.1.tgz",
+      "https://registry.npmjs.org/micromark-util-combine-extensions/-/micromark-util-combine-extensions-2.0.1.tgz",
       {
         "dependencies": {
           "micromark-util-chunked": "^2.0.0",
@@ -6453,7 +6453,7 @@
     ],
     "micromark-util-decode-numeric-character-reference": [
       "micromark-util-decode-numeric-character-reference@2.0.2",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/micromark-util-decode-numeric-character-reference/-/micromark-util-decode-numeric-character-reference-2.0.2.tgz",
+      "https://registry.npmjs.org/micromark-util-decode-numeric-character-reference/-/micromark-util-decode-numeric-character-reference-2.0.2.tgz",
       {
         "dependencies": {
           "micromark-util-symbol": "^2.0.0"
@@ -6463,7 +6463,7 @@
     ],
     "micromark-util-decode-string": [
       "micromark-util-decode-string@2.0.1",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/micromark-util-decode-string/-/micromark-util-decode-string-2.0.1.tgz",
+      "https://registry.npmjs.org/micromark-util-decode-string/-/micromark-util-decode-string-2.0.1.tgz",
       {
         "dependencies": {
           "decode-named-character-reference": "^1.0.0",
@@ -6476,7 +6476,7 @@
     ],
     "micromark-util-edit-map": [
       "micromark-util-edit-map@1.0.0",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/micromark-util-edit-map/-/micromark-util-edit-map-1.0.0.tgz",
+      "https://registry.npmjs.org/micromark-util-edit-map/-/micromark-util-edit-map-1.0.0.tgz",
       {
         "dependencies": {
           "micromark-util-types": "^2.0.0"
@@ -6486,19 +6486,19 @@
     ],
     "micromark-util-encode": [
       "micromark-util-encode@2.0.1",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/micromark-util-encode/-/micromark-util-encode-2.0.1.tgz",
+      "https://registry.npmjs.org/micromark-util-encode/-/micromark-util-encode-2.0.1.tgz",
       {},
       "sha512-c3cVx2y4KqUnwopcO9b/SCdo2O67LwJJ/UyqGfbigahfegL9myoEFoDYZgkT7f36T0bLrM9hZTAaAyH+PCAXjw=="
     ],
     "micromark-util-html-tag-name": [
       "micromark-util-html-tag-name@2.0.1",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/micromark-util-html-tag-name/-/micromark-util-html-tag-name-2.0.1.tgz",
+      "https://registry.npmjs.org/micromark-util-html-tag-name/-/micromark-util-html-tag-name-2.0.1.tgz",
       {},
       "sha512-2cNEiYDhCWKI+Gs9T0Tiysk136SnR13hhO8yW6BGNyhOC4qYFnwF1nKfD3HFAIXA5c45RrIG1ub11GiXeYd1xA=="
     ],
     "micromark-util-normalize-identifier": [
       "micromark-util-normalize-identifier@2.0.1",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/micromark-util-normalize-identifier/-/micromark-util-normalize-identifier-2.0.1.tgz",
+      "https://registry.npmjs.org/micromark-util-normalize-identifier/-/micromark-util-normalize-identifier-2.0.1.tgz",
       {
         "dependencies": {
           "micromark-util-symbol": "^2.0.0"
@@ -6508,7 +6508,7 @@
     ],
     "micromark-util-resolve-all": [
       "micromark-util-resolve-all@2.0.1",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/micromark-util-resolve-all/-/micromark-util-resolve-all-2.0.1.tgz",
+      "https://registry.npmjs.org/micromark-util-resolve-all/-/micromark-util-resolve-all-2.0.1.tgz",
       {
         "dependencies": {
           "micromark-util-types": "^2.0.0"
@@ -6518,7 +6518,7 @@
     ],
     "micromark-util-sanitize-uri": [
       "micromark-util-sanitize-uri@2.0.1",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/micromark-util-sanitize-uri/-/micromark-util-sanitize-uri-2.0.1.tgz",
+      "https://registry.npmjs.org/micromark-util-sanitize-uri/-/micromark-util-sanitize-uri-2.0.1.tgz",
       {
         "dependencies": {
           "micromark-util-character": "^2.0.0",
@@ -6530,7 +6530,7 @@
     ],
     "micromark-util-subtokenize": [
       "micromark-util-subtokenize@2.1.0",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/micromark-util-subtokenize/-/micromark-util-subtokenize-2.1.0.tgz",
+      "https://registry.npmjs.org/micromark-util-subtokenize/-/micromark-util-subtokenize-2.1.0.tgz",
       {
         "dependencies": {
           "devlop": "^1.0.0",
@@ -6543,13 +6543,13 @@
     ],
     "micromark-util-symbol": [
       "micromark-util-symbol@2.0.1",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/micromark-util-symbol/-/micromark-util-symbol-2.0.1.tgz",
+      "https://registry.npmjs.org/micromark-util-symbol/-/micromark-util-symbol-2.0.1.tgz",
       {},
       "sha512-vs5t8Apaud9N28kgCrRUdEed4UJ+wWNvicHLPxCa9ENlYuAY31M0ETy5y1vA33YoNPDFTghEbnh6efaE8h4x0Q=="
     ],
     "micromark-util-types": [
       "micromark-util-types@2.0.3",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/micromark-util-types/-/micromark-util-types-2.0.3.tgz",
+      "https://registry.npmjs.org/micromark-util-types/-/micromark-util-types-2.0.3.tgz",
       {},
       "sha512-oxB2Ik03hI0gv+VNn9tnh1t1YEe9MDPptViAEgfdf3YQHsn0pzGTgCdlSCJXcwhqm8phaEuM7zeEu3QQzVBrPg=="
     ],
@@ -6829,7 +6829,7 @@
     ],
     "parse-entities": [
       "parse-entities@4.0.2",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/parse-entities/-/parse-entities-4.0.2.tgz",
+      "https://registry.npmjs.org/parse-entities/-/parse-entities-4.0.2.tgz",
       {
         "dependencies": {
           "@types/unist": "^2.0.0",
@@ -6903,7 +6903,7 @@
     ],
     "postgres": [
       "postgres@3.4.9",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/postgres/-/postgres-3.4.9.tgz",
+      "https://registry.npmjs.org/postgres/-/postgres-3.4.9.tgz",
       {},
       "sha512-GD3qdB0x1z9xgFI6cdRD6xu2Sp2WCOEoe3mtnyB5Ee0XrrL5Pe+e4CCnJrRMnL1zYtRDZmQQVbvOttLnKDLnaw=="
     ],
@@ -6959,7 +6959,7 @@
     ],
     "property-information": [
       "property-information@7.2.0",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/property-information/-/property-information-7.2.0.tgz",
+      "https://registry.npmjs.org/property-information/-/property-information-7.2.0.tgz",
       {},
       "sha512-IAtzIB6sUiWaJYrX9smp3V46pBGbBeLFRGdh25kg1334VcBlD8HzhPeNIWQH9zhGmo2itIe25EHt9dQP7G5hmg=="
     ],
@@ -7059,7 +7059,7 @@
     ],
     "react-markdown": [
       "react-markdown@10.1.0",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/react-markdown/-/react-markdown-10.1.0.tgz",
+      "https://registry.npmjs.org/react-markdown/-/react-markdown-10.1.0.tgz",
       {
         "dependencies": {
           "@types/hast": "^3.0.0",
@@ -7238,7 +7238,7 @@
     ],
     "remark-parse": [
       "remark-parse@11.0.0",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/remark-parse/-/remark-parse-11.0.0.tgz",
+      "https://registry.npmjs.org/remark-parse/-/remark-parse-11.0.0.tgz",
       {
         "dependencies": {
           "@types/mdast": "^4.0.0",
@@ -7251,7 +7251,7 @@
     ],
     "remark-rehype": [
       "remark-rehype@11.1.2",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/remark-rehype/-/remark-rehype-11.1.2.tgz",
+      "https://registry.npmjs.org/remark-rehype/-/remark-rehype-11.1.2.tgz",
       {
         "dependencies": {
           "@types/hast": "^3.0.0",
@@ -7277,7 +7277,7 @@
     ],
     "resolve-pkg-maps": [
       "resolve-pkg-maps@1.0.0",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/resolve-pkg-maps/-/resolve-pkg-maps-1.0.0.tgz",
+      "https://registry.npmjs.org/resolve-pkg-maps/-/resolve-pkg-maps-1.0.0.tgz",
       {},
       "sha512-seS2Tj26TBVOC2NIc2rOe2y2ZO7efxITtLZcGSOnHHNOQ7CkiUBfw0Iw2ck6xkIhPwLhKNLS8BO+hEpngQlqzw=="
     ],
@@ -7474,7 +7474,7 @@
     ],
     "source-map-support": [
       "source-map-support@0.5.21",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/source-map-support/-/source-map-support-0.5.21.tgz",
+      "https://registry.npmjs.org/source-map-support/-/source-map-support-0.5.21.tgz",
       {
         "dependencies": {
           "buffer-from": "^1.0.0",
@@ -7485,7 +7485,7 @@
     ],
     "space-separated-tokens": [
       "space-separated-tokens@2.0.2",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/space-separated-tokens/-/space-separated-tokens-2.0.2.tgz",
+      "https://registry.npmjs.org/space-separated-tokens/-/space-separated-tokens-2.0.2.tgz",
       {},
       "sha512-PEGlAwrG8yXGXRjW32fGbg66JAlOAwbObuqVoJpv/mRgoWDQfgH1wDPvtzWyUSNAXBGSk8h755YDbbcEy3SH2Q=="
     ],
@@ -7513,7 +7513,7 @@
     ],
     "stringify-entities": [
       "stringify-entities@4.0.4",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/stringify-entities/-/stringify-entities-4.0.4.tgz",
+      "https://registry.npmjs.org/stringify-entities/-/stringify-entities-4.0.4.tgz",
       {
         "dependencies": {
           "character-entities-html4": "^2.0.0",
@@ -7540,7 +7540,7 @@
     ],
     "style-to-js": [
       "style-to-js@1.1.21",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/style-to-js/-/style-to-js-1.1.21.tgz",
+      "https://registry.npmjs.org/style-to-js/-/style-to-js-1.1.21.tgz",
       {
         "dependencies": {
           "style-to-object": "1.0.14"
@@ -7550,7 +7550,7 @@
     ],
     "style-to-object": [
       "style-to-object@1.0.14",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/style-to-object/-/style-to-object-1.0.14.tgz",
+      "https://registry.npmjs.org/style-to-object/-/style-to-object-1.0.14.tgz",
       {
         "dependencies": {
           "inline-style-parser": "0.2.7"
@@ -7662,13 +7662,13 @@
     ],
     "trim-lines": [
       "trim-lines@3.0.1",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/trim-lines/-/trim-lines-3.0.1.tgz",
+      "https://registry.npmjs.org/trim-lines/-/trim-lines-3.0.1.tgz",
       {},
       "sha512-kRj8B+YHZCc9kQYdWfJB2/oUl9rA99qbowYYBtr4ui4mZyAQ2JpvVBd/6U2YloATfqBhBTSMhTpgBHtU0Mf3Rg=="
     ],
     "trough": [
       "trough@2.2.0",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/trough/-/trough-2.2.0.tgz",
+      "https://registry.npmjs.org/trough/-/trough-2.2.0.tgz",
       {},
       "sha512-tmMpK00BjZiUyVyvrBK7knerNgmgvcV/KLVyuma/SC+TQN167GrMRciANTz09+k3zW8L8t60jWO1GpfkZdjTaw=="
     ],
@@ -7706,7 +7706,7 @@
     ],
     "tsx": [
       "tsx@4.23.15",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/tsx/-/tsx-4.23.15.tgz",
+      "https://registry.npmjs.org/tsx/-/tsx-4.23.15.tgz",
       {
         "dependencies": {
           "esbuild": "~0.28.0"
@@ -7794,7 +7794,7 @@
     ],
     "unified": [
       "unified@11.0.5",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/unified/-/unified-11.0.5.tgz",
+      "https://registry.npmjs.org/unified/-/unified-11.0.5.tgz",
       {
         "dependencies": {
           "@types/unist": "^3.0.0",
@@ -7810,7 +7810,7 @@
     ],
     "unist-util-is": [
       "unist-util-is@6.0.1",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/unist-util-is/-/unist-util-is-6.0.1.tgz",
+      "https://registry.npmjs.org/unist-util-is/-/unist-util-is-6.0.1.tgz",
       {
         "dependencies": {
           "@types/unist": "^3.0.0"
@@ -7820,7 +7820,7 @@
     ],
     "unist-util-position": [
       "unist-util-position@5.0.0",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/unist-util-position/-/unist-util-position-5.0.0.tgz",
+      "https://registry.npmjs.org/unist-util-position/-/unist-util-position-5.0.0.tgz",
       {
         "dependencies": {
           "@types/unist": "^3.0.0"
@@ -7830,7 +7830,7 @@
     ],
     "unist-util-stringify-position": [
       "unist-util-stringify-position@4.0.0",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/unist-util-stringify-position/-/unist-util-stringify-position-4.0.0.tgz",
+      "https://registry.npmjs.org/unist-util-stringify-position/-/unist-util-stringify-position-4.0.0.tgz",
       {
         "dependencies": {
           "@types/unist": "^3.0.0"
@@ -7840,7 +7840,7 @@
     ],
     "unist-util-visit": [
       "unist-util-visit@5.1.0",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/unist-util-visit/-/unist-util-visit-5.1.0.tgz",
+      "https://registry.npmjs.org/unist-util-visit/-/unist-util-visit-5.1.0.tgz",
       {
         "dependencies": {
           "@types/unist": "^3.0.0",
@@ -7852,7 +7852,7 @@
     ],
     "unist-util-visit-parents": [
       "unist-util-visit-parents@6.0.2",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/unist-util-visit-parents/-/unist-util-visit-parents-6.0.2.tgz",
+      "https://registry.npmjs.org/unist-util-visit-parents/-/unist-util-visit-parents-6.0.2.tgz",
       {
         "dependencies": {
           "@types/unist": "^3.0.0",
@@ -8057,7 +8057,7 @@
     ],
     "vfile": [
       "vfile@6.0.3",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/vfile/-/vfile-6.0.3.tgz",
+      "https://registry.npmjs.org/vfile/-/vfile-6.0.3.tgz",
       {
         "dependencies": {
           "@types/unist": "^3.0.0",
@@ -8068,7 +8068,7 @@
     ],
     "vfile-message": [
       "vfile-message@4.0.3",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/vfile-message/-/vfile-message-4.0.3.tgz",
+      "https://registry.npmjs.org/vfile-message/-/vfile-message-4.0.3.tgz",
       {
         "dependencies": {
           "@types/unist": "^3.0.0",
@@ -8376,7 +8376,7 @@
     ],
     "zwitch": [
       "zwitch@2.0.4",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/zwitch/-/zwitch-2.0.4.tgz",
+      "https://registry.npmjs.org/zwitch/-/zwitch-2.0.4.tgz",
       {},
       "sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A=="
     ],
@@ -8459,7 +8459,7 @@
     ],
     "@esbuild-kit/core-utils/esbuild": [
       "esbuild@0.18.20",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/esbuild/-/esbuild-0.18.20.tgz",
+      "https://registry.npmjs.org/esbuild/-/esbuild-0.18.20.tgz",
       {
         "optionalDependencies": {
           "@esbuild/android-arm": "0.18.20",
@@ -8820,7 +8820,7 @@
     ],
     "parse-entities/@types/unist": [
       "@types/unist@2.0.11",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@types/unist/-/unist-2.0.11.tgz",
+      "https://registry.npmjs.org/@types/unist/-/unist-2.0.11.tgz",
       {},
       "sha512-CmBKiL6NNo/OqgmMn95Fk9Whlp2mtvIv+KNpQKN2F4SjvrEesubTRWGYSg+BnWZOnlCaSTU1sMpsBOzgbYhnsA=="
     ],
@@ -8860,7 +8860,7 @@
     ],
     "tsx/esbuild": [
       "esbuild@0.28.2",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/esbuild/-/esbuild-0.28.2.tgz",
+      "https://registry.npmjs.org/esbuild/-/esbuild-0.28.2.tgz",
       {
         "optionalDependencies": {
           "@esbuild/aix-ppc64": "0.28.2",
@@ -8904,7 +8904,7 @@
     ],
     "@esbuild-kit/core-utils/esbuild/@esbuild/android-arm": [
       "@esbuild/android-arm@0.18.20",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/android-arm/-/android-arm-0.18.20.tgz",
+      "https://registry.npmjs.org/@esbuild/android-arm/-/android-arm-0.18.20.tgz",
       {
         "os": "android",
         "cpu": "arm"
@@ -8913,7 +8913,7 @@
     ],
     "@esbuild-kit/core-utils/esbuild/@esbuild/android-arm64": [
       "@esbuild/android-arm64@0.18.20",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/android-arm64/-/android-arm64-0.18.20.tgz",
+      "https://registry.npmjs.org/@esbuild/android-arm64/-/android-arm64-0.18.20.tgz",
       {
         "os": "android",
         "cpu": "arm64"
@@ -8922,7 +8922,7 @@
     ],
     "@esbuild-kit/core-utils/esbuild/@esbuild/android-x64": [
       "@esbuild/android-x64@0.18.20",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/android-x64/-/android-x64-0.18.20.tgz",
+      "https://registry.npmjs.org/@esbuild/android-x64/-/android-x64-0.18.20.tgz",
       {
         "os": "android",
         "cpu": "x64"
@@ -8931,7 +8931,7 @@
     ],
     "@esbuild-kit/core-utils/esbuild/@esbuild/darwin-arm64": [
       "@esbuild/darwin-arm64@0.18.20",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/darwin-arm64/-/darwin-arm64-0.18.20.tgz",
+      "https://registry.npmjs.org/@esbuild/darwin-arm64/-/darwin-arm64-0.18.20.tgz",
       {
         "os": "darwin",
         "cpu": "arm64"
@@ -8940,7 +8940,7 @@
     ],
     "@esbuild-kit/core-utils/esbuild/@esbuild/darwin-x64": [
       "@esbuild/darwin-x64@0.18.20",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/darwin-x64/-/darwin-x64-0.18.20.tgz",
+      "https://registry.npmjs.org/@esbuild/darwin-x64/-/darwin-x64-0.18.20.tgz",
       {
         "os": "darwin",
         "cpu": "x64"
@@ -8949,7 +8949,7 @@
     ],
     "@esbuild-kit/core-utils/esbuild/@esbuild/freebsd-arm64": [
       "@esbuild/freebsd-arm64@0.18.20",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/freebsd-arm64/-/freebsd-arm64-0.18.20.tgz",
+      "https://registry.npmjs.org/@esbuild/freebsd-arm64/-/freebsd-arm64-0.18.20.tgz",
       {
         "os": "freebsd",
         "cpu": "arm64"
@@ -8958,7 +8958,7 @@
     ],
     "@esbuild-kit/core-utils/esbuild/@esbuild/freebsd-x64": [
       "@esbuild/freebsd-x64@0.18.20",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/freebsd-x64/-/freebsd-x64-0.18.20.tgz",
+      "https://registry.npmjs.org/@esbuild/freebsd-x64/-/freebsd-x64-0.18.20.tgz",
       {
         "os": "freebsd",
         "cpu": "x64"
@@ -8967,7 +8967,7 @@
     ],
     "@esbuild-kit/core-utils/esbuild/@esbuild/linux-arm": [
       "@esbuild/linux-arm@0.18.20",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/linux-arm/-/linux-arm-0.18.20.tgz",
+      "https://registry.npmjs.org/@esbuild/linux-arm/-/linux-arm-0.18.20.tgz",
       {
         "os": "linux",
         "cpu": "arm"
@@ -8976,7 +8976,7 @@
     ],
     "@esbuild-kit/core-utils/esbuild/@esbuild/linux-arm64": [
       "@esbuild/linux-arm64@0.18.20",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/linux-arm64/-/linux-arm64-0.18.20.tgz",
+      "https://registry.npmjs.org/@esbuild/linux-arm64/-/linux-arm64-0.18.20.tgz",
       {
         "os": "linux",
         "cpu": "arm64"
@@ -8985,7 +8985,7 @@
     ],
     "@esbuild-kit/core-utils/esbuild/@esbuild/linux-ia32": [
       "@esbuild/linux-ia32@0.18.20",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/linux-ia32/-/linux-ia32-0.18.20.tgz",
+      "https://registry.npmjs.org/@esbuild/linux-ia32/-/linux-ia32-0.18.20.tgz",
       {
         "os": "linux",
         "cpu": "ia32"
@@ -8994,7 +8994,7 @@
     ],
     "@esbuild-kit/core-utils/esbuild/@esbuild/linux-loong64": [
       "@esbuild/linux-loong64@0.18.20",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/linux-loong64/-/linux-loong64-0.18.20.tgz",
+      "https://registry.npmjs.org/@esbuild/linux-loong64/-/linux-loong64-0.18.20.tgz",
       {
         "os": "linux",
         "cpu": "none"
@@ -9003,7 +9003,7 @@
     ],
     "@esbuild-kit/core-utils/esbuild/@esbuild/linux-mips64el": [
       "@esbuild/linux-mips64el@0.18.20",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/linux-mips64el/-/linux-mips64el-0.18.20.tgz",
+      "https://registry.npmjs.org/@esbuild/linux-mips64el/-/linux-mips64el-0.18.20.tgz",
       {
         "os": "linux",
         "cpu": "none"
@@ -9012,7 +9012,7 @@
     ],
     "@esbuild-kit/core-utils/esbuild/@esbuild/linux-ppc64": [
       "@esbuild/linux-ppc64@0.18.20",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/linux-ppc64/-/linux-ppc64-0.18.20.tgz",
+      "https://registry.npmjs.org/@esbuild/linux-ppc64/-/linux-ppc64-0.18.20.tgz",
       {
         "os": "linux",
         "cpu": "ppc64"
@@ -9021,7 +9021,7 @@
     ],
     "@esbuild-kit/core-utils/esbuild/@esbuild/linux-riscv64": [
       "@esbuild/linux-riscv64@0.18.20",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/linux-riscv64/-/linux-riscv64-0.18.20.tgz",
+      "https://registry.npmjs.org/@esbuild/linux-riscv64/-/linux-riscv64-0.18.20.tgz",
       {
         "os": "linux",
         "cpu": "none"
@@ -9030,7 +9030,7 @@
     ],
     "@esbuild-kit/core-utils/esbuild/@esbuild/linux-s390x": [
       "@esbuild/linux-s390x@0.18.20",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/linux-s390x/-/linux-s390x-0.18.20.tgz",
+      "https://registry.npmjs.org/@esbuild/linux-s390x/-/linux-s390x-0.18.20.tgz",
       {
         "os": "linux",
         "cpu": "s390x"
@@ -9039,7 +9039,7 @@
     ],
     "@esbuild-kit/core-utils/esbuild/@esbuild/linux-x64": [
       "@esbuild/linux-x64@0.18.20",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/linux-x64/-/linux-x64-0.18.20.tgz",
+      "https://registry.npmjs.org/@esbuild/linux-x64/-/linux-x64-0.18.20.tgz",
       {
         "os": "linux",
         "cpu": "x64"
@@ -9048,7 +9048,7 @@
     ],
     "@esbuild-kit/core-utils/esbuild/@esbuild/netbsd-x64": [
       "@esbuild/netbsd-x64@0.18.20",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/netbsd-x64/-/netbsd-x64-0.18.20.tgz",
+      "https://registry.npmjs.org/@esbuild/netbsd-x64/-/netbsd-x64-0.18.20.tgz",
       {
         "os": "none",
         "cpu": "x64"
@@ -9057,7 +9057,7 @@
     ],
     "@esbuild-kit/core-utils/esbuild/@esbuild/openbsd-x64": [
       "@esbuild/openbsd-x64@0.18.20",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/openbsd-x64/-/openbsd-x64-0.18.20.tgz",
+      "https://registry.npmjs.org/@esbuild/openbsd-x64/-/openbsd-x64-0.18.20.tgz",
       {
         "os": "openbsd",
         "cpu": "x64"
@@ -9066,7 +9066,7 @@
     ],
     "@esbuild-kit/core-utils/esbuild/@esbuild/sunos-x64": [
       "@esbuild/sunos-x64@0.18.20",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/sunos-x64/-/sunos-x64-0.18.20.tgz",
+      "https://registry.npmjs.org/@esbuild/sunos-x64/-/sunos-x64-0.18.20.tgz",
       {
         "os": "sunos",
         "cpu": "x64"
@@ -9075,7 +9075,7 @@
     ],
     "@esbuild-kit/core-utils/esbuild/@esbuild/win32-arm64": [
       "@esbuild/win32-arm64@0.18.20",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/win32-arm64/-/win32-arm64-0.18.20.tgz",
+      "https://registry.npmjs.org/@esbuild/win32-arm64/-/win32-arm64-0.18.20.tgz",
       {
         "os": "win32",
         "cpu": "arm64"
@@ -9084,7 +9084,7 @@
     ],
     "@esbuild-kit/core-utils/esbuild/@esbuild/win32-ia32": [
       "@esbuild/win32-ia32@0.18.20",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/win32-ia32/-/win32-ia32-0.18.20.tgz",
+      "https://registry.npmjs.org/@esbuild/win32-ia32/-/win32-ia32-0.18.20.tgz",
       {
         "os": "win32",
         "cpu": "ia32"
@@ -9093,7 +9093,7 @@
     ],
     "@esbuild-kit/core-utils/esbuild/@esbuild/win32-x64": [
       "@esbuild/win32-x64@0.18.20",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/win32-x64/-/win32-x64-0.18.20.tgz",
+      "https://registry.npmjs.org/@esbuild/win32-x64/-/win32-x64-0.18.20.tgz",
       {
         "os": "win32",
         "cpu": "x64"
@@ -9232,7 +9232,7 @@
     ],
     "tsx/esbuild/@esbuild/aix-ppc64": [
       "@esbuild/aix-ppc64@0.28.2",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/aix-ppc64/-/aix-ppc64-0.28.2.tgz",
+      "https://registry.npmjs.org/@esbuild/aix-ppc64/-/aix-ppc64-0.28.2.tgz",
       {
         "os": "aix",
         "cpu": "ppc64"
@@ -9241,7 +9241,7 @@
     ],
     "tsx/esbuild/@esbuild/android-arm": [
       "@esbuild/android-arm@0.28.2",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/android-arm/-/android-arm-0.28.2.tgz",
+      "https://registry.npmjs.org/@esbuild/android-arm/-/android-arm-0.28.2.tgz",
       {
         "os": "android",
         "cpu": "arm"
@@ -9250,7 +9250,7 @@
     ],
     "tsx/esbuild/@esbuild/android-arm64": [
       "@esbuild/android-arm64@0.28.2",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/android-arm64/-/android-arm64-0.28.2.tgz",
+      "https://registry.npmjs.org/@esbuild/android-arm64/-/android-arm64-0.28.2.tgz",
       {
         "os": "android",
         "cpu": "arm64"
@@ -9259,7 +9259,7 @@
     ],
     "tsx/esbuild/@esbuild/android-x64": [
       "@esbuild/android-x64@0.28.2",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/android-x64/-/android-x64-0.28.2.tgz",
+      "https://registry.npmjs.org/@esbuild/android-x64/-/android-x64-0.28.2.tgz",
       {
         "os": "android",
         "cpu": "x64"
@@ -9268,7 +9268,7 @@
     ],
     "tsx/esbuild/@esbuild/darwin-arm64": [
       "@esbuild/darwin-arm64@0.28.2",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/darwin-arm64/-/darwin-arm64-0.28.2.tgz",
+      "https://registry.npmjs.org/@esbuild/darwin-arm64/-/darwin-arm64-0.28.2.tgz",
       {
         "os": "darwin",
         "cpu": "arm64"
@@ -9277,7 +9277,7 @@
     ],
     "tsx/esbuild/@esbuild/darwin-x64": [
       "@esbuild/darwin-x64@0.28.2",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/darwin-x64/-/darwin-x64-0.28.2.tgz",
+      "https://registry.npmjs.org/@esbuild/darwin-x64/-/darwin-x64-0.28.2.tgz",
       {
         "os": "darwin",
         "cpu": "x64"
@@ -9286,7 +9286,7 @@
     ],
     "tsx/esbuild/@esbuild/freebsd-arm64": [
       "@esbuild/freebsd-arm64@0.28.2",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/freebsd-arm64/-/freebsd-arm64-0.28.2.tgz",
+      "https://registry.npmjs.org/@esbuild/freebsd-arm64/-/freebsd-arm64-0.28.2.tgz",
       {
         "os": "freebsd",
         "cpu": "arm64"
@@ -9295,7 +9295,7 @@
     ],
     "tsx/esbuild/@esbuild/freebsd-x64": [
       "@esbuild/freebsd-x64@0.28.2",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/freebsd-x64/-/freebsd-x64-0.28.2.tgz",
+      "https://registry.npmjs.org/@esbuild/freebsd-x64/-/freebsd-x64-0.28.2.tgz",
       {
         "os": "freebsd",
         "cpu": "x64"
@@ -9304,7 +9304,7 @@
     ],
     "tsx/esbuild/@esbuild/linux-arm": [
       "@esbuild/linux-arm@0.28.2",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/linux-arm/-/linux-arm-0.28.2.tgz",
+      "https://registry.npmjs.org/@esbuild/linux-arm/-/linux-arm-0.28.2.tgz",
       {
         "os": "linux",
         "cpu": "arm"
@@ -9313,7 +9313,7 @@
     ],
     "tsx/esbuild/@esbuild/linux-arm64": [
       "@esbuild/linux-arm64@0.28.2",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/linux-arm64/-/linux-arm64-0.28.2.tgz",
+      "https://registry.npmjs.org/@esbuild/linux-arm64/-/linux-arm64-0.28.2.tgz",
       {
         "os": "linux",
         "cpu": "arm64"
@@ -9322,7 +9322,7 @@
     ],
     "tsx/esbuild/@esbuild/linux-ia32": [
       "@esbuild/linux-ia32@0.28.2",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/linux-ia32/-/linux-ia32-0.28.2.tgz",
+      "https://registry.npmjs.org/@esbuild/linux-ia32/-/linux-ia32-0.28.2.tgz",
       {
         "os": "linux",
         "cpu": "ia32"
@@ -9331,7 +9331,7 @@
     ],
     "tsx/esbuild/@esbuild/linux-loong64": [
       "@esbuild/linux-loong64@0.28.2",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/linux-loong64/-/linux-loong64-0.28.2.tgz",
+      "https://registry.npmjs.org/@esbuild/linux-loong64/-/linux-loong64-0.28.2.tgz",
       {
         "os": "linux",
         "cpu": "none"
@@ -9340,7 +9340,7 @@
     ],
     "tsx/esbuild/@esbuild/linux-mips64el": [
       "@esbuild/linux-mips64el@0.28.2",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/linux-mips64el/-/linux-mips64el-0.28.2.tgz",
+      "https://registry.npmjs.org/@esbuild/linux-mips64el/-/linux-mips64el-0.28.2.tgz",
       {
         "os": "linux",
         "cpu": "none"
@@ -9349,7 +9349,7 @@
     ],
     "tsx/esbuild/@esbuild/linux-ppc64": [
       "@esbuild/linux-ppc64@0.28.2",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/linux-ppc64/-/linux-ppc64-0.28.2.tgz",
+      "https://registry.npmjs.org/@esbuild/linux-ppc64/-/linux-ppc64-0.28.2.tgz",
       {
         "os": "linux",
         "cpu": "ppc64"
@@ -9358,7 +9358,7 @@
     ],
     "tsx/esbuild/@esbuild/linux-riscv64": [
       "@esbuild/linux-riscv64@0.28.2",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/linux-riscv64/-/linux-riscv64-0.28.2.tgz",
+      "https://registry.npmjs.org/@esbuild/linux-riscv64/-/linux-riscv64-0.28.2.tgz",
       {
         "os": "linux",
         "cpu": "none"
@@ -9367,7 +9367,7 @@
     ],
     "tsx/esbuild/@esbuild/linux-s390x": [
       "@esbuild/linux-s390x@0.28.2",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/linux-s390x/-/linux-s390x-0.28.2.tgz",
+      "https://registry.npmjs.org/@esbuild/linux-s390x/-/linux-s390x-0.28.2.tgz",
       {
         "os": "linux",
         "cpu": "s390x"
@@ -9376,7 +9376,7 @@
     ],
     "tsx/esbuild/@esbuild/linux-x64": [
       "@esbuild/linux-x64@0.28.2",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/linux-x64/-/linux-x64-0.28.2.tgz",
+      "https://registry.npmjs.org/@esbuild/linux-x64/-/linux-x64-0.28.2.tgz",
       {
         "os": "linux",
         "cpu": "x64"
@@ -9385,7 +9385,7 @@
     ],
     "tsx/esbuild/@esbuild/netbsd-arm64": [
       "@esbuild/netbsd-arm64@0.28.2",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/netbsd-arm64/-/netbsd-arm64-0.28.2.tgz",
+      "https://registry.npmjs.org/@esbuild/netbsd-arm64/-/netbsd-arm64-0.28.2.tgz",
       {
         "os": "none",
         "cpu": "arm64"
@@ -9394,7 +9394,7 @@
     ],
     "tsx/esbuild/@esbuild/netbsd-x64": [
       "@esbuild/netbsd-x64@0.28.2",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/netbsd-x64/-/netbsd-x64-0.28.2.tgz",
+      "https://registry.npmjs.org/@esbuild/netbsd-x64/-/netbsd-x64-0.28.2.tgz",
       {
         "os": "none",
         "cpu": "x64"
@@ -9403,7 +9403,7 @@
     ],
     "tsx/esbuild/@esbuild/openbsd-arm64": [
       "@esbuild/openbsd-arm64@0.28.2",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/openbsd-arm64/-/openbsd-arm64-0.28.2.tgz",
+      "https://registry.npmjs.org/@esbuild/openbsd-arm64/-/openbsd-arm64-0.28.2.tgz",
       {
         "os": "openbsd",
         "cpu": "arm64"
@@ -9412,7 +9412,7 @@
     ],
     "tsx/esbuild/@esbuild/openbsd-x64": [
       "@esbuild/openbsd-x64@0.28.2",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/openbsd-x64/-/openbsd-x64-0.28.2.tgz",
+      "https://registry.npmjs.org/@esbuild/openbsd-x64/-/openbsd-x64-0.28.2.tgz",
       {
         "os": "openbsd",
         "cpu": "x64"
@@ -9421,7 +9421,7 @@
     ],
     "tsx/esbuild/@esbuild/openharmony-arm64": [
       "@esbuild/openharmony-arm64@0.28.2",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/openharmony-arm64/-/openharmony-arm64-0.28.2.tgz",
+      "https://registry.npmjs.org/@esbuild/openharmony-arm64/-/openharmony-arm64-0.28.2.tgz",
       {
         "os": "none",
         "cpu": "arm64"
@@ -9430,7 +9430,7 @@
     ],
     "tsx/esbuild/@esbuild/sunos-x64": [
       "@esbuild/sunos-x64@0.28.2",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/sunos-x64/-/sunos-x64-0.28.2.tgz",
+      "https://registry.npmjs.org/@esbuild/sunos-x64/-/sunos-x64-0.28.2.tgz",
       {
         "os": "sunos",
         "cpu": "x64"
@@ -9439,7 +9439,7 @@
     ],
     "tsx/esbuild/@esbuild/win32-arm64": [
       "@esbuild/win32-arm64@0.28.2",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/win32-arm64/-/win32-arm64-0.28.2.tgz",
+      "https://registry.npmjs.org/@esbuild/win32-arm64/-/win32-arm64-0.28.2.tgz",
       {
         "os": "win32",
         "cpu": "arm64"
@@ -9448,7 +9448,7 @@
     ],
     "tsx/esbuild/@esbuild/win32-ia32": [
       "@esbuild/win32-ia32@0.28.2",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/win32-ia32/-/win32-ia32-0.28.2.tgz",
+      "https://registry.npmjs.org/@esbuild/win32-ia32/-/win32-ia32-0.28.2.tgz",
       {
         "os": "win32",
         "cpu": "ia32"
@@ -9457,7 +9457,7 @@
     ],
     "tsx/esbuild/@esbuild/win32-x64": [
       "@esbuild/win32-x64@0.28.2",
-      "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@esbuild/win32-x64/-/win32-x64-0.28.2.tgz",
+      "https://registry.npmjs.org/@esbuild/win32-x64/-/win32-x64-0.28.2.tgz",
       {
         "os": "win32",
         "cpu": "x64"
