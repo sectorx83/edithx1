@@ -33,7 +33,7 @@ The current AI client removes blank and duplicate keys. It tries configured keys
 
 EDITH NETWORK provides optional server-mediated actions such as web search, page fetching, website opening, world-news dashboard access, and multi-step tasks.
 
-The current source reads the server environment variable `STYX_NETWORK_API_KEY`. This is a legacy variable name retained by the implementation. Configure that exact name if you enable the network integration; do not expose it through a `VITE_*` variable or send it to browser code. The credential is shared across users of the same deployment, so apply suitable usage limits and monitor the external service.
+Set `EDITH_NETWORK_API_KEY` in the server environment when enabling this integration. The credential is sent only from server-side code and must never be exposed through a `VITE_*` variable or sent to browser code. Existing deployments can continue using the previous variable name temporarily, but new deployments should use `EDITH_NETWORK_API_KEY`. The credential is shared across users of the same deployment, so apply suitable usage limits and monitor the external service.
 
 ## Optional project identifiers
 
