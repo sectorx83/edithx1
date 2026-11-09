@@ -57,14 +57,14 @@ These public values must point to the same Supabase project as the server variab
 
 | Variable | Purpose |
 | --- | --- |
-| `STYX_NETWORK_API_KEY` | Legacy-named server credential used by the EDITH NETWORK integration. Needed only when using network tools. |
+| `EDITH_NETWORK_API_KEY` | Server credential for the optional EDITH NETWORK integration. |
 | `GROQ_API_KEY_2` through `GROQ_API_KEY_4` | Additional Groq keys used for configured key failover. |
 | `GROQ_MODEL` | Groq model ID; defaults to `openai/gpt-oss-120b`. |
 | `SUPABASE_PROJECT_ID`, `VITE_SUPABASE_PROJECT_ID` | Optional project identifiers for integrations that need them; not required by the core chat path. |
 
 Create a Groq key at https://console.groq.com/keys. The current code reads Groq keys in this order: `GROQ_API_KEY_1` through `GROQ_API_KEY_4`, followed by `GROQ_API_KEY`. Blank and duplicate values are ignored.
 
-**Network credential compatibility note:** the network integration is presented in the app as EDITH NETWORK, but the current server implementation still reads the environment variable named `STYX_NETWORK_API_KEY`. Set that exact variable if you enable network tools. This is a legacy configuration name, not a separate user-facing product or a public API name. Renaming it requires a coordinated source-code change.
+For existing deployments, the network integration temporarily continues to accept its previous environment-variable name as a fallback. New deployments should use `EDITH_NETWORK_API_KEY`.
 
 **Security:** variables prefixed with `VITE_` are exposed in the browser bundle. Only public Supabase project values belong there. Never put Groq keys, the network credential, Supabase secret/service-role keys, database passwords, or other private credentials in `VITE_*` variables. Keep `.env` private; it is ignored by Git.
 
@@ -127,7 +127,7 @@ Redeploy after changing environment variables so the new values are available to
 
 **AI is not configured:** add `GROQ_API_KEY_1` or `GROQ_API_KEY` to the server environment and restart or redeploy.
 
-**EDITH NETWORK unavailable:** verify that `STYX_NETWORK_API_KEY` is configured in the server environment and that the external network service is reachable. This variable retains a legacy name in the current source.
+**EDITH NETWORK unavailable:** verify that `EDITH_NETWORK_API_KEY` is configured in the server environment and that the external network service is reachable. Existing deployments may still use the previous variable name until migrated.
 
 **Invalid Groq key:** replace it with a valid Groq API key from Groq Console, then redeploy. Do not paste the key into issue reports or screenshots.
 
