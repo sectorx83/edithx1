@@ -1,4 +1,4 @@
-// Server-only client for the STYX NETWORK execution engine.
+// Server-only client for EDITH NETWORK execution.
 // Never import this file from client code.
 
 export const NETWORK_BASE = "https://styx-network.lovable.app";
@@ -41,8 +41,9 @@ export type NetworkCommandResult = {
 };
 
 function getKey(): string {
-  const key = process.env["STYX_NETWORK_API_KEY"];
-  if (!key) throw new Error("STYX_NETWORK_API_KEY is not configured");
+  // Keep the old variable as a fallback so existing deployments do not break.
+  const key = process.env["EDITH_NETWORK_API_KEY"] || process.env["STYX_NETWORK_API_KEY"];
+  if (!key) throw new Error("EDITH_NETWORK_API_KEY is not configured");
   return key;
 }
 
