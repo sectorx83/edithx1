@@ -1,6 +1,6 @@
 # Environment configuration
 
-Copy `.env.example` to `.env` for local development. Set the same variables in your hosting provider's server environment for deployed builds.
+Copy `.env.example` to `.env` for local development. Set the same required values in your hosting provider's server environment for deployed builds.
 
 ## Required server variables
 
@@ -9,7 +9,6 @@ Copy `.env.example` to `.env` for local development. Set the same variables in y
 | `SUPABASE_URL` | Supabase project URL used by server-side code. |
 | `SUPABASE_PUBLISHABLE_KEY` | Supabase publishable key. A legacy anon/public key is also supported. |
 | `GROQ_API_KEY_1` or `GROQ_API_KEY` | At least one Groq key is required for AI chat. |
-| `STYX_NETWORK_API_KEY` | Shared server-side credential used by EDITH NETWORK tools. |
 
 ## Browser-visible Supabase variables
 
@@ -28,26 +27,29 @@ These are public project values, not secrets. They should refer to the same Supa
 | `GROQ_API_KEY` | Single-key fallback or an additional pool key. |
 | `GROQ_MODEL` | Groq model ID. Defaults to `openai/gpt-oss-120b`. |
 
-The AI client removes blank and duplicate keys. Keep all Groq keys server-side. Never prefix provider credentials with `VITE_`.
+The current AI client removes blank and duplicate keys. It tries configured keys in order and advances after HTTP 402/429 quota or billing responses and HTTP 401/403 credential responses. Keep every Groq key server-side.
 
-## Edith Network
+## EDITH NETWORK
 
-EDITH uses the Edith Network execution service for web search, page fetching, world-news dashboard actions, and multi-step network tasks. Configure `STYX_NETWORK_API_KEY` on the server. The application sends it as a bearer token from server-only code; it is never sent to the browser. The shared deployment credential enables these network tools for app users, subject to the network service's own limits and policies.
+EDITH NETWORK provides optional server-mediated actions such as web search, page fetching, website opening, world-news dashboard access, and multi-step tasks.
+
+The current source reads the server environment variable `STYX_NETWORK_API_KEY`. This is a legacy variable name retained by the implementation. Configure that exact name if you enable the network integration; do not expose it through a `VITE_*` variable or send it to browser code. The credential is shared across users of the same deployment, so apply suitable usage limits and monitor the external service.
 
 ## Optional project identifiers
 
-`SUPABASE_PROJECT_ID` and `VITE_SUPABASE_PROJECT_ID` are included in the example template for tools or client integrations that require the project identifier. They are not required by the core chat server path.
+`SUPABASE_PROJECT_ID` and `VITE_SUPABASE_PROJECT_ID` are included in the example template for integrations that need the project identifier. They are not required by the core chat server path.
 
 ## Authentication
 
-EDITH does not use a site password or password-based login. Enable **Anonymous Sign-Ins** in Supabase Authentication so the app can create a per-browser session automatically. Anonymous sessions are not verified personal accounts; use strict Row Level Security policies for user-owned data.
+EDITH currently uses Supabase Anonymous Sign-Ins to create a per-browser session. It does not implement a site password or password-based login. Anonymous sessions are not verified personal accounts; configure and test strict Row Level Security policies for user-owned data.
 
 ## Vercel deployment
 
 1. Open the Vercel project and navigate to **Settings → Environment Variables**.
-2. Add the required Supabase, Groq, and Edith Network values.
-3. Select the environments that need each value (Production, Preview, and/or Development).
-4. Save and trigger a new deployment.
+2. Add the required Supabase and Groq values.
+3. Add the EDITH NETWORK credential only if that integration is enabled.
+4. Select the environments that need each value (Production, Preview, and Development).
+5. Save and trigger a new deployment.
 
 Environment variable changes do not alter an already-built deployment. Redeploy after changing them.
 
