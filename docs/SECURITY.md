@@ -3,7 +3,6 @@
 ## Secrets and server boundaries
 
 - Keep Groq API keys and the EDITH NETWORK credential in server-side environment variables. Never prefix them with `VITE_`, return them from server functions, or include them in browser bundles.
-- The current network integration reads the legacy variable name `STYX_NETWORK_API_KEY`. Treat its value as a secret even though the variable name is retained for compatibility.
 - Use Supabase publishable keys only in browser-visible configuration. Supabase secret/service-role keys must remain server-side and are not needed by the documented client setup.
 - Never log API keys, authorization headers, raw provider response bodies, or private user content.
 - Do not commit `.env`, local credentials, tokens, production data, or private user information.
@@ -21,4 +20,5 @@
 - Treat EDITH NETWORK commands and arguments as untrusted model output.
 - Keep an explicit command allowlist and validate/sanitize arguments in the server-side execution layer before performing external actions.
 - Keep external service credentials on the server and monitor usage because the deployment credential is shared across app users.
+- Existing deployments may temporarily retain a previous network credential variable name; new deployments should use `EDITH_NETWORK_API_KEY`.
 - Do not treat generated text as authorization for privileged actions. Add independent authorization checks for any future sensitive operation.
